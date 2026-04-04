@@ -53,7 +53,7 @@ export const PostCard: React.FC<PostCardProps> = ({ post, onClick }) => {
           referrerPolicy="no-referrer"
         />
         <div className="absolute top-4 left-4">
-          <span className="px-3 py-1.5 text-[10px] font-bold tracking-normal uppercase rounded-sm bg-white/95 backdrop-blur-sm text-stone-900 shadow-lg transition-all group-hover:bg-white">
+          <span className="px-3 py-1.5 text-[9px] font-semibold tracking-normal uppercase rounded-sm bg-white/95 backdrop-blur-sm text-stone-900 shadow-lg transition-all group-hover:bg-white font-serif">
             {post.type === 'ПОМЕН' ? (
               post.pomenSubtype === '40 дена' ? 'Четриесетдневен помен' :
               post.pomenSubtype === '6 месеци' ? 'Шестмесечен помен' :
@@ -64,22 +64,22 @@ export const PostCard: React.FC<PostCardProps> = ({ post, onClick }) => {
         </div>
       </div>
       
-      <div className="p-6 md:p-8 text-center flex flex-col items-center flex-grow">
-        <h3 className="font-serif text-2xl md:text-3xl text-stone-900 mb-2 group-hover:text-stone-700 transition-colors leading-tight">
+      <div className="p-4 md:p-6 text-center flex flex-col items-center flex-grow">
+        <h3 className="font-serif text-2xl md:text-3xl text-stone-900 mb-1 group-hover:text-stone-700 transition-colors leading-tight">
           {post.fullName}
         </h3>
         
         {(post.birthYear || post.deathYear) && (
-          <div className="text-stone-500 font-serif tracking-widest mb-4">
+          <div className="text-stone-500 font-serif tracking-widest mb-2">
             {post.birthYear || '...'} – {post.deathYear || '...'}
           </div>
         )}
         
-        <div className="text-stone-400 text-xs uppercase tracking-[0.2em] font-medium mb-6">
+        <div className="text-stone-400 text-[10px] uppercase tracking-normal font-semibold mb-3 font-sans">
           {post.city}
         </div>
         
-        <div className="mt-auto pt-6 border-t border-stone-100 w-full">
+        <div className="mt-auto pt-4 border-t border-stone-100 w-full">
           <p className="text-stone-600 text-sm italic font-serif">
             {getContextSubtitle(post)}
           </p>

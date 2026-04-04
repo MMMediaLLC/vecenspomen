@@ -65,29 +65,29 @@ export const Home: React.FC<HomeProps> = ({ posts }) => {
     <div className="relative pb-24 md:pb-0"> {/* Padding bottom for mobile sticky CTA */}
 
       {/* 1) PREMIUM HERO SECTION */}
-      <section className="relative pt-16 pb-24 md:pt-24 md:pb-32 overflow-hidden bg-white border-b border-stone-100">
+      <section className="relative pt-12 pb-16 md:pt-16 md:pb-20 overflow-hidden bg-white border-b border-stone-100">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
             
             {/* Left side text */}
             <div className="space-y-8 animate-in fade-in duration-1000 slide-in-from-bottom-4">
               <h1 className="text-4xl md:text-5xl lg:text-7xl font-serif text-stone-900 leading-[1.1] tracking-tight">
-                Достоинствено место за тажни вести и вечни спомени
+                Со достоинство, во спомен на оние што ги сакаме.
               </h1>
               <p className="text-lg md:text-xl text-stone-600 leading-relaxed max-w-lg font-light">
-                Брзо и достоинствено поднесете тажна вест, помен, сочувство или последен поздрав за цела Македонија. Без регистрација, со преглед пред објава и админ одобрување.
+                Во мигови на тишина и тага, споделете тажна вест, последен поздрав, сочувство или помен со почит и љубов.
               </p>
 
               <div className="flex flex-col sm:flex-row gap-4 pt-4">
                 <button
                   onClick={onNavigateSubmit}
-                  className="bg-stone-900 text-white px-8 py-4 text-base font-medium transition-all hover:bg-stone-800 flex items-center justify-center gap-2"
+                  className="bg-stone-900 text-white px-8 py-4 text-base font-semibold font-sans transition-all hover:bg-stone-800 flex items-center justify-center gap-2"
                 >
                   Поднеси објава <ArrowRight size={18} />
                 </button>
                 <button
                   onClick={scrollToLatest}
-                  className="bg-transparent text-stone-900 border border-stone-200 px-8 py-4 text-base font-medium transition-all hover:border-stone-400 flex items-center justify-center"
+                  className="bg-transparent text-stone-900 border border-stone-200 px-8 py-4 text-base font-semibold font-sans transition-all hover:border-stone-400 flex items-center justify-center"
                 >
                   Погледни пример
                 </button>
@@ -95,7 +95,7 @@ export const Home: React.FC<HomeProps> = ({ posts }) => {
             </div>
 
             {/* Right side preview card */}
-            <div className="hidden lg:block relative ml-auto w-full max-w-md animate-in fade-in duration-1000 delay-300 slide-in-from-right-8">
+            <div className="hidden lg:block relative ml-auto w-full max-w-lg animate-in fade-in duration-1000 delay-300 slide-in-from-right-8">
               <div className="absolute -inset-10 bg-stone-50 rounded-[3rem] -z-10 blur-xl opacity-70"></div>
               <div 
                 className="bg-white p-2 border border-stone-100 shadow-[0_8px_30px_rgb(0,0,0,0.04)] transform rotate-1 hover:rotate-0 transition-transform duration-700 overflow-hidden max-h-[580px]"
@@ -113,10 +113,10 @@ export const Home: React.FC<HomeProps> = ({ posts }) => {
       </section>
 
       {/* 2) LATEST MEMORIALS */}
-      <section id="latest-memorials" className="py-24 bg-white">
+      <section id="latest-memorials" className="py-12 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl md:text-4xl font-serif text-stone-900 mb-6">
+          <div className="text-center mb-6">
+            <h2 className="text-3xl md:text-4xl font-serif text-stone-900 mb-4">
               Последни објави низ Македонија
             </h2>
             <div className="w-12 h-[1px] bg-[var(--color-gold)] mx-auto mb-10 opacity-60"></div>
@@ -127,7 +127,7 @@ export const Home: React.FC<HomeProps> = ({ posts }) => {
                 <button
                   key={city}
                   onClick={() => setSelectedCity(city)}
-                  className={`snap-start whitespace-nowrap px-6 py-2 text-sm font-medium transition-all duration-300 border ${
+                  className={`snap-start whitespace-nowrap px-6 py-2 text-[13px] font-semibold font-sans transition-all duration-300 border uppercase tracking-normal ${
                     selectedCity === city 
                       ? 'bg-stone-900 text-white border-stone-900' 
                       : 'bg-white text-stone-500 border-stone-200 hover:border-stone-300'
@@ -156,7 +156,7 @@ export const Home: React.FC<HomeProps> = ({ posts }) => {
           <div className="text-center mt-12">
             <button
               onClick={() => { navigate('/pochinati'); window.scrollTo(0, 0); }}
-              className="text-stone-500 hover:text-stone-900 text-sm font-medium uppercase tracking-widest transition-colors"
+              className="text-stone-500 hover:text-stone-900 text-xs font-semibold uppercase tracking-normal transition-colors font-sans"
             >
               Види ги сите починати
             </button>
@@ -165,7 +165,7 @@ export const Home: React.FC<HomeProps> = ({ posts }) => {
       </section>
 
       {/* 3) PREMIUM BOTTOM CTA */}
-      <section className="bg-stone-900 py-32 mt-0">
+      <section className="bg-stone-900 py-20 mt-0">
         <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <h2 className="text-4xl md:text-5xl font-serif text-white mb-6 leading-tight">
             Достоинствено објавете вест за починато лице
@@ -175,7 +175,7 @@ export const Home: React.FC<HomeProps> = ({ posts }) => {
           </p>
           <button
             onClick={onNavigateSubmit}
-            className="bg-white text-stone-900 px-10 py-4 text-base font-medium transition-all hover:bg-stone-100 inline-flex items-center justify-center gap-2"
+            className="bg-white text-stone-900 px-10 py-4 text-base font-bold font-sans transition-all hover:bg-stone-100 inline-flex items-center justify-center gap-2 uppercase tracking-normal"
           >
             Поднесете објава <ArrowRight size={18} />
           </button>

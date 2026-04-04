@@ -19,7 +19,7 @@ export const Layout: React.FC<LayoutProps> = ({ children }) => {
     <Link
       to={path}
       onClick={() => setIsMenuOpen(false)}
-      className={`text-sm font-medium transition-colors ${
+      className={`text-[13px] font-semibold font-sans uppercase tracking-[0.05em] transition-colors ${
         currentPath === path ? 'text-stone-900' : 'text-stone-500 hover:text-stone-900'
       }`}
     >
@@ -47,7 +47,7 @@ export const Layout: React.FC<LayoutProps> = ({ children }) => {
                 </div>
                 <div className="flex flex-col leading-none">
                   <span className="font-serif text-xl font-bold tracking-tight text-stone-900">ВЕЧЕН СПОМЕН</span>
-                  <span className="text-[10px] uppercase tracking-[0.3em] text-stone-400 font-bold mt-0.5">Македонија</span>
+                  <span className="text-[10px] uppercase tracking-normal text-stone-400 font-bold mt-0.5 font-sans">Македонија</span>
                 </div>
               </Link>
             </div>
@@ -60,7 +60,7 @@ export const Layout: React.FC<LayoutProps> = ({ children }) => {
               <Link
                 to="/objavi"
                 onClick={() => { window.scrollTo(0, 0); }}
-                className="bg-stone-900 text-white px-6 py-2.5 rounded-sm text-sm font-medium hover:bg-stone-800 transition-all shadow-sm"
+                className="bg-stone-900 text-white px-6 py-2.5 rounded-sm text-[13px] font-bold font-sans uppercase tracking-normal hover:bg-stone-800 transition-all shadow-sm"
                 aria-label="Поднеси нова објава"
               >
                 Поднеси објава
@@ -132,7 +132,7 @@ export const Layout: React.FC<LayoutProps> = ({ children }) => {
             </div>
 
             {/* Editorial Links */}
-            <ul className="flex flex-wrap justify-center gap-6 text-sm font-medium">
+            <ul className="flex flex-wrap justify-center gap-6 text-[12px] font-semibold font-sans uppercase tracking-wider">
               <li><button className="hover:text-stone-900 transition-colors">За нас</button></li>
               <li><button className="hover:text-stone-900 transition-colors">Како работи</button></li>
               <li><button className="hover:text-stone-900 transition-colors">Контакт</button></li>
