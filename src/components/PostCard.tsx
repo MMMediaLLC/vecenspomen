@@ -43,7 +43,7 @@ export const PostCard: React.FC<PostCardProps> = ({ post, onClick }) => {
   return (
     <div 
       onClick={() => onClick(post.slug || post.id)}
-      className="group cursor-pointer bg-white border border-stone-100 rounded-sm overflow-hidden transition-all duration-700 hover:shadow-2xl hover:-translate-y-2 flex flex-col h-full relative"
+      className="group cursor-pointer bg-white border border-stone-100/60 hover:border-stone-200 rounded-sm overflow-hidden transition-all duration-700 shadow-[0_1px_3px_rgba(0,0,0,0.04)] hover:shadow-[0_8px_30px_rgba(0,0,0,0.07)] flex flex-col h-full relative paper-texture"
     >
       <div className="relative aspect-[4/5] overflow-hidden bg-stone-100">
         <img 
@@ -52,8 +52,8 @@ export const PostCard: React.FC<PostCardProps> = ({ post, onClick }) => {
           className="w-full h-full object-cover grayscale-[0.2] group-hover:grayscale-0 transition-all duration-700 scale-100 group-hover:scale-105"
           referrerPolicy="no-referrer"
         />
-        <div className="absolute top-4 left-4">
-          <span className="px-3 py-1.5 text-[9px] font-semibold tracking-normal uppercase rounded-sm bg-white/95 backdrop-blur-sm text-stone-900 shadow-lg transition-all group-hover:bg-white font-serif">
+        <div className="absolute top-4 left-4 flex flex-col gap-2">
+          <span className="px-2.5 py-1 text-[8px] font-medium tracking-wider uppercase rounded-sm bg-white/90 backdrop-blur-sm text-stone-700 shadow-sm transition-all group-hover:bg-white font-sans">
             {post.type === 'ПОМЕН' ? (
               post.pomenSubtype === '40 дена' ? 'Четриесетдневен помен' :
               post.pomenSubtype === '6 месеци' ? 'Шестмесечен помен' :
@@ -65,7 +65,7 @@ export const PostCard: React.FC<PostCardProps> = ({ post, onClick }) => {
       </div>
       
       <div className="p-4 md:p-6 text-center flex flex-col items-center flex-grow">
-        <h3 className="font-serif text-2xl md:text-3xl text-stone-900 mb-1 group-hover:text-stone-700 transition-colors leading-tight">
+        <h3 className="font-serif font-normal text-2xl md:text-3xl text-stone-900 mb-1 group-hover:text-stone-700 transition-colors leading-tight">
           {post.fullName}
         </h3>
         
@@ -75,12 +75,12 @@ export const PostCard: React.FC<PostCardProps> = ({ post, onClick }) => {
           </div>
         )}
         
-        <div className="text-stone-400 text-[10px] uppercase tracking-normal font-semibold mb-3 font-sans">
+        <div className="text-[11px] md:text-xs tracking-[0.08em] text-stone-500 font-normal mb-3 font-sans">
           {post.city}
         </div>
         
         <div className="mt-auto pt-4 border-t border-stone-100 w-full">
-          <p className="text-stone-600 text-sm italic font-serif">
+          <p className="text-stone-500 text-sm font-serif italic">
             {getContextSubtitle(post)}
           </p>
         </div>

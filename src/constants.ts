@@ -14,22 +14,16 @@ export const CITIES: City[] = [
 
 export const PACKAGES: PricingPackage[] = [
   {
-    name: 'Стандардна',
-    price: '900 ден.',
-    features: ['7 дена видливост на почетна', 'Трајно во архива', 'Стандарден приказ', 'Директно споделување'],
+    name: 'Основен',
+    price: '300 ден.',
+    features: ['7 дена видливост на почетна', 'Трајно достапно во архивата', 'Класичен и достоен приказ', 'Хоризонтална картичка за споделување'],
     color: 'bg-stone-50'
   },
   {
-    name: 'Премиум',
-    price: '1.900 ден.',
-    features: ['14 дена видливост на почетна', 'Трајно во архива', 'Истакнат приказ', 'Книга на сочувство', 'Специјален URL', 'Потсетници за помени'],
+    name: 'Истакнат',
+    price: '500 ден.',
+    features: ['14 дена видливост на почетна', 'Трајно достапно во архивата', 'Премиум дизајн со украсна рамка', 'Поистакнат приказ во листата', 'Хоризонтална картичка за споделување'],
     color: 'bg-stone-900 text-white'
-  },
-  {
-    name: 'Вечен спомен',
-    price: '2.900 ден.',
-    features: ['30 дена видливост на почетна', 'Трајно во архива', 'Приоритетен приказ', 'Книга на сочувство (трајна)', 'Специјален URL', 'Автоматизирани помени засекогаш'],
-    color: 'bg-[var(--color-gold)] text-white'
   }
 ];
 
@@ -54,7 +48,7 @@ export const SEEDED_POSTS: MemorialPost[] = [
     email: 'petrovski@example.com',
     phone: '070123456',
     photoUrl: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&q=80&w=400',
-    package: 'Премиум',
+    package: 'Истакнат',
     status: 'Објавено',
     createdAt: '2026-04-01T10:00:00Z',
     isFeatured: true,
@@ -80,7 +74,7 @@ export const SEEDED_POSTS: MemorialPost[] = [
     phone: '071234567',
     mainText: 'Со љубов и тага те споменуваме и по една година од твоето заминување. Засекогаш ќе живееш во нашите мисли и молитви.',
     photoUrl: 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?auto=format&fit=crop&q=80&w=400',
-    package: 'Премиум',
+    package: 'Истакнат',
     status: 'Објавено',
     createdAt: '2026-04-02T08:00:00Z',
     guestbookEnabled: true
@@ -100,7 +94,7 @@ export const SEEDED_POSTS: MemorialPost[] = [
     phone: '042123456',
     mainText: 'Те испраќаме со неизмерна тага и благодарност за добрината и сите спомени што ни ги остави. Ќе ни недостигаш Никола.',
     photoUrl: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?auto=format&fit=crop&q=80&w=400',
-    package: 'Стандардна',
+    package: 'Основен',
     status: 'Објавено',
     createdAt: '2026-04-03T15:00:00Z',
     guestbookEnabled: false
@@ -119,7 +113,7 @@ export const SEEDED_POSTS: MemorialPost[] = [
     phone: '075555444',
     mainText: 'Во овие тешки моменти изразуваме искрено сочувство до семејството и најблиските. Нека споменот за него биде вечен.',
     photoUrl: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&q=80&w=400',
-    package: 'Стандардна',
+    package: 'Основен',
     status: 'Објавено',
     createdAt: '2026-04-03T16:30:00Z',
     guestbookEnabled: false

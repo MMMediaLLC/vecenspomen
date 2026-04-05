@@ -8,9 +8,19 @@ interface Step5Props {
   post: Partial<MemorialPost>;
   selectedPackage: PackageType | null;
   onSelect: (pkg: PackageType) => void;
+  updatePost?: (data: Partial<MemorialPost>) => void;
 }
 
-export const Step5: React.FC<Step5Props> = ({ post, selectedPackage, onSelect }) => {
+const SYMBOLS = [
+  { id: 'elegant', icon: '◻' },
+  { id: 'orthodox', icon: '☦' },
+  { id: 'catholic', icon: '✝' },
+  { id: 'muslim', icon: '☾' },
+  { id: 'star', icon: '★' },
+  { id: 'clean', icon: '─' },
+] as const;
+
+export const Step5: React.FC<Step5Props> = ({ post, selectedPackage, onSelect, updatePost }) => {
   return (
     <div className="space-y-12 animate-in fade-in duration-700">
       
@@ -37,11 +47,16 @@ export const Step5: React.FC<Step5Props> = ({ post, selectedPackage, onSelect })
           <p className="text-stone-500 text-sm">Изберете опција која најдобро одговара на вашите потреби.</p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-5xl mx-auto">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-3xl mx-auto">
           {PACKAGES.map((pkg) => (
             <div 
               key={pkg.name}
-              onClick={() => onSelect(pkg.name)}
+              onClick={() => {
+                onSelect(pkg.name);
+                if (pkg.name === 'Истакнат' && !post.selectedFrameStyle && updatePost) {
+                  updatePost({ selectedFrameStyle: 'clean' });
+                }
+              }}
               className={`relative p-8 border rounded-sm cursor-pointer transition-all duration-300 flex flex-col group ${
                 selectedPackage === pkg.name 
                   ? 'border-stone-900 bg-stone-50 shadow-xl scale-[1.02] z-10' 
@@ -68,6 +83,12 @@ export const Step5: React.FC<Step5Props> = ({ post, selectedPackage, onSelect })
                     <span>{f}</span>
                   </li>
                 ))}
+                {pkg.name === 'Истакнат' && (
+                  <li className="flex items-start gap-2 text-sm text-stone-900 leading-tight font-bold">
+                    <Check size={16} className="text-stone-900 mt-0.5 flex-shrink-0" />
+                    <span>Книга на сочувство</span>
+                  </li>
+                )}
               </ul>
 
               <button className={`w-full py-3 text-xs font-bold uppercase tracking-widest transition-all rounded-sm border ${
@@ -81,6 +102,34 @@ export const Step5: React.FC<Step5Props> = ({ post, selectedPackage, onSelect })
           ))}
         </div>
       </div>
+
+      {/* 2.5) SYMBOL SELECTOR FOR PREMIUM */}
+      {selectedPackage === 'Истакнат' && (
+        <div className="space-y-6 pt-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
+          <div className="text-center">
+            <h3 className="text-xl font-serif text-stone-900 mb-2">Изберете рамка за објавата</h3>
+          </div>
+          
+          <div className="flex justify-center flex-wrap gap-3">
+            {SYMBOLS.map((sym) => {
+              const isSelected = post.selectedFrameStyle === sym.id || (!post.selectedFrameStyle && sym.id === 'clean');
+              return (
+                <button
+                  key={sym.id}
+                  onClick={() => updatePost?.({ selectedFrameStyle: sym.id as any })}
+                  className={`w-14 h-14 flex items-center justify-center text-2xl rounded-sm transition-all duration-300
+                    ${isSelected 
+                      ? 'border-2 border-stone-800 bg-stone-50 text-stone-900 shadow-md scale-105' 
+                      : 'border border-stone-200 bg-white text-stone-500 hover:border-stone-400 hover:text-stone-800 hover:shadow-sm'
+                    }`}
+                >
+                  {sym.icon}
+                </button>
+              );
+            })}
+          </div>
+        </div>
+      )}
 
       {/* 3) PAYMENT INFO PLACEHOLDER */}
       {selectedPackage && (

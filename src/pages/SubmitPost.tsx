@@ -115,7 +115,7 @@ export const SubmitPost: React.FC<SubmitPostProps> = ({ onComplete, initialPost,
       ...post,
       id: crypto.randomUUID?.() || `post-${Date.now()}`,
       slug: generateSlug(post.fullName || 'memorial', post.deathYear),
-      guestbookEnabled: post.package !== 'Стандардна',
+      guestbookEnabled: post.package === 'Истакнат',
     } as MemorialPost;
 
     await new Promise(r => setTimeout(r, 1500));
@@ -149,6 +149,7 @@ export const SubmitPost: React.FC<SubmitPostProps> = ({ onComplete, initialPost,
             post={post}
             selectedPackage={post.package || null}
             onSelect={(pkg: PackageType) => updatePost({ package: pkg })}
+            updatePost={updatePost}
           />
         );
       case 5:

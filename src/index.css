@@ -35,11 +35,38 @@
 }
 
 .memorial-card-shadow {
-  box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.05), 0 2px 10px -2px rgba(0, 0, 0, 0.03);
+  box-shadow: 
+    0 10px 40px -10px rgba(0, 0, 0, 0.04),
+    0 4px 12px -4px rgba(0, 0, 0, 0.02);
 }
 
 .premium-border {
-  border: 1px solid rgba(41, 37, 36, 0.1);
+  border: 1px solid rgba(176, 141, 87, 0.15);
+}
+
+.paper-texture {
+  position: relative;
+}
+
+.paper-texture::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3%3Cfilter id='noiseFilter'%3%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3%3C/filter%3%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3%3C/svg%3");
+  opacity: 0.015;
+  mix-blend-mode: multiply;
+}
+
+.marble-texture {
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 1000 1000' xmlns='http://www.w3.org/2000/svg'%3%3Cfilter id='marbleFilter'%3%3CfeTurbulence type='fractalNoise' baseFrequency='0.01' numOctaves='3' seed='5' stitchTiles='stitch'/%3%3C/filter%3%3Crect width='100%25' height='100%25' filter='url(%23marbleFilter)' opacity='0.05'/%3%3C/svg%3");
+}
+
+.gold-gradient-text {
+  background: linear-gradient(135deg, #B08D57 0%, #8D6E3F 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
 }
 
 /* Print styles — само memorial card се печати */

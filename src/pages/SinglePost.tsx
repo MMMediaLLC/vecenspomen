@@ -123,39 +123,45 @@ export const SinglePost: React.FC = () => {
   }
 
   return (
-    <div className="bg-stone-50 min-h-screen pb-32">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+    <div className="bg-stone-50 border-t border-stone-100/80 min-h-screen pb-32">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
 
         {/* Top bar */}
-        <div className="flex flex-col md:flex-row justify-between items-center gap-6 mb-16 no-print animate-in fade-in slide-in-from-top-4 duration-1000">
-          <div className="flex items-center gap-4">
+        <div className="flex flex-col md:flex-row justify-between items-center gap-4 mb-10 no-print animate-in fade-in slide-in-from-top-4 duration-1000">
+          
+          {/* Navigation */}
+          <div className="flex items-center gap-4 order-2 md:order-1">
             <button
               onClick={() => navigate(-1)}
               className="group flex items-center gap-2 text-stone-400 hover:text-stone-900 transition-all text-[10px] font-bold uppercase tracking-widest"
               aria-label="Назад"
             >
-              <ArrowLeft size={16} className="group-hover:-translate-x-1 transition-transform" /> Назад
+              <ArrowLeft size={14} className="group-hover:-translate-x-1 transition-transform" /> Назад
             </button>
             <span className="w-1 h-1 bg-stone-300 rounded-full" />
             <span className="text-stone-400 text-[10px] uppercase tracking-[0.2em] font-bold">{post.city}</span>
           </div>
 
-          <div className="flex flex-wrap items-center justify-center gap-3">
+          {/* Share Action Bar */}
+          <div className="flex flex-wrap items-center justify-center md:justify-end gap-[8px] text-stone-500 font-sans order-1 md:order-2 w-full md:w-auto mb-4 md:mb-0">
             <button
               onClick={handleFacebookShare}
-              className="flex items-center gap-2 bg-[#1877F2] text-white px-5 py-2.5 rounded-sm text-xs font-bold uppercase tracking-widest hover:bg-[#166FE5] transition-all shadow-md hover:shadow-lg"
+              className="flex items-center justify-center gap-1.5 h-8 px-3 bg-white border border-stone-200 rounded-[8px] text-xs font-medium text-stone-500 hover:border-stone-300 hover:text-stone-700 hover:-translate-y-[1px] transition-all shadow-[0_1px_4px_-1px_rgba(0,0,0,0.05)]"
+              aria-label="Сподели на Facebook"
             >
-              <Facebook size={14} /> Сподели
+              <Facebook size={14} /> Facebook
             </button>
             <button
               onClick={handleViberShare}
-              className="flex items-center gap-2 bg-[#7360F2] text-white px-5 py-2.5 rounded-sm text-xs font-bold uppercase tracking-widest hover:bg-[#6554D4] transition-all shadow-md hover:shadow-lg"
+              className="flex items-center justify-center gap-1.5 h-8 px-3 bg-white border border-stone-200 rounded-[8px] text-xs font-medium text-stone-500 hover:border-stone-300 hover:text-stone-700 hover:-translate-y-[1px] transition-all shadow-[0_1px_4px_-1px_rgba(0,0,0,0.05)]"
+              aria-label="Сподели на Viber"
             >
               <MessageCircle size={14} /> Viber
             </button>
             <button
               onClick={handleCopyLink}
-              className="relative flex items-center gap-2 bg-white border border-stone-200 text-stone-600 px-5 py-2.5 rounded-sm text-xs font-bold uppercase tracking-widest hover:bg-stone-50 transition-all shadow-sm"
+              className="flex items-center justify-center gap-1.5 h-8 px-3 bg-white border border-stone-200 rounded-[8px] text-xs font-medium text-stone-500 hover:border-stone-300 hover:text-stone-700 hover:-translate-y-[1px] transition-all shadow-[0_1px_4px_-1px_rgba(0,0,0,0.05)]"
+              aria-label="Копирај линк"
             >
               {copied ? <Check size={14} className="text-green-600" /> : <LinkIcon size={14} />}
               {copied ? 'Копирано' : 'Линк'}
@@ -163,16 +169,11 @@ export const SinglePost: React.FC = () => {
             <button
               onClick={handleDownloadImage}
               disabled={isDownloading}
-              className="flex items-center gap-2 bg-white border border-stone-200 text-stone-600 px-5 py-2.5 rounded-sm text-xs font-bold uppercase tracking-widest hover:bg-stone-50 transition-all disabled:opacity-50 shadow-sm"
+              className="flex items-center justify-center gap-1.5 h-8 px-3 bg-white border border-stone-200 rounded-[8px] text-xs font-medium text-stone-500 hover:border-stone-300 hover:text-stone-700 hover:-translate-y-[1px] transition-all shadow-[0_1px_4px_-1px_rgba(0,0,0,0.05)] disabled:opacity-50 disabled:hover:-translate-y-0"
+              aria-label="Преземи слика"
             >
               <Download size={14} />
               {isDownloading ? '...' : 'Слика'}
-            </button>
-            <button
-              onClick={handlePrint}
-              className="flex items-center gap-2 bg-white border border-stone-200 text-stone-600 px-5 py-2.5 rounded-sm text-xs font-bold uppercase tracking-widest hover:bg-stone-50 transition-all shadow-sm"
-            >
-              <Printer size={14} /> Печати
             </button>
           </div>
         </div>

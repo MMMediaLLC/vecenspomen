@@ -4,7 +4,7 @@ export type PostType = 'ТАЖНА ВЕСТ' | 'ПОСЛЕДЕН ПОЗДРАВ'
 
 export type PomenSubtype = '40 дена' | '6 месеци' | '1 година' | 'Сеќавање';
 
-export type PackageType = 'Стандардна' | 'Премиум' | 'Вечен спомен';
+export type PackageType = 'Основен' | 'Истакнат';
 
 export type PostStatus = 'Во проверка' | 'Објавено' | 'Одбиено' | 'Потребна корекција';
 
@@ -51,6 +51,7 @@ export interface MemorialPost {
   aiRefinedText?: string;
   photoUrl: string;
   package: PackageType;
+  selectedFrameStyle?: 'elegant' | 'orthodox' | 'catholic' | 'muslim' | 'star' | 'clean';
   status: PostStatus;
   createdAt: string;
   isFeatured?: boolean;

@@ -50,7 +50,7 @@ export const Home: React.FC<HomeProps> = ({ posts }) => {
     placeOfFuneral: 'Градски гробишта Бутел',
     familyNote: 'Засекогаш во нашите срца',
     senderName: 'Семејството',
-    package: 'Стандард'
+    package: 'Истакнат'
   } as unknown as MemorialPost;
 
   const cityFilters = ['Сите', 'Скопје', 'Гостивар', 'Тетово', 'Битола', 'Охрид'];
@@ -65,13 +65,23 @@ export const Home: React.FC<HomeProps> = ({ posts }) => {
     <div className="relative pb-24 md:pb-0"> {/* Padding bottom for mobile sticky CTA */}
 
       {/* 1) PREMIUM HERO SECTION */}
-      <section className="relative pt-12 pb-16 md:pt-16 md:pb-20 overflow-hidden bg-white border-b border-stone-100">
+      <section className="relative pt-14 pb-20 md:pt-20 md:pb-28 overflow-hidden">
+        <div 
+          className="absolute inset-0 -z-10 opacity-[0.35] transition-opacity duration-1000"
+          style={{ 
+            backgroundImage: `url('/bg-hero.png')`,
+            backgroundSize: 'cover',
+            backgroundPosition: 'center 40%',
+            maskImage: 'linear-gradient(to bottom, black 0%, black 60%, transparent 100%)',
+            WebkitMaskImage: 'linear-gradient(to bottom, black 0%, black 60%, transparent 100%)'
+          }}
+        />
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
             
             {/* Left side text */}
             <div className="space-y-8 animate-in fade-in duration-1000 slide-in-from-bottom-4">
-              <h1 className="text-4xl md:text-5xl lg:text-7xl font-serif text-stone-900 leading-[1.1] tracking-tight">
+              <h1 className="text-5xl md:text-6xl lg:text-6xl font-serif text-stone-900 leading-[1.05] tracking-tight font-normal">
                 Со достоинство, во спомен на оние што ги сакаме.
               </h1>
               <p className="text-lg md:text-xl text-stone-600 leading-relaxed max-w-lg font-light">
@@ -85,20 +95,13 @@ export const Home: React.FC<HomeProps> = ({ posts }) => {
                 >
                   Поднеси објава <ArrowRight size={18} />
                 </button>
-                <button
-                  onClick={scrollToLatest}
-                  className="bg-transparent text-stone-900 border border-stone-200 px-8 py-4 text-base font-semibold font-sans transition-all hover:border-stone-400 flex items-center justify-center"
-                >
-                  Погледни пример
-                </button>
               </div>
             </div>
 
             {/* Right side preview card */}
             <div className="hidden lg:block relative ml-auto w-full max-w-lg animate-in fade-in duration-1000 delay-300 slide-in-from-right-8">
-              <div className="absolute -inset-10 bg-stone-50 rounded-[3rem] -z-10 blur-xl opacity-70"></div>
               <div 
-                className="bg-white p-2 border border-stone-100 shadow-[0_8px_30px_rgb(0,0,0,0.04)] transform rotate-1 hover:rotate-0 transition-transform duration-700 overflow-hidden max-h-[580px]"
+                className="bg-white p-2 border border-stone-200/60 shadow-[0_30px_60px_-15px_rgba(0,0,0,0.08)] transform rotate-1 hover:rotate-0 transition-transform duration-700 overflow-hidden max-h-[580px] paper-texture"
                 style={{ 
                   maskImage: 'linear-gradient(to bottom, black 75%, transparent 100%)', 
                   WebkitMaskImage: 'linear-gradient(to bottom, black 75%, transparent 100%)' 
@@ -112,14 +115,25 @@ export const Home: React.FC<HomeProps> = ({ posts }) => {
         </div>
       </section>
 
+      {/* Soft visual bridge */}
+      <div className="h-14 bg-gradient-to-b from-white to-stone-50" />
+
       {/* 2) LATEST MEMORIALS */}
-      <section id="latest-memorials" className="py-12 bg-white">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <section id="latest-memorials" className="py-24 relative overflow-hidden bg-stone-50">
+        <div 
+          className="absolute inset-0 -z-10 opacity-[0.14] grayscale-[0.2]"
+          style={{ 
+            backgroundImage: `url('/bg-marble.png')`,
+            backgroundSize: '800px',
+            backgroundRepeat: 'repeat'
+          }}
+        />
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
           <div className="text-center mb-6">
             <h2 className="text-3xl md:text-4xl font-serif text-stone-900 mb-4">
               Последни објави низ Македонија
             </h2>
-            <div className="w-12 h-[1px] bg-[var(--color-gold)] mx-auto mb-10 opacity-60"></div>
+            <div className="w-8 h-[1px] bg-stone-300 mx-auto mb-10 opacity-70"></div>
             
             {/* Horizontal scrollable pills for mobile */}
             <div className="flex overflow-x-auto pb-4 snap-x hide-scrollbar justify-start md:justify-center gap-2">
@@ -127,10 +141,10 @@ export const Home: React.FC<HomeProps> = ({ posts }) => {
                 <button
                   key={city}
                   onClick={() => setSelectedCity(city)}
-                  className={`snap-start whitespace-nowrap px-6 py-2 text-[13px] font-semibold font-sans transition-all duration-300 border uppercase tracking-normal ${
+                  className={`snap-start whitespace-nowrap px-5 py-2 text-[12px] font-medium font-sans transition-all duration-300 border uppercase tracking-wide rounded-sm ${
                     selectedCity === city 
-                      ? 'bg-stone-900 text-white border-stone-900' 
-                      : 'bg-white text-stone-500 border-stone-200 hover:border-stone-300'
+                      ? 'bg-stone-800 text-stone-50 border-stone-800 shadow-sm' 
+                      : 'bg-white text-stone-600 border-stone-200 hover:bg-stone-50'
                   }`}
                 >
                   {city}
@@ -153,22 +167,39 @@ export const Home: React.FC<HomeProps> = ({ posts }) => {
             </div>
           )}
 
-          <div className="text-center mt-12">
+          <div className="flex items-center justify-center gap-6 mt-16">
+            <div className="h-[1px] w-8 bg-stone-200" />
             <button
               onClick={() => { navigate('/pochinati'); window.scrollTo(0, 0); }}
-              className="text-stone-500 hover:text-stone-900 text-xs font-semibold uppercase tracking-normal transition-colors font-sans"
+              className="text-stone-600 hover:text-stone-900 text-sm font-normal tracking-wide transition-colors font-sans"
             >
               Види ги сите починати
             </button>
+            <div className="h-[1px] w-8 bg-stone-200" />
           </div>
         </div>
       </section>
 
       {/* 3) PREMIUM BOTTOM CTA */}
-      <section className="bg-stone-900 py-20 mt-0">
-        <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+      <section className="relative overflow-hidden bg-[#111111] py-24 mt-0">
+        <div 
+          className="absolute inset-0 z-0 transition-opacity duration-1000"
+          style={{ 
+            backgroundImage: `url('/bg-hero-memorial.png')`,
+            backgroundSize: '110%',
+            backgroundPosition: '75% 70%',
+          }}
+        />
+        {/* Dark Gradient Overlay */}
+        <div 
+          className="absolute inset-0 z-10"
+          style={{
+            background: 'linear-gradient(to right, rgba(17, 17, 17, 0.95) 0%, rgba(17, 17, 17, 0.8) 40%, rgba(17, 17, 17, 0.3) 100%)'
+          }}
+        />
+        <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 text-center relative z-20">
           <h2 className="text-4xl md:text-5xl font-serif text-white mb-6 leading-tight">
-            Достоинствено објавете вест за починато лице
+            Информирајте ги пријателите и семејството за тажната вест.
           </h2>
           <p className="text-stone-400 text-sm md:text-base font-light mb-12 max-w-xl mx-auto leading-relaxed">
             Поднесете објава за неколку минути, а нашиот тим ќе ја провери пред објавување.

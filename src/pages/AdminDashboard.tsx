@@ -409,8 +409,8 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
                         alt="" 
                         onClick={() => setPreviewPhoto(post.photoUrl)}
                       />
-                      {post.package === 'Вечен спомен' && (
-                        <div className="absolute -top-1 -right-1 w-4 h-4 bg-[var(--color-gold)] rounded-full ring-2 ring-white shadow-md animate-pulse" />
+                      {post.package === 'Истакнат' && (
+                        <div className="absolute -top-1 -right-1 w-4 h-4 bg-stone-900 rounded-full ring-2 ring-white shadow-md animate-pulse" />
                       )}
                     </div>
                     
@@ -419,7 +419,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
                         <h4 className="font-serif text-2xl text-stone-900 font-black italic truncate">{post.fullName}</h4>
                         <span className="text-[9px] font-black uppercase tracking-widest text-stone-400 bg-stone-50 px-2 py-0.5 border border-stone-100">{post.type}</span>
                         <span className={`text-[9px] font-black uppercase tracking-widest px-2 py-0.5 border ${
-                          post.package === 'Вечен спомен' ? 'border-amber-200 text-amber-600 bg-amber-50' : 'border-stone-200 text-stone-400'
+                          post.package === 'Истакнат' ? 'border-stone-900 text-stone-900 bg-stone-50' : 'border-stone-200 text-stone-400'
                         }`}>{post.package}</span>
                       </div>
                       <div className="grid grid-cols-2 md:grid-cols-4 gap-x-8 gap-y-2 text-[10px] font-bold text-stone-500 uppercase tracking-widest">
