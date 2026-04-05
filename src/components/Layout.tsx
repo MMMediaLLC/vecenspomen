@@ -43,12 +43,11 @@ export const Layout: React.FC<LayoutProps> = ({ children }) => {
                 aria-label="Почетна — Вечен Спомен"
                 title="Почетна"
               >
-                <div className="w-10 h-10 bg-white/5 rounded-sm flex items-center justify-center text-white transition-transform group-hover:scale-110">
-                  <Heart size={20} fill="currentColor" />
+                <div className="flex items-center justify-center transition-transform group-hover:scale-105">
+                  <img src="/logo.png" alt="Вечен Спомен" className="h-[60px] w-auto object-contain mix-blend-screen" />
                 </div>
-                <div className="flex flex-col leading-none">
-                  <span className="font-serif text-xl font-bold tracking-tight text-white">ВЕЧЕН СПОМЕН</span>
-                  <span className="text-[10px] uppercase tracking-normal text-stone-400 font-bold mt-0.5 font-sans">Македонија</span>
+                <div className="flex items-center ml-1 text-white">
+                  <span className="font-serif text-[18px] font-bold tracking-[0.08em]">ВЕЧЕН СПОМЕН</span>
                 </div>
               </Link>
             </div>
@@ -127,9 +126,11 @@ export const Layout: React.FC<LayoutProps> = ({ children }) => {
           <div className="flex flex-col md:flex-row justify-between items-center gap-6">
             
             {/* Brand Minimal */}
-            <div className="flex items-center gap-2">
-              <Heart size={14} className="text-stone-900" />
-              <span className="font-serif text-lg font-normal tracking-tight text-stone-800">ВЕЧЕН СПОМЕН</span>
+            <div className="flex items-center gap-3">
+              <img src="/logo.png" alt="Вечен Спомен" className="h-[48px] w-auto object-contain invert mix-blend-multiply" />
+              <div className="flex items-center">
+                <span className="font-serif text-[14px] font-bold tracking-[0.08em] text-stone-900">ВЕЧЕН СПОМЕН</span>
+              </div>
             </div>
 
             {/* Editorial Links */}
