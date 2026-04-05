@@ -68,7 +68,7 @@ export const Guestbook: React.FC<GuestbookProps> = ({ entries, onAddComment, isE
             />
           </div>
           <div className="flex flex-col md:flex-row justify-between items-center gap-4">
-            <p className="text-[10px] text-stone-400 uppercase tracking-widest italic">
+            <p className="text-[10px] text-stone-400 uppercase tracking-widest">
               * Пораките се модерирани и ќе бидат јавно видливи по одобрување.
             </p>
             <button
@@ -103,7 +103,7 @@ export const Guestbook: React.FC<GuestbookProps> = ({ entries, onAddComment, isE
                     {new Date(entry.createdAt).toLocaleDateString('mk-MK')}
                   </span>
                 </div>
-                <p className="text-sm text-stone-600 font-light leading-relaxed italic">
+                <p className="text-sm text-stone-600 font-light leading-relaxed">
                   „{entry.text}“
                 </p>
               </div>
@@ -112,7 +112,7 @@ export const Guestbook: React.FC<GuestbookProps> = ({ entries, onAddComment, isE
         ) : (
           <div className="text-center py-20 border-t border-stone-100 border-dashed">
             <MessageSquare className="mx-auto text-stone-200 mb-4" size={40} />
-            <p className="text-stone-400 text-sm font-serif italic">Сè уште нема запишани пораки.</p>
+            <p className="text-stone-400 text-sm font-serif">Сè уште нема запишани пораки.</p>
           </div>
         )}
       </div>

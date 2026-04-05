@@ -28,7 +28,7 @@ export const Step5: React.FC<Step5Props> = ({ post, selectedPackage, onSelect, u
       <div className="space-y-6">
         <div className="text-center">
           <h3 className="text-2xl font-serif text-stone-900 mb-2">Конечен преглед</h3>
-          <p className="text-stone-500 text-sm italic">
+          <p className="text-stone-500 text-sm">
             Вака ќе изгледа вашата објава на порталот. Проверете ги сите детали пред да продолжите.
           </p>
         </div>

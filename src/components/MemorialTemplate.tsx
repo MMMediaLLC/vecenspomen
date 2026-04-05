@@ -68,7 +68,7 @@ export const MemorialTemplate: React.FC<MemorialTemplateProps> = ({ post, isPrev
       {/* Hierarchy 1: Intro Message (Above Photo) */}
       {type === 'ТАЖНА ВЕСТ' && introText && (
         <div className={`text-center max-w-full mx-auto ${isPreview ? 'mb-4' : 'mb-6'}`}>
-          <p className={`text-stone-500 font-serif text-lg leading-relaxed ${isPreview ? 'px-1 line-clamp-2' : 'px-4'} ${isPremium ? 'italic' : ''}`}>
+          <p className={`text-stone-500 font-serif text-lg leading-relaxed ${isPreview ? 'px-1 line-clamp-2' : 'px-4'}`}>
             {introText}
           </p>
           <div className={`w-12 h-[1px] bg-stone-100 mx-auto mt-6 ${isPreview ? 'hidden' : 'block'}`} />
@@ -88,7 +88,7 @@ export const MemorialTemplate: React.FC<MemorialTemplateProps> = ({ post, isPrev
                 referrerPolicy="no-referrer"
               />
             ) : (
-              <div className="w-full h-full bg-stone-50 flex items-center justify-center text-stone-300 text-xs uppercase tracking-widest italic">
+              <div className="w-full h-full bg-stone-50 flex items-center justify-center text-stone-300 text-xs uppercase tracking-widest">
                 Тишина
               </div>
             )}
@@ -98,7 +98,7 @@ export const MemorialTemplate: React.FC<MemorialTemplateProps> = ({ post, isPrev
 
       {/* Name & Years */}
       <div className={`text-center ${isPreview ? 'mb-2' : 'mb-6'}`}>
-        <h2 className={`font-serif text-stone-900 mb-2 leading-tight tracking-tight transition-all duration-700 ${isPremium ? 'text-5xl md:text-6xl font-normal' : 'text-4xl md:text-5xl font-normal'}`}>
+        <h2 className="font-serif text-stone-900 mb-2 leading-tight tracking-tight transition-all duration-700 text-3xl md:text-5xl font-normal">
           {fullName || 'Име и Презиме'}
         </h2>
         
@@ -117,7 +117,7 @@ export const MemorialTemplate: React.FC<MemorialTemplateProps> = ({ post, isPrev
         )}
 
         {familyNote && (
-          <p className={`mt-8 text-stone-500 font-serif italic text-base max-w-sm mx-auto leading-relaxed opacity-80 ${isPremium ? 'text-lg' : ''}`}>
+          <p className={`mt-8 text-stone-500 font-serif text-base max-w-sm mx-auto leading-relaxed opacity-80 ${isPremium ? 'text-lg' : ''}`}>
             „{familyNote}“
           </p>
         )}
@@ -126,7 +126,7 @@ export const MemorialTemplate: React.FC<MemorialTemplateProps> = ({ post, isPrev
       {/* Farewell Title / Condolence Family Hint */}
       {farewellTitle && type === 'ПОСЛЕДЕН ПОЗДРАВ' && (
         <div className="text-center mb-4">
-           <h3 className="text-stone-900 font-serif text-2xl italic font-bold">
+           <h3 className="text-stone-900 font-serif text-2xl font-bold">
               {farewellTitle}
            </h3>
            <div className="w-8 h-[1px] bg-stone-100 mx-auto mt-4" />
@@ -135,7 +135,7 @@ export const MemorialTemplate: React.FC<MemorialTemplateProps> = ({ post, isPrev
 
       {condolenceFamily && type === 'СОЧУВСТВО' && (
         <div className="text-center mb-4">
-           <h3 className="text-stone-900 font-serif text-xl italic">
+           <h3 className="text-stone-900 font-serif text-xl">
               До {condolenceFamily}
            </h3>
            <div className="w-8 h-[1px] bg-stone-100 mx-auto mt-4" />
@@ -144,12 +144,12 @@ export const MemorialTemplate: React.FC<MemorialTemplateProps> = ({ post, isPrev
 
       <div className="space-y-6 text-stone-800 leading-[1.8] text-center max-w-lg mx-auto mb-10 px-4">
         {displayText ? (
-          <p className={`whitespace-pre-wrap text-lg md:text-xl font-serif text-stone-700 ${aiRefinedText ? 'italic' : ''}`}>
+          <p className="whitespace-pre-wrap text-lg md:text-xl font-serif text-stone-700">
             {displayText}
           </p>
         ) : (
           <div className="h-20 flex items-center justify-center border border-dashed border-stone-100 rounded-sm">
-              <p className="text-stone-300 text-sm italic">Текстот ќе биде прикажан овде...</p>
+              <p className="text-stone-300 text-sm">Текстот ќе биде прикажан овде...</p>
           </div>
         )}
       </div>
@@ -162,8 +162,8 @@ export const MemorialTemplate: React.FC<MemorialTemplateProps> = ({ post, isPrev
               
               {type === 'ТАЖНА ВЕСТ' && (dateOfFuneral || timeOfFuneral || placeOfFuneral) && (
                 <>
-                  <h4 className="text-[10px] font-semibold uppercase tracking-normal text-stone-400 font-serif">Погреб</h4>
-                  <div className="text-stone-900 font-medium text-lg font-serif italic">
+                  <h4 className="text-[11px] font-semibold uppercase tracking-normal text-stone-400 font-serif">Погреб</h4>
+                  <div className="text-stone-900 font-medium text-lg font-serif">
                     {dateOfFuneral && <span>{formatDate(dateOfFuneral)}</span>}
                     {timeOfFuneral && <span> во {timeOfFuneral} часот</span>}
                   </div>
@@ -173,11 +173,11 @@ export const MemorialTemplate: React.FC<MemorialTemplateProps> = ({ post, isPrev
 
               {type === 'ПОМЕН' && (pomenDate || pomenTime || pomenPlace) && (
                 <>
-                  <h4 className="text-[10px] font-semibold uppercase tracking-normal text-stone-400 font-serif">
+                  <h4 className="text-[11px] font-semibold uppercase tracking-normal text-stone-400 font-serif">
                     {pomenSubtype === 'Сеќавање' ? 'Сеќавање' : 'Парастос'}
                   </h4>
                   {pomenDate && (
-                    <div className="text-stone-900 font-medium text-lg font-serif italic">
+                    <div className="text-stone-900 font-medium text-lg font-serif">
                       {formatDate(pomenDate)}
                       {pomenTime && <span> во {pomenTime} часот</span>}
                     </div>
@@ -193,8 +193,8 @@ export const MemorialTemplate: React.FC<MemorialTemplateProps> = ({ post, isPrev
       <div className="text-center pt-6 relative">
         <div className="absolute top-0 left-1/2 -translate-x-1/2 w-20 h-[1px] bg-stone-200/50" />
         
-        <h4 className="text-[9px] font-semibold uppercase tracking-normal text-stone-400 mb-4 font-serif">
-          {type === 'СОЧУВСТВО' ? 'Со најдлабоко сочувство' : 
+        <h4 className="text-[11px] font-semibold uppercase tracking-normal text-stone-400 mb-4 font-serif">
+          {type === 'СОЧУВСТВО' ? 'Искрено сочувство' : 
            type === 'ПОСЛЕДЕН ПОЗДРАВ' ? 'Последен поздрав од' : 
            'Со љубов и почит од:'}
         </h4>

@@ -134,10 +134,10 @@ export const Layout: React.FC<LayoutProps> = ({ children }) => {
 
             {/* Editorial Links */}
             <ul className="flex flex-wrap justify-center gap-6 text-[12px] font-semibold font-sans uppercase tracking-wider">
-              <li><button className="hover:text-stone-900 transition-colors">Како работи</button></li>
+              <li><Link to="/kako-raboti" onClick={() => window.scrollTo(0, 0)} className="hover:text-stone-900 transition-colors">Како работи</Link></li>
               <li><button className="hover:text-stone-900 transition-colors">Контакт</button></li>
-              <li><button className="hover:text-stone-900 transition-colors">Политика на приватност</button></li>
-              <li><button className="hover:text-stone-900 transition-colors">Услови</button></li>
+              <li><Link to="/politika-na-privatnost" onClick={() => window.scrollTo(0, 0)} className="hover:text-stone-900 transition-colors">Политика на приватност</Link></li>
+              <li><Link to="/uslovi" onClick={() => window.scrollTo(0, 0)} className="hover:text-stone-900 transition-colors">Услови</Link></li>
             </ul>
           </div>
           

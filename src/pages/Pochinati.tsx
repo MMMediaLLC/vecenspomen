@@ -69,7 +69,7 @@ export const Pochinati: React.FC<PochinatiProps> = ({ posts }) => {
       <div className="bg-stone-50 border-b border-stone-100 py-20 mb-12">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <h1 className="text-4xl md:text-5xl font-serif text-stone-900 mb-6">Починати</h1>
-          <p className="text-lg text-stone-500 max-w-2xl mx-auto font-light italic">
+          <p className="text-lg text-stone-500 max-w-2xl mx-auto font-light">
             Последни поздрави, сеќавања и тажни вести од цела Македонија.
           </p>
         </div>
@@ -192,7 +192,7 @@ export const Pochinati: React.FC<PochinatiProps> = ({ posts }) => {
           </>
         ) : (
           <div className="text-center py-40 border-t border-stone-50">
-            <h3 className="font-serif text-2xl text-stone-300 italic mb-8">Нема пронајдено објави со избраните критериуми.</h3>
+            <h3 className="font-serif text-2xl text-stone-300 mb-8">Нема пронајдено објави со избраните критериуми.</h3>
             <button
               onClick={resetFilters}
               className="px-8 py-3 border border-stone-200 text-stone-900 text-sm font-medium hover:bg-stone-50 transition-all"

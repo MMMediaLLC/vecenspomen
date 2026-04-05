@@ -65,7 +65,7 @@ export const PostCard: React.FC<PostCardProps> = ({ post, onClick }) => {
       </div>
       
       <div className="p-4 md:p-6 text-center flex flex-col items-center flex-grow">
-        <h3 className="font-serif font-normal text-2xl md:text-3xl text-stone-900 mb-1 group-hover:text-stone-700 transition-colors leading-tight">
+        <h3 className="font-serif font-normal text-2xl text-stone-900 mb-1 group-hover:text-stone-700 transition-colors leading-tight">
           {post.fullName}
         </h3>
         
@@ -80,7 +80,7 @@ export const PostCard: React.FC<PostCardProps> = ({ post, onClick }) => {
         </div>
         
         <div className="mt-auto pt-4 border-t border-stone-100 w-full">
-          <p className="text-stone-500 text-sm font-serif italic">
+          <p className="text-stone-500 text-sm font-serif">
             {getContextSubtitle(post)}
           </p>
         </div>

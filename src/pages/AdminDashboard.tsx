@@ -225,7 +225,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
     return (
       <div className="min-h-screen flex flex-col items-center justify-center bg-stone-50 text-stone-400 gap-4">
         <Clock className="animate-spin" size={32} />
-        <p className="font-serif italic uppercase tracking-widest text-[10px] font-black">Вчитување на системот...</p>
+        <p className="font-serif uppercase tracking-widest text-[10px] font-black">Вчитување на системот...</p>
       </div>
     );
   }
@@ -235,7 +235,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
       <div className="min-h-screen flex items-center justify-center bg-stone-100 p-4 font-sans">
         <div className="bg-white p-12 border border-stone-200 w-full max-w-md shadow-2xl animate-in zoom-in-95 duration-700">
           <div className="text-center mb-10">
-            <h2 className="text-3xl font-serif text-stone-900 mb-2 italic">Админ Панел</h2>
+            <h2 className="text-3xl font-serif text-stone-900 mb-2">Админ Панел</h2>
             <p className="text-[10px] font-black first-letter:uppercase uppercase tracking-[0.3em] text-stone-400">Вечен Спомен Македонија</p>
           </div>
           <form onSubmit={handleLogin} className="space-y-6">
@@ -268,7 +268,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
               Најава во систем
             </button>
             {isMock && (
-              <p className="text-[9px] text-stone-400 text-center italic mt-6 border-t border-stone-100 pt-6 uppercase tracking-widest">
+              <p className="text-[9px] text-stone-400 text-center mt-6 border-t border-stone-100 pt-6 uppercase tracking-widest">
                 Системот е во тест режим. Внесете било која е-пошта.
               </p>
             )}
@@ -285,7 +285,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
       </div>
       <div className="flex flex-col gap-1 relative z-10">
         <span className="text-[9px] font-black text-stone-400 uppercase tracking-widest">{label}</span>
-        <span className={`text-4xl font-serif italic ${colorClass} font-bold`}>{value}</span>
+        <span className={`text-4xl font-serif ${colorClass} font-bold`}>{value}</span>
       </div>
     </div>
   );
@@ -296,7 +296,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
       {/* Sidebar Navigation */}
       <aside className="w-full md:w-72 bg-white border-r border-stone-200 flex flex-col pt-12 shrink-0 z-20">
         <div className="px-8 mb-16">
-          <h2 className="text-xl font-serif font-black italic tracking-tighter">ВЕЧЕН СПОМЕН</h2>
+          <h2 className="text-xl font-serif font-black tracking-tighter">ВЕЧЕН СПОМЕН</h2>
           <div className="flex items-center gap-2 mt-2">
             <div className="w-1.5 h-1.5 rounded-full bg-green-500 shadow-[0_0_8px_rgba(34,197,94,0.5)]" />
             <span className="text-[9px] font-black uppercase tracking-[0.2em] text-stone-400">Админ Мод</span>
@@ -359,7 +359,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
         {/* Header Section */}
         <header className="mb-12 flex flex-col lg:flex-row justify-between items-start lg:items-center gap-8">
           <div className="animate-in fade-in slide-in-from-left-4 duration-700">
-            <h1 className="text-4xl md:text-5xl font-serif text-stone-900 mb-2 italic tracking-tight">{activeTab}</h1>
+            <h1 className="text-4xl md:text-5xl font-serif text-stone-900 mb-2 tracking-tight">{activeTab}</h1>
             <p className="text-stone-400 text-xs font-light uppercase tracking-[0.1em]">Проверка и управување со меморијални објави</p>
           </div>
           
@@ -394,7 +394,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
               {filteredPosts.length === 0 ? (
                 <div className="bg-white border-2 border-dashed border-stone-200 py-32 rounded-sm text-center animate-in fade-in duration-500">
                   <Clock className="mx-auto text-stone-100 mb-6" size={64} />
-                  <p className="font-serif text-xl text-stone-400 italic">Нема нови објави за проверка.</p>
+                  <p className="font-serif text-xl text-stone-400">Нема нови објави за проверка.</p>
                 </div>
               ) : (
                 filteredPosts.map(post => (
@@ -416,7 +416,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
                     
                     <div className="flex-grow text-center lg:text-left space-y-1 min-w-0">
                       <div className="flex flex-col lg:flex-row lg:items-center gap-2 lg:gap-4 mb-2">
-                        <h4 className="font-serif text-2xl text-stone-900 font-black italic truncate">{post.fullName}</h4>
+                        <h4 className="font-serif text-2xl text-stone-900 font-black truncate">{post.fullName}</h4>
                         <span className="text-[9px] font-black uppercase tracking-widest text-stone-400 bg-stone-50 px-2 py-0.5 border border-stone-100">{post.type}</span>
                         <span className={`text-[9px] font-black uppercase tracking-widest px-2 py-0.5 border ${
                           post.package === 'Истакнат' ? 'border-stone-900 text-stone-900 bg-stone-50' : 'border-stone-200 text-stone-400'
@@ -490,14 +490,14 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
                {filteredPosts.length === 0 ? (
                 <div className="bg-white border-2 border-dashed border-stone-100 py-32 rounded-sm text-center">
                   <CheckCircle className="mx-auto text-stone-50 mb-6" size={64} />
-                  <p className="font-serif text-xl text-stone-300 italic">Нема објавени меморијали во овој град.</p>
+                  <p className="font-serif text-xl text-stone-300">Нема објавени меморијали во овој град.</p>
                 </div>
               ) : (
                 filteredPosts.map(post => (
                   <div key={post.id} className="bg-white p-5 border border-stone-100 flex items-center gap-6 hover:border-stone-200 transition-all animate-in fade-in">
                     <img src={post.photoUrl} className="w-12 h-16 object-cover rounded shadow-sm opacity-60" alt="" />
                     <div className="flex-grow">
-                      <h4 className="font-serif text-lg text-stone-700 italic">{post.fullName}</h4>
+                      <h4 className="font-serif text-lg text-stone-700">{post.fullName}</h4>
                       <p className="text-[10px] uppercase font-black tracking-widest text-stone-300">{post.type} • {post.city}</p>
                     </div>
                     <div className="flex gap-1">
@@ -550,7 +550,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
                   {pendingCondolences.length === 0 ? (
                     <div className="bg-white border-2 border-dashed border-stone-100 py-20 rounded-sm text-center">
                       <MessageSquare className="mx-auto text-stone-100 mb-4" size={48} />
-                      <p className="font-serif text-lg text-stone-300 italic">Нема нови пораки за проверка.</p>
+                      <p className="font-serif text-lg text-stone-300">Нема нови пораки за проверка.</p>
                     </div>
                   ) : (
                     pendingCondolences.map(({ postId, postName, entry }) => (
@@ -562,12 +562,12 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
                             </div>
                             <div>
                               <h4 className="text-sm font-bold text-stone-900">{entry.senderName}</h4>
-                              <p className="text-[9px] uppercase font-black tracking-widest text-stone-400">До заминатиот: <span className="text-stone-900 italic font-serif capitalize">{postName}</span></p>
+                              <p className="text-[9px] uppercase font-black tracking-widest text-stone-400">До заминатиот: <span className="text-stone-900 font-serif capitalize">{postName}</span></p>
                             </div>
                           </div>
                           <span className="text-[9px] font-black text-stone-300 uppercase tracking-widest">{formatDate(entry.createdAt)}</span>
                         </div>
-                        <p className="text-stone-700 italic font-serif text-lg leading-relaxed bg-amber-50/30 p-6 border-l-2 border-amber-200">
+                        <p className="text-stone-700 font-serif text-lg leading-relaxed bg-amber-50/30 p-6 border-l-2 border-amber-200">
                           {`\u201e${entry.text}\u201c`}
                         </p>
                         <div className="flex gap-4 pt-2">
@@ -609,7 +609,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
                             <span className="text-[9px] font-black uppercase tracking-widest text-stone-300">{`\u2192 ${postName}`}</span>
                             <span className="text-[9px] font-black uppercase tracking-widest text-stone-300">{formatDate(entry.createdAt)}</span>
                           </div>
-                          <p className="text-stone-500 italic font-serif text-sm leading-relaxed line-clamp-2">{`\u201e${entry.text}\u201c`}</p>
+                          <p className="text-stone-500 font-serif text-sm leading-relaxed line-clamp-2">{`\u201e${entry.text}\u201c`}</p>
                         </div>
                         <button
                           onClick={() => onDeleteGuestbookEntry(postId, entry.id)}
@@ -643,12 +643,12 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
                 <tbody className="divide-y divide-stone-50">
                   {allReminders.length === 0 ? (
                     <tr>
-                      <td colSpan={5} className="px-8 py-24 text-center text-stone-300 italic font-serif text-lg">Нема пронајдено активни потсетници.</td>
+                      <td colSpan={5} className="px-8 py-24 text-center text-stone-300 font-serif text-lg">Нема пронајдено активни потсетници.</td>
                     </tr>
                   ) : (
                     allReminders.map(r => (
                       <tr key={r.id} className="hover:bg-stone-50 transition-colors group">
-                        <td className="px-8 py-6 font-serif text-stone-900 font-bold italic">{r.fullName}</td>
+                        <td className="px-8 py-6 font-serif text-stone-900 font-bold">{r.fullName}</td>
                         <td className="px-8 py-6">
                            <span className="text-[10px] font-black uppercase tracking-widest text-stone-500 bg-stone-100 px-3 py-1 rounded-full">
                             {r.type}
@@ -696,7 +696,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
               <div className="p-8 bg-white border-b border-stone-200 flex justify-between items-center sticky top-0 z-10 shadow-sm">
                 <div className="flex items-center gap-4">
                   <div className="flex flex-col">
-                    <h3 className="text-3xl font-serif text-stone-900 italic font-bold">Целосен Преглед</h3>
+                    <h3 className="text-3xl font-serif text-stone-900 font-bold">Целосен Преглед</h3>
                     <p className="text-[9px] font-black uppercase tracking-widest text-stone-300">Модераторска контрола на содржината</p>
                   </div>
                 </div>

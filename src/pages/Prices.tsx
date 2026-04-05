@@ -23,7 +23,7 @@ export const Prices: React.FC = () => {
       <div className="bg-white border-b border-stone-100 py-24 mb-16 relative overflow-hidden">
         <div className="absolute inset-0 opacity-[0.02] pointer-events-none bg-[url('https://www.transparenttextures.com/patterns/natural-paper.png')]" />
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center relative z-10">
-          <h1 className="text-4xl md:text-6xl font-serif text-stone-900 mb-8 italic tracking-tight">Цени и пакети</h1>
+          <h1 className="text-4xl md:text-6xl font-serif text-stone-900 mb-8 tracking-tight">Цени и пакети</h1>
           <p className="text-lg md:text-xl text-stone-500 max-w-2xl mx-auto font-light leading-relaxed">
             Универзален систем на пакети за сите типови на објави. Изберете го соодветниот начин за достоинствено одбележување на споменот.
           </p>
@@ -56,7 +56,7 @@ export const Prices: React.FC = () => {
                   }`}>
                     <Icon size={28} />
                   </div>
-                  <h3 className="font-serif text-3xl text-stone-900 mb-2 italic">{pkg.name}</h3>
+                  <h3 className="font-serif text-3xl text-stone-900 mb-2">{pkg.name}</h3>
                   <p className="text-xs text-stone-400 uppercase tracking-widest font-bold mb-4">
                     {isPremium ? 'Поистакнат спомен' : 'Достоинствена објава'}
                   </p>
@@ -65,7 +65,7 @@ export const Prices: React.FC = () => {
                   </div>
                 </div>
                 
-                <p className="text-stone-500 text-sm mb-10 leading-relaxed text-center font-serif italic h-12 flex items-center justify-center">
+                <p className="text-stone-500 text-sm mb-10 leading-relaxed text-center font-serif h-12 flex items-center justify-center">
                   {packageHighlights[pkg.name]}
                 </p>
 
@@ -103,7 +103,7 @@ export const Prices: React.FC = () => {
           <div className="absolute inset-0 opacity-10 bg-[url('https://www.transparenttextures.com/patterns/natural-paper.png')] pointer-events-none" />
           <ShieldCheck size={140} className="absolute -left-10 -bottom-10 text-stone-800 rotate-12 transition-transform group-hover:rotate-6 duration-1000" />
           
-          <h2 className="text-3xl md:text-4xl font-serif mb-6 relative z-10 italic">Професионална уредничка проверка</h2>
+          <h2 className="text-3xl md:text-4xl font-serif mb-6 relative z-10">Професионална уредничка проверка</h2>
           <p className="text-stone-400 font-light text-lg leading-relaxed relative z-10 max-w-2xl mx-auto">
             Секоја објава поминува низ внимателен преглед од нашиот тим. Ова осигурува дека платформата останува достоинствено место за сеќавање, ослободено од несоодветна содржина.
           </p>
@@ -112,7 +112,7 @@ export const Prices: React.FC = () => {
         {/* Detailed FAQ */}
         <div className="max-w-4xl mx-auto">
           <div className="text-center mb-16">
-            <h2 className="text-4xl font-serif text-stone-900 mb-4 italic">Често поставувани прашања</h2>
+            <h2 className="text-4xl font-serif text-stone-900 mb-4">Често поставувани прашања</h2>
             <div className="w-12 h-[2px] bg-[var(--color-gold)] mx-auto opacity-50" />
           </div>
 
@@ -136,7 +136,7 @@ export const Prices: React.FC = () => {
               }
             ].map((faq) => (
               <div key={faq.q} className="space-y-3">
-                <h4 className="text-lg font-serif text-stone-900 italic font-bold">{faq.q}</h4>
+                <h4 className="text-lg font-serif text-stone-900 font-bold">{faq.q}</h4>
                 <p className="text-stone-500 font-light leading-relaxed text-sm">
                   {faq.a}
                 </p>

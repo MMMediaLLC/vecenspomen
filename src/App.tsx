@@ -12,6 +12,9 @@ import { getPosts, addPost as firebaseAddPost, updatePostStatus as firebaseUpdat
 import { SEEDED_POSTS } from './constants';
 import { Loader2 } from 'lucide-react';
 import { EditPost } from './pages/EditPost';
+import { KakoRaboti } from './pages/KakoRaboti';
+import { PolitikaNaPrivatnost } from './pages/PolitikaNaPrivatnost';
+import { Uslovi } from './pages/Uslovi';
 
 const AppRoutes = () => {
   const navigate = useNavigate();
@@ -147,6 +150,9 @@ const AppRoutes = () => {
         <Route path="/sochuvstvo" element={<Pochinati posts={publishedPosts} />} />
         <Route path="/posleden-pozdrav" element={<Pochinati posts={publishedPosts} />} />
         <Route path="/ceni" element={<Prices />} />
+        <Route path="/kako-raboti" element={<KakoRaboti />} />
+        <Route path="/politika-na-privatnost" element={<PolitikaNaPrivatnost />} />
+        <Route path="/uslovi" element={<Uslovi />} />
         <Route path="/objavi" element={
           <SubmitPost
             onComplete={(post) => {

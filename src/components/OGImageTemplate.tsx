@@ -50,7 +50,7 @@ export const OGImageTemplate: React.FC<OGImageTemplateProps> = ({ post }) => {
               crossOrigin="anonymous"
             />
           ) : (
-            <div className="w-full h-full bg-stone-50 flex items-center justify-center text-stone-200 text-3xl italic font-serif">
+            <div className="w-full h-full bg-stone-50 flex items-center justify-center text-stone-200 text-3xl font-serif">
               Тишина
             </div>
           )}
@@ -69,14 +69,14 @@ export const OGImageTemplate: React.FC<OGImageTemplateProps> = ({ post }) => {
           </div>
         </div>
 
-        <div className="text-3xl text-stone-600 leading-relaxed mb-12 line-clamp-2 italic font-serif">
+        <div className="text-3xl text-stone-600 leading-relaxed mb-12 line-clamp-2 font-serif">
           "{message}"
         </div>
 
         <div className="flex justify-between items-end mt-auto">
           <div>
             <h4 className="text-xs font-black uppercase tracking-[0.3em] text-stone-400 mb-4">Со љубов и почит од:</h4>
-            <p className={`text-stone-900 font-serif italic ${isPremium ? 'text-4xl font-bold' : 'text-3xl font-normal'}`}>
+            <p className={`text-stone-900 font-serif ${isPremium ? 'text-4xl font-bold' : 'text-3xl font-normal'}`}>
               {senderName || 'Најблиските'}
             </p>
           </div>
@@ -89,7 +89,7 @@ export const OGImageTemplate: React.FC<OGImageTemplateProps> = ({ post }) => {
 
         {/* Branding */}
         <div className="absolute bottom-[-40px] right-0 flex items-center gap-4 opacity-40">
-          <span className="font-serif text-2xl font-black italic tracking-tighter text-stone-900">
+          <span className="font-serif text-2xl font-black tracking-tighter text-stone-900">
             ВЕЧЕН СПОМЕН
           </span>
         </div>

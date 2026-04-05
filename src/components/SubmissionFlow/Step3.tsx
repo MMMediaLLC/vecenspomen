@@ -176,8 +176,8 @@ export const Step3: React.FC<Step3Props> = ({ photoUrl, onPhotoChange }) => {
           )}
         </div>
         {isDefault && (
-          <p className="text-stone-400 text-xs italic text-center">
-            Прикажана е стандардна слика.<br />Прикачете своја фотографија погоре.
+          <p className="text-stone-400 text-xs text-center">
+            Сите фотографии се означуваат со црна лента во аголот во спомен на починатиот.
           </p>
         )}
       </div>

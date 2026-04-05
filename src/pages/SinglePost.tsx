@@ -108,7 +108,7 @@ export const SinglePost: React.FC = () => {
     return (
       <div className="flex flex-col items-center justify-center min-h-[60vh] text-stone-400 bg-stone-50 animate-pulse">
         <Loader2 className="animate-spin w-10 h-10 mb-4" />
-        <p className="font-serif italic text-lg">Се вчитува споменот...</p>
+        <p className="font-serif text-lg">Се вчитува споменот...</p>
       </div>
     );
   }
@@ -116,7 +116,7 @@ export const SinglePost: React.FC = () => {
   if (!post) {
     return (
       <div className="flex flex-col items-center justify-center min-h-[60vh] text-stone-400 bg-stone-50">
-        <p className="font-serif text-2xl text-stone-800 mb-2 italic">Објавата не е пронајдена</p>
+        <p className="font-serif text-2xl text-stone-800 mb-2">Објавата не е пронајдена</p>
         <button onClick={() => navigate('/')} className="text-stone-500 hover:text-stone-900 underline font-light">Врати се на почетна</button>
       </div>
     );

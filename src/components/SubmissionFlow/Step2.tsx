@@ -132,7 +132,7 @@ export const Step2: React.FC<Step2Props> = ({ post, updatePost }) => {
                 placeholder="пр. 13:00" 
                 className={inputClass} 
               />
-              <p className="text-[9px] text-stone-400 font-light italic text-right">Внесете само бројки, системот автоматски ќе го форматира времето.</p>
+              <p className="text-[9px] text-stone-400 font-light text-right">Внесете само бројки, системот автоматски ќе го форматира времето.</p>
             </div>
           </div>
 
@@ -175,7 +175,7 @@ export const Step2: React.FC<Step2Props> = ({ post, updatePost }) => {
                       <div className="flex items-center gap-2"><Sparkles size={14} className="text-[var(--color-gold)]" /><h4 className="text-[10px] font-bold uppercase tracking-widest text-stone-900">AI Подобрена верзија</h4></div>
                       <button onClick={() => updatePost({ aiRefinedText: undefined })} className="text-stone-400 hover:text-red-700 text-[10px] font-bold uppercase tracking-widest">Откажи</button>
                    </div>
-                   <p className="text-stone-800 leading-relaxed font-light italic text-sm">{post.aiRefinedText}</p>
+                   <p className="text-stone-800 leading-relaxed font-light text-sm">{post.aiRefinedText}</p>
                    <div className="flex items-center gap-2 text-[9px] uppercase tracking-widest text-stone-400 font-bold"><Check size={10} className="text-green-500" /> Достоинствено • Граматички точно</div>
                 </div>
               )}
@@ -235,7 +235,7 @@ export const Step2: React.FC<Step2Props> = ({ post, updatePost }) => {
               </button>
             </div>
             <textarea name="mainText" value={post.mainText || ''} onChange={handleChange} className={`${textareaClass} h-40`} placeholder="Те испраќаме со неизмерна тага и благодарност за љубовта, добрината и спомените што ни ги остави. Ќе останеш засекогаш во нашите срца." />
-            <p className="text-[10px] text-stone-400 font-light italic">Напишете достоинствени последни зборови и потпишете се.</p>
+            <p className="text-[10px] text-stone-400 font-light">Напишете достоинствени последни зборови и потпишете се.</p>
           </div>
           <div className="space-y-1">
             <label className={labelClass}>Од (вашето име или семејство) {required}</label>
@@ -277,7 +277,7 @@ export const Step2: React.FC<Step2Props> = ({ post, updatePost }) => {
           <div className="space-y-1">
             <label className={labelClass}>Текст на сочувството {required}</label>
             <textarea name="mainText" value={post.mainText || ''} onChange={handleChange} className={`${textareaClass} h-40`} placeholder="Во овие тешки моменти изразуваме искрено сочувство до семејството и најблиските. Нека споменот за покојниот биде вечен." />
-            <p className="text-[10px] text-stone-400 font-light italic">Изразете сочувство со достоинствена порака. (Сликата се додава во следен чекор)</p>
+            <p className="text-[10px] text-stone-400 font-light">Изразете сочувство со достоинствена порака. (Сликата се додава во следен чекор)</p>
           </div>
           <div className="space-y-1">
             <label className={labelClass}>Од {required}</label>
@@ -341,7 +341,7 @@ export const Step2: React.FC<Step2Props> = ({ post, updatePost }) => {
                 placeholder="пр. 13:00" 
                 className={inputClass} 
               />
-              <p className="text-[9px] text-stone-400 font-light italic text-right">Внесете само бројки, системот автоматски ќе го форматира времето.</p>
+              <p className="text-[9px] text-stone-400 font-light text-right">Внесете само бројки, системот автоматски ќе го форматира времето.</p>
             </div>
             <div className="space-y-1">
               <label className={labelClass}>Локација {required}</label>

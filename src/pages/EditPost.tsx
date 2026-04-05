@@ -18,8 +18,8 @@ export const EditPost: React.FC<EditPostProps> = ({ posts }) => {
   if (!postToEdit) {
     return (
       <div className="flex flex-col items-center justify-center min-h-[60vh] text-stone-400">
-        <p className="font-serif text-2xl text-stone-800 mb-2 italic">Објавата не е пронајдена</p>
-        <button onClick={() => navigate('/admin')} className="text-stone-500 hover:text-stone-900 underline font-light">Врати се назад</button>
+        <p className="font-serif text-2xl text-stone-800 mb-2">Објавата не е пронајдена</p>
+        <button onClick={() => navigate('/')} className="text-stone-500 hover:text-stone-900 underline font-light">Врати се на почетна</button>
       </div>
     );
   }

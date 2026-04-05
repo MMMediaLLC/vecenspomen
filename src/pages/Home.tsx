@@ -119,7 +119,7 @@ export const Home: React.FC<HomeProps> = ({ posts }) => {
       <div className="h-14 bg-gradient-to-b from-white to-stone-50" />
 
       {/* 2) LATEST MEMORIALS */}
-      <section id="latest-memorials" className="py-24 relative overflow-hidden bg-stone-50">
+      <section id="latest-memorials" className="pt-12 pb-24 relative overflow-hidden bg-stone-50">
         <div 
           className="absolute inset-0 -z-10 opacity-[0.14] grayscale-[0.2]"
           style={{ 
@@ -131,7 +131,7 @@ export const Home: React.FC<HomeProps> = ({ posts }) => {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
           <div className="text-center mb-6">
             <h2 className="text-3xl md:text-4xl font-serif text-stone-900 mb-4">
-              Последни објави низ Македонија
+              Последни спомени и посвети
             </h2>
             <div className="w-8 h-[1px] bg-stone-300 mx-auto mb-10 opacity-70"></div>
             
@@ -162,7 +162,7 @@ export const Home: React.FC<HomeProps> = ({ posts }) => {
           </div>
           
           {latestPosts.length === 0 && (
-            <div className="text-center text-stone-500 py-12 font-serif italic">
+            <div className="text-center text-stone-500 py-12 font-serif">
               Нема пронајдено објави за овој град.
             </div>
           )}

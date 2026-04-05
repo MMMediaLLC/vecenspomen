@@ -42,7 +42,7 @@ export const Carousel: React.FC<CarouselProps> = ({ posts, onPostClick }) => {
   }, [posts.length, itemsToShow]);
 
   if (posts.length === 0) return (
-    <div className="text-center py-16 text-stone-400 italic">
+    <div className="text-center py-16 text-stone-400">
       Нема објави за прикажување во овој град.
     </div>
   );
