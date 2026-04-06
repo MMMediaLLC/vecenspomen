@@ -80,7 +80,7 @@ export const OGImageTemplate: React.FC<OGImageTemplateProps> = ({ post }) => {
             {birthYear || '...'} – {deathYear || (post.dateOfDeath ? new Date(post.dateOfDeath).getFullYear() : '...')}
           </div>
           {(birthYear && (deathYear || post.dateOfDeath)) && (
-            <div className="text-stone-400 font-sans text-xs uppercase tracking-[0.4em] mt-3 font-semibold">
+            <div className="text-stone-400 font-serif text-[13px] uppercase tracking-normal mt-3 font-semibold">
               { (deathYear || new Date(post.dateOfDeath!).getFullYear()) - birthYear } години
             </div>
           )}

@@ -112,7 +112,7 @@ export const MemorialTemplate: React.FC<MemorialTemplateProps> = ({ post, isPrev
           </div>
 
           {(birthYear && (deathYear || post.dateOfDeath)) && (
-            <div className="text-stone-400 text-[11px] uppercase tracking-[0.3em] font-normal">
+            <div className="text-stone-400 font-serif text-[13px] uppercase tracking-normal mt-3 font-semibold">
               { (deathYear || new Date(post.dateOfDeath!).getFullYear()) - birthYear } години
             </div>
           )}
