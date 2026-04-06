@@ -116,11 +116,7 @@ export const MemorialTemplate: React.FC<MemorialTemplateProps> = ({ post, isPrev
           </div>
         )}
 
-        {familyNote && (
-          <p className={`mt-8 text-stone-500 font-serif text-base max-w-sm mx-auto leading-relaxed opacity-80 ${isPremium ? 'text-lg' : ''}`}>
-            „{familyNote}“
-          </p>
-        )}
+
       </div>
 
       {/* Farewell Title / Condolence Family Hint */}
@@ -200,7 +196,7 @@ export const MemorialTemplate: React.FC<MemorialTemplateProps> = ({ post, isPrev
         </h4>
         
         <p className="text-stone-900 font-serif text-2xl tracking-tight">
-          {senderName || 'Најблиските'}
+          {familyNote || senderName || 'Најблиските'}
         </p>
         
         {senderType && type === 'ПОСЛЕДЕН ПОЗДРАВ' && (
