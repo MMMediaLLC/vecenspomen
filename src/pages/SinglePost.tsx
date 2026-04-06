@@ -25,6 +25,10 @@ export const SinglePost: React.FC = () => {
         let data: MemorialPost | null = null;
         if (slug) {
           data = await getPostBySlug(slug);
+          if (!data) {
+             // Fallback: if the 'slug' is actually a document ID that contains a hyphen
+             data = await getPostById(slug);
+          }
         } else if (id) {
           // Attempt both ID and Slug for /objava/:id route
           data = await getPostById(id);
