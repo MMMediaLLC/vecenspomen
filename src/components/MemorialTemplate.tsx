@@ -140,7 +140,7 @@ export const MemorialTemplate: React.FC<MemorialTemplateProps> = ({ post, isPrev
 
       <div className="space-y-6 text-stone-800 leading-[1.55] text-center max-w-2xl mx-auto mb-6 px-1">
         {displayText ? (
-          <p className="whitespace-pre-wrap text-[19px] md:text-2xl font-serif text-stone-700 tracking-tight">
+          <p className="whitespace-pre-wrap text-lg md:text-xl font-serif text-stone-700 leading-[1.55] tracking-tight">
             {displayText}
           </p>
         ) : (

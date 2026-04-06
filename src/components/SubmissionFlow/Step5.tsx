@@ -157,7 +157,7 @@ export const Step5: React.FC<Step5Props> = ({ post, selectedPackage, onSelect, u
 
           <div className="flex items-center gap-2 text-[10px] text-stone-500 uppercase tracking-widest font-bold">
             <ShieldCheck size={14} className="text-green-500" />
-            Плаќањето се процесира преку Lemon Squeezy • SSL Безбедно
+            Безбедно онлајн плаќање • SSL заштитено
           </div>
         </div>
       )}
