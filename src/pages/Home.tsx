@@ -53,7 +53,23 @@ export const Home: React.FC<HomeProps> = ({ posts }) => {
     package: 'Истакнат'
   } as unknown as MemorialPost;
 
-  const cityFilters = ['Сите', 'Скопје', 'Гостивар', 'Тетово', 'Битола', 'Охрид'];
+  // Dynamic City Tabs: Get Top 5 cities with most 'Објавено' posts
+  const cityCounts = posts
+    .filter(p => p.status === 'Објавено')
+    .reduce((acc, p) => {
+      acc[p.city] = (acc[p.city] || 0) + 1;
+      return acc;
+    }, {} as Record<string, number>);
+
+  const dynamicCities = Object.entries(cityCounts)
+    .sort((a: [string, number], b: [string, number]) => {
+      if (b[1] !== a[1]) return b[1] - a[1]; // Sort by count descending
+      return a[0].localeCompare(b[0]); // Then alphabetically
+    })
+    .slice(0, 5)
+    .map(entry => entry[0]);
+
+  const cityFilters = ['Сите', ...dynamicCities];
   
   const filteredPosts = selectedCity === 'Сите' 
     ? posts 

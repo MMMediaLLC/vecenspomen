@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { MemorialPost } from '../../types';
 import { CITIES } from '../../constants';
-import { Sparkles, Loader2, Check } from 'lucide-react';
+import { Sparkles, Loader2, Check, Search, MapPin, X } from 'lucide-react';
 import { GoogleGenAI } from '@google/genai';
 
 interface Step2Props {
@@ -12,6 +12,98 @@ interface Step2Props {
 const inputClass = 'w-full p-4 border border-stone-200 rounded-sm focus:outline-none focus:border-stone-900 transition-colors bg-white font-light text-stone-800 h-14';
 const labelClass = 'text-[10px] font-bold uppercase tracking-[0.2em] text-stone-400 mb-2 block';
 const textareaClass = 'w-full p-4 border border-stone-200 rounded-sm focus:outline-none focus:border-stone-900 transition-colors bg-white font-light text-stone-800 leading-relaxed resize-none';
+
+const CitySelector: React.FC<{ 
+  value: string; 
+  onChange: (city: string) => void;
+}> = ({ value, onChange }) => {
+  const [isOpen, setIsOpen] = useState(false);
+  const [search, setSearch] = useState('');
+  
+  const filteredCities = CITIES.filter(c => 
+    c.name.toLowerCase().includes(search.toLowerCase())
+  );
+
+  const isOther = value && !CITIES.some(c => c.name === value && c.slug !== 'other');
+  // If the value is "Друго место" explicitly or it's a custom value not in list
+  const showCustomInput = value === 'Друго место' || isOther;
+
+  return (
+    <div className="space-y-4">
+      <div className="relative">
+        <div className="relative">
+           <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-stone-400" size={16} />
+           <input
+             type="text"
+             placeholder="Пребарај град..."
+             value={isOpen ? search : (value === 'Друго место' ? 'Друго место' : value)}
+             onFocus={() => { setIsOpen(true); setSearch(''); }}
+             onChange={(e) => setSearch(e.target.value)}
+             className={`${inputClass} pl-12 cursor-pointer`}
+             readOnly={!isOpen}
+           />
+           {value && !isOpen && (
+             <button 
+               onClick={() => onChange('')}
+               className="absolute right-4 top-1/2 -translate-y-1/2 text-stone-300 hover:text-stone-600"
+             >
+               <X size={14} />
+             </button>
+           )}
+        </div>
+
+        {isOpen && (
+          <div className="absolute z-50 left-0 right-0 mt-1 bg-white border border-stone-200 shadow-xl max-h-60 overflow-y-auto rounded-sm animate-in fade-in slide-in-from-top-2 duration-200">
+            {filteredCities.length > 0 ? (
+              filteredCities.map(city => (
+                <button
+                  key={city.slug}
+                  onClick={() => {
+                    onChange(city.name);
+                    setIsOpen(false);
+                    setSearch('');
+                  }}
+                  className="w-full flex items-center gap-3 px-4 py-3 hover:bg-stone-50 transition-colors text-left border-b border-stone-50 last:border-0"
+                >
+                  <MapPin size={14} className={city.name === value ? 'text-stone-900' : 'text-stone-300'} />
+                  <span className={`text-sm ${city.name === value ? 'font-bold text-stone-900' : 'font-light text-stone-600'}`}>
+                    {city.name}
+                  </span>
+                  {city.name === value && <Check size={14} className="ml-auto text-green-600" />}
+                </button>
+              ))
+            ) : (
+              <div className="p-4 text-center text-stone-400 text-sm font-light">
+                Нема резултати. Изберете „Друго место“.
+              </div>
+            )}
+          </div>
+        )}
+        
+        {isOpen && (
+           <div className="fixed inset-0 -z-10" onClick={() => setIsOpen(false)} />
+        )}
+      </div>
+
+      {showCustomInput && (
+        <div className="animate-in slide-in-from-top-2 duration-300">
+          <label className={labelClass}>Внесете го името на местото / селото / регионот</label>
+          <input
+            type="text"
+            className={inputClass}
+            placeholder="пр. с. Ростуше"
+            value={value === 'Друго место' ? '' : value}
+            onChange={(e) => onChange(e.target.value)}
+            autoFocus
+          />
+          <p className="text-[9px] text-stone-400 mt-2 font-light italic">
+            * Оваа вредност ќе биде прикажана во вашата објава.
+          </p>
+        </div>
+      )}
+    </div>
+  );
+};
 
 export const Step2: React.FC<Step2Props> = ({ post, updatePost }) => {
   const [isRefining, setIsRefining] = useState(false);
@@ -97,10 +189,10 @@ export const Step2: React.FC<Step2Props> = ({ post, updatePost }) => {
             </div>
             <div className="space-y-1">
               <label className={labelClass}>Град {required}</label>
-              <select name="city" value={post.city || ''} onChange={handleChange} className={inputClass}>
-                <option value="">Изберете град</option>
-                {CITIES.map(c => <option key={c.slug} value={c.name}>{c.name}</option>)}
-              </select>
+              <CitySelector 
+                value={post.city || ''} 
+                onChange={(city) => updatePost({ city })} 
+              />
             </div>
           </div>
 
@@ -230,10 +322,10 @@ export const Step2: React.FC<Step2Props> = ({ post, updatePost }) => {
             </div>
             <div className="space-y-1">
               <label className={labelClass}>Град</label>
-              <select name="city" value={post.city || ''} onChange={handleChange} className={inputClass}>
-                <option value="">Изберете град</option>
-                {CITIES.map(c => <option key={c.slug} value={c.name}>{c.name}</option>)}
-              </select>
+              <CitySelector 
+                value={post.city || ''} 
+                onChange={(city) => updatePost({ city })} 
+              />
             </div>
           </div>
           <div className="space-y-1">
@@ -295,10 +387,10 @@ export const Step2: React.FC<Step2Props> = ({ post, updatePost }) => {
           </div>
           <div className="space-y-1">
             <label className={labelClass}>Град</label>
-            <select name="city" value={post.city || ''} onChange={handleChange} className={inputClass}>
-              <option value="">Изберете град</option>
-              {CITIES.map(c => <option key={c.slug} value={c.name}>{c.name}</option>)}
-            </select>
+            <CitySelector 
+              value={post.city || ''} 
+              onChange={(city) => updatePost({ city })} 
+            />
           </div>
           <div className="space-y-1">
             <label className={labelClass}>Текст на сочувството {required}</label>
@@ -345,10 +437,10 @@ export const Step2: React.FC<Step2Props> = ({ post, updatePost }) => {
             </div>
             <div className="space-y-1">
               <label className={labelClass}>Град {required}</label>
-              <select name="city" value={post.city || ''} onChange={handleChange} className={inputClass}>
-                <option value="">Изберете град</option>
-                {CITIES.map(c => <option key={c.slug} value={c.name}>{c.name}</option>)}
-              </select>
+              <CitySelector 
+                value={post.city || ''} 
+                onChange={(city) => updatePost({ city })} 
+              />
             </div>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
