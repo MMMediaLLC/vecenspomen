@@ -207,7 +207,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
     const list = posts.filter(p => {
       const matchesSearch = p.fullName.toLowerCase().includes(searchQuery.toLowerCase()) || 
                            p.city.toLowerCase().includes(searchQuery.toLowerCase());
-      if (activeTab === 'На чекање') return p.status === 'Во проверка' && matchesSearch;
+      if (activeTab === 'На чекање') return (p.status === 'Во проверка' || p.status === 'Чека одобрување') && matchesSearch;
       if (activeTab === 'Објавени') return p.status === 'Објавено' && matchesSearch;
       return false;
     });
@@ -215,7 +215,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
   }, [posts, activeTab, searchQuery]);
 
   const stats = {
-    pending: posts.filter(p => p.status === 'Во проверка').length,
+    pending: posts.filter(p => p.status === 'Во проверка' || p.status === 'Чека одобрување').length,
     published: posts.filter(p => p.status === 'Објавено').length,
     condolences: pendingCondolences.length,
     reminders: allReminders.filter(r => r.status === 'Предстоен').length
