@@ -48,7 +48,7 @@ export const MemorialTemplate: React.FC<MemorialTemplateProps> = ({ post, isPrev
   const isPremium = packageType === 'Истакнат';
 
   const ContentBody = () => (
-    <div className={`${isPreview ? 'px-4 md:px-6' : 'px-8 md:px-20'} pb-20 relative z-10 pt-10`}>
+    <div className={`${isPreview ? 'px-4 md:px-6' : 'px-8 md:px-20'} pb-12 relative z-10 pt-6`}>
       {/* Type Label (Very Top) */}
       <div className="text-center mb-4">
         <h1 className={`uppercase tracking-normal text-stone-900 font-serif ${isPremium ? 'text-2xl md:text-3xl font-bold' : 'text-xl md:text-2xl font-semibold'}`}>
@@ -76,7 +76,7 @@ export const MemorialTemplate: React.FC<MemorialTemplateProps> = ({ post, isPrev
       )}
 
       {/* Photo Container */}
-      <div className={`flex justify-center ${isPreview ? 'mb-4' : 'mb-8'}`}>
+      <div className={`flex justify-center ${isPreview ? 'mb-4' : 'mb-6'}`}>
         <div className="relative group">
           <div className={`absolute inset-0 bg-stone-900/5 rotate-1 scale-105 rounded-sm transition-transform duration-700 ${isPremium ? 'scale-110' : ''}`} />
           <div className={`relative w-44 h-60 md:w-56 md:h-74 overflow-hidden rounded-sm shadow-xl border-[6px] border-white ring-1 ring-stone-100 transition-all duration-700 ${isPremium ? 'scale-105 shadow-2xl' : ''}`}>
@@ -138,9 +138,9 @@ export const MemorialTemplate: React.FC<MemorialTemplateProps> = ({ post, isPrev
         </div>
       )}
 
-      <div className="space-y-6 text-stone-800 leading-[1.8] text-center max-w-lg mx-auto mb-10 px-4">
+      <div className="space-y-6 text-stone-800 leading-[1.55] text-center max-w-2xl mx-auto mb-6 px-1">
         {displayText ? (
-          <p className="whitespace-pre-wrap text-lg md:text-xl font-serif text-stone-700">
+          <p className="whitespace-pre-wrap text-[19px] md:text-2xl font-serif text-stone-700 tracking-tight">
             {displayText}
           </p>
         ) : (
@@ -152,8 +152,8 @@ export const MemorialTemplate: React.FC<MemorialTemplateProps> = ({ post, isPrev
 
       {/* Detail Blocks */}
       {(type === 'ТАЖНА ВЕСТ' || type === 'ПОМЕН') && (
-         <div className="max-w-md mx-auto mb-10">
-            <div className="p-8 bg-stone-50/50 rounded-sm border border-stone-100 text-center space-y-4 shadow-sm">
+         <div className="max-w-md mx-auto mb-6">
+            <div className="p-5 bg-stone-50/50 rounded-sm border border-stone-100 text-center space-y-2 shadow-sm">
               <div className="w-8 h-[1px] bg-stone-200 mx-auto" />
               
               {type === 'ТАЖНА ВЕСТ' && (dateOfFuneral || timeOfFuneral || placeOfFuneral) && (
@@ -186,7 +186,7 @@ export const MemorialTemplate: React.FC<MemorialTemplateProps> = ({ post, isPrev
       )}
 
       {/* Sender / Family Section */}
-      <div className="text-center pt-6 relative">
+      <div className="text-center pt-4 relative">
         <div className="absolute top-0 left-1/2 -translate-x-1/2 w-20 h-[1px] bg-stone-200/50" />
         
         <h4 className="text-[11px] font-semibold uppercase tracking-normal text-stone-400 mb-4 font-serif">
