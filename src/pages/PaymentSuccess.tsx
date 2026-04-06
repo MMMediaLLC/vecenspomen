@@ -9,7 +9,24 @@ export const PaymentSuccess: React.FC = () => {
 
   useEffect(() => {
     window.scrollTo(0, 0);
-  }, []);
+
+    // If mock=true is present, manually move the post to 'Чека одобрување' 
+    // to simulate the webhook for developer testing.
+    const isMockPayment = searchParams.get('mock') === 'true';
+    if (isMockPayment && postId) {
+      import('../lib/posts').then(async m => {
+        const post = await m.getPostById(postId);
+        if (post && post.paymentStatus !== 'paid') {
+          console.log('Simulating successful payment for postId:', postId);
+          await m.markPostPaid(postId, 'MOCK_ORDER_ID');
+        } else if (post?.paymentStatus === 'paid') {
+          console.log('Post is already paid, skipping mock update.');
+        } else {
+          console.warn('Mock payment simulation: post not found:', postId);
+        }
+      });
+    }
+  }, [postId, searchParams]);
 
   return (
     <div className="bg-stone-50 min-h-screen py-20 font-sans text-stone-900">

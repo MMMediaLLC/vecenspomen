@@ -30,7 +30,7 @@ export const createLemonCheckout = async (postId: string, packageName: string): 
         type: 'checkouts',
         attributes: {
           checkout_data: {
-            custom: {
+            custom_data: {
               postId: postId,
               package: packageName
             }

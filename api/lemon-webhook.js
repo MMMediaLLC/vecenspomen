@@ -97,19 +97,18 @@ export default async function handler(req, res) {
     const postId     = customData.postId ?? null;
     const pkg        = customData.package ?? null;
 
-    console.log('[Webhook] Event received', { event: eventName, orderId, postId, pkg });
-
+    console.log(`[Webhook] Processing event: ${eventName}`, { orderId, postId, pkg });
+    
     // E. order_created
     if (eventName === 'order_created') {
-
       const orderStatus = payload?.data?.attributes?.status;
       if (orderStatus !== 'paid') {
-        console.log('[Webhook] order_created — not paid, skipping', { orderStatus });
+        console.log(`[Webhook] order_created ignored: status is ${orderStatus}`);
         return res.status(200).json({ received: true, processed: false, reason: 'order_not_paid' });
       }
 
       if (!postId) {
-        console.warn('[Webhook] order_created — postId missing in custom_data');
+        console.warn('[Webhook] order_created failed: postId missing in custom_data');
         return res.status(200).json({ received: true, processed: false, reason: 'missing_post_id' });
       }
 
@@ -117,14 +116,16 @@ export default async function handler(req, res) {
       const postSnap = await postRef.get();
 
       if (!postSnap.exists) {
-        console.warn('[Webhook] Post not found in Firestore:', postId);
+        console.warn(`[Webhook] order_created failed: Post ${postId} not found in Firestore`);
         return res.status(200).json({ received: true, processed: false, reason: 'post_not_found' });
       }
 
-      // Idempotency — skip if already paid
+      console.log(`[Webhook] found post: ${postId}`);
+
+      // Idempotency
       const existing = postSnap.data();
       if (existing.paymentStatus === 'paid') {
-        console.log('[Webhook] Duplicate event — post already paid, skipping:', postId);
+        console.log(`[Webhook] order_created skipped: Post ${postId} already marked as paid`);
         return res.status(200).json({ received: true, processed: false, reason: 'already_processed' });
       }
 
@@ -144,7 +145,7 @@ export default async function handler(req, res) {
       }
 
       await postRef.update(update);
-      console.log('[Webhook] Post marked paid', { postId, pkg, orderId });
+      console.log(`[Webhook] order_created SUCCESS: Post ${postId} updated to status 'Чека одобрување'`);
 
     // F. order_refunded
     } else if (eventName === 'order_refunded') {
