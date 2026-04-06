@@ -40,7 +40,7 @@ export const Step3: React.FC<Step3Props> = ({ photoUrl, onPhotoChange }) => {
         return;
       }
 
-      const filename = `posts/${Date.now()}_${file.name}`;
+      const filename = `posts/${file.name}-${Date.now()}`;
       const storageRef = ref(storage, filename);
       
       setUploadProgress(40);
