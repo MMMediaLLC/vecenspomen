@@ -1,18 +1,11 @@
 import { createHmac, timingSafeEqual } from 'crypto';
 import admin from 'firebase-admin';
 
-/**
- * POST /api/lemon-webhook
- * Vercel Serverless Function — Lemon Squeezy Payment Webhook
- *
- * Disable Vercel's body parser so we receive the raw Buffer.
- * This is mandatory for HMAC-SHA256 signature verification.
- */
 export const config = {
   api: { bodyParser: false },
 };
 
-// ─── Firebase Admin — lazy singleton ─────────────────────────────────────────
+// ─── Firebase Admin lazy singleton ───────────────────────────────────────────
 
 let _db = null;
 
@@ -26,17 +19,16 @@ function getDb() {
   }
 
   try {
-    // Some secret stores escape newlines — fix them before parsing
     const serviceAccount = JSON.parse(raw.replace(/\\n/g, '\n'));
 
     if (!serviceAccount.project_id) {
-      console.error('[Webhook/FB] Service account JSON missing project_id');
+      console.error('[Webhook/FB] Service account missing project_id');
       return null;
     }
 
     if (!admin.apps.length) {
       admin.initializeApp({ credential: admin.credential.cert(serviceAccount) });
-      console.log('[Webhook/FB] Admin SDK initialized for:', serviceAccount.project_id);
+      console.log('[Webhook/FB] Admin SDK initialized:', serviceAccount.project_id);
     }
 
     _db = admin.firestore();
@@ -66,7 +58,7 @@ export default async function handler(req, res) {
     return res.status(405).json({ error: 'Method Not Allowed' });
   }
 
-  // B. Environment guard — fail fast with a clear message
+  // B. Env guard
   const secret = process.env.LEMON_WEBHOOK_SECRET;
   if (!secret) {
     console.error('[Webhook] LEMON_WEBHOOK_SECRET is not set');
@@ -80,7 +72,7 @@ export default async function handler(req, res) {
   }
 
   try {
-    // C. Read raw body and verify HMAC-SHA256 signature
+    // C. Raw body + HMAC SHA256 verification
     const rawBody   = await readRawBody(req);
     const signature = req.headers['x-signature'] ?? '';
 
@@ -107,18 +99,17 @@ export default async function handler(req, res) {
 
     console.log('[Webhook] Event received', { event: eventName, orderId, postId, pkg });
 
-    // E. Route by event
+    // E. order_created
     if (eventName === 'order_created') {
-      const orderStatus = payload?.data?.attributes?.status;
 
-      // Only act on confirmed paid orders
+      const orderStatus = payload?.data?.attributes?.status;
       if (orderStatus !== 'paid') {
-        console.log('[Webhook] order_created — status not paid, skipping', { orderStatus });
+        console.log('[Webhook] order_created — not paid, skipping', { orderStatus });
         return res.status(200).json({ received: true, processed: false, reason: 'order_not_paid' });
       }
 
       if (!postId) {
-        console.warn('[Webhook] order_created paid — postId missing, skipping');
+        console.warn('[Webhook] order_created — postId missing in custom_data');
         return res.status(200).json({ received: true, processed: false, reason: 'missing_post_id' });
       }
 
@@ -126,39 +117,40 @@ export default async function handler(req, res) {
       const postSnap = await postRef.get();
 
       if (!postSnap.exists) {
-        // Return 200 so Lemon stops retrying for a non-existent post
-        console.warn('[Webhook] Post not found in Firestore — skipping:', postId);
+        console.warn('[Webhook] Post not found in Firestore:', postId);
         return res.status(200).json({ received: true, processed: false, reason: 'post_not_found' });
       }
 
-      // Idempotency: already processed the same order — skip silently
+      // Idempotency — skip if already paid
       const existing = postSnap.data();
-      if (existing.paymentOrderId === orderId && existing.paymentStatus === 'paid') {
-        console.log('[Webhook] Duplicate event — already processed:', orderId);
+      if (existing.paymentStatus === 'paid') {
+        console.log('[Webhook] Duplicate event — post already paid, skipping:', postId);
         return res.status(200).json({ received: true, processed: false, reason: 'already_processed' });
       }
 
       const now    = admin.firestore.FieldValue.serverTimestamp();
       const update = {
-        paymentStatus:  'paid',
-        status:         'Чека одобрување',
-        paymentOrderId: orderId,
-        paidAt:         now,
-        updatedAt:      now,
+        paymentStatus: 'paid',
+        status:        'Чека одобрување',
+        orderId,
+        paidAt:        now,
+        updatedAt:     now,
       };
 
       if (pkg === 'Истакнат') {
-        update.isFeatured    = true;
-        update.featuredUntil = new Date(Date.now() + 14 * 24 * 60 * 60 * 1000).toISOString();
+        const featuredUntilMs  = Date.now() + 14 * 24 * 60 * 60 * 1000;
+        update.isFeatured      = true;
+        update.featuredUntil   = admin.firestore.Timestamp.fromMillis(featuredUntilMs);
       }
 
       await postRef.update(update);
       console.log('[Webhook] Post marked paid', { postId, pkg, orderId });
 
+    // F. order_refunded
     } else if (eventName === 'order_refunded') {
 
       if (!postId) {
-        console.warn('[Webhook] order_refunded — postId missing, skipping');
+        console.warn('[Webhook] order_refunded — postId missing in custom_data');
         return res.status(200).json({ received: true, processed: false, reason: 'missing_post_id' });
       }
 
@@ -170,17 +162,19 @@ export default async function handler(req, res) {
         return res.status(200).json({ received: true, processed: false, reason: 'post_not_found' });
       }
 
-      // Safe partial update — resets featured flag without corrupting missing fields
+      const now = admin.firestore.FieldValue.serverTimestamp();
       await postRef.update({
         paymentStatus: 'refunded',
         isFeatured:    false,
-        updatedAt:     admin.firestore.FieldValue.serverTimestamp(),
+        featuredUntil: null,
+        refundAt:      now,
+        updatedAt:     now,
       });
       console.log('[Webhook] Post refund processed:', postId);
 
+    // G. Unknown events — 200 to prevent Lemon retries
     } else {
-      // Unknown events — return 200 to stop Lemon retrying indefinitely
-      console.log('[Webhook] Unhandled event, ignoring:', eventName);
+      console.log('[Webhook] Unknown event, ignoring:', eventName);
     }
 
     return res.status(200).json({ received: true, processed: true });
