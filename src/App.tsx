@@ -15,6 +15,8 @@ import { EditPost } from './pages/EditPost';
 import { KakoRaboti } from './pages/KakoRaboti';
 import { PolitikaNaPrivatnost } from './pages/PolitikaNaPrivatnost';
 import { Uslovi } from './pages/Uslovi';
+import { PaymentSuccess } from './pages/PaymentSuccess';
+import { PaymentCancel } from './pages/PaymentCancel';
 
 const AppRoutes = () => {
   const navigate = useNavigate();
@@ -153,12 +155,12 @@ const AppRoutes = () => {
         <Route path="/kako-raboti" element={<KakoRaboti />} />
         <Route path="/politika-na-privatnost" element={<PolitikaNaPrivatnost />} />
         <Route path="/uslovi" element={<Uslovi />} />
+        <Route path="/payment/success" element={<PaymentSuccess />} />
+        <Route path="/payment/cancel" element={<PaymentCancel />} />
         <Route path="/objavi" element={
           <SubmitPost
-            onComplete={(post) => {
-              addPost(post);
-              navigate('/');
-              window.scrollTo(0, 0);
+            onComplete={async (post) => {
+              await addPost(post);
             }}
           />
         } />

@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { createLemonCheckout } from '../lib/payments';
 import { MemorialPost, PostType, PackageType } from '../types';
 import { Step1 } from '../components/SubmissionFlow/Step1';
 import { Step2 } from '../components/SubmissionFlow/Step2';
@@ -111,17 +112,29 @@ export const SubmitPost: React.FC<SubmitPostProps> = ({ onComplete, initialPost,
 
   const handleFinalSubmit = async () => {
     setIsSubmitting(true);
-    const finalPost: MemorialPost = {
-      ...post,
-      id: crypto.randomUUID?.() || `post-${Date.now()}`,
-      slug: generateSlug(post.fullName || 'memorial', post.deathYear),
-      guestbookEnabled: post.package === 'Истакнат',
-    } as MemorialPost;
+    try {
+      const finalPost: MemorialPost = {
+        ...post,
+        id: crypto.randomUUID?.() || `post-${Date.now()}`,
+        slug: generateSlug(post.fullName || 'memorial', post.deathYear),
+        guestbookEnabled: post.package === 'Истакнат',
+      } as MemorialPost;
 
-    await new Promise(r => setTimeout(r, 1500));
-    onComplete(finalPost);
-    setStep(5); // Success step
-    setIsSubmitting(false);
+      await onComplete(finalPost);
+
+      if (!isEditMode && finalPost.package) {
+        const checkoutUrl = await createLemonCheckout(finalPost.id, finalPost.package);
+        window.location.href = checkoutUrl;
+      } else {
+        // If edit mode, skip checkout and show success
+        setStep(5);
+        setIsSubmitting(false);
+      }
+    } catch (err) {
+      console.error(err);
+      setValidationError('Настана грешка при процесирање. Ве молиме обидете се повторно.');
+      setIsSubmitting(false);
+    }
   };
 
   const steps = ['Тип', 'Податоци', 'Фото', 'Плаќање']; // Now 4 steps

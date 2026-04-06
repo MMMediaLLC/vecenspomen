@@ -6,7 +6,7 @@ export type PomenSubtype = '40 дена' | '6 месеци' | '1 година' |
 
 export type PackageType = 'Основен' | 'Истакнат';
 
-export type PostStatus = 'Во проверка' | 'Објавено' | 'Одбиено' | 'Потребна корекција';
+export type PostStatus = 'Во плаќање' | 'Чека одобрување' | 'Објавено' | 'Одбиено' | 'Тргнато' | 'Во проверка' | 'Потребна корекција';
 
 export interface GuestbookEntry {
   id: string;
@@ -58,6 +58,12 @@ export interface MemorialPost {
   guestbookEnabled: boolean;
   guestbookEntries?: GuestbookEntry[];
   reminders?: ReminderIntent[];
+  // Payment fields
+  paymentStatus?: 'unpaid' | 'paid' | 'cancelled' | 'failed';
+  paymentCheckoutId?: string;
+  paymentOrderId?: string;
+  paidAt?: string;
+  featuredUntil?: string;
 }
 
 export interface City {

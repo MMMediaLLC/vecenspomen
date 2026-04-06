@@ -14,12 +14,72 @@ export const getPosts = async (): Promise<MemorialPost[]> => {
 };
 
 export const addPost = async (post: MemorialPost): Promise<void> => {
+  const now = new Date().toISOString();
+  const enrichedPost: MemorialPost = {
+    ...post,
+    createdAt: post.createdAt || now,
+    status: 'Во плаќање',
+    paymentStatus: 'unpaid',
+    isFeatured: post.package === 'Истакнат' ? true : (post.isFeatured ?? false),
+  };
   if (isMock) {
-    mockPosts = [post, ...mockPosts];
+    mockPosts = [enrichedPost, ...mockPosts];
     return;
   }
-  const docRef = doc(postsCollection, post.id);
-  await setDoc(docRef, post);
+  const docRef = doc(postsCollection, enrichedPost.id);
+  await setDoc(docRef, enrichedPost);
+};
+
+/**
+ * Called by the Lemon Squeezy webhook / checkout success handler.
+ * Marks the post as paid and moves it to 'Чека одобрување' for admin review.
+ */
+export const markPostPaid = async (id: string, orderId: string): Promise<void> => {
+  const now = new Date().toISOString();
+  const featuredUntil = new Date(Date.now() + 14 * 24 * 60 * 60 * 1000).toISOString();
+
+  if (isMock) {
+    mockPosts = mockPosts.map(p => {
+      if (p.id !== id) return p;
+      return {
+        ...p,
+        paymentStatus: 'paid' as const,
+        paymentOrderId: orderId,
+        paidAt: now,
+        status: 'Чека одобрување' as const,
+        ...(p.package === 'Истакнат' ? { isFeatured: true, featuredUntil } : {}),
+      };
+    });
+    return;
+  }
+
+  const postRef = doc(postsCollection, id);
+  const snap = await getDoc(postRef);
+  if (!snap.exists()) throw new Error(`Post ${id} not found`);
+  const post = snap.data() as MemorialPost;
+
+  await updateDoc(postRef, {
+    paymentStatus: 'paid',
+    paymentOrderId: orderId,
+    paidAt: now,
+    status: 'Чека одобрување',
+    ...(post.package === 'Истакнат' ? { isFeatured: true, featuredUntil } : {}),
+  });
+};
+
+/**
+ * Called when the user cancels or abandons the checkout.
+ * Keeps the post in 'Во плаќање' so the user can retry.
+ */
+export const markPostPaymentCancelled = async (id: string): Promise<void> => {
+  if (isMock) {
+    mockPosts = mockPosts.map(p =>
+      p.id === id ? { ...p, paymentStatus: 'cancelled' as const } : p
+    );
+    return;
+  }
+  const postRef = doc(postsCollection, id);
+  await updateDoc(postRef, { paymentStatus: 'cancelled' });
 };
 
 export const updatePostStatus = async (id: string, status: PostStatus): Promise<void> => {
