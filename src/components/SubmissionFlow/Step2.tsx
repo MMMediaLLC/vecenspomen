@@ -195,6 +195,19 @@ export const Step2: React.FC<Step2Props> = ({ post, updatePost }) => {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8 border-t border-stone-100 pt-10">
+            <div className="space-y-1">
+              <label className={labelClass}>Дизајн на рамка</label>
+              <select name="selectedFrameStyle" value={post.selectedFrameStyle || ''} onChange={handleChange} className={inputClass}>
+                <option value="">Стандардна (Чиста)</option>
+                <option value="elegant">Елеганција (Црна лента)</option>
+                <option value="orthodox">Православна (Крст)</option>
+                <option value="catholic">Католичка (Крст)</option>
+                <option value="muslim">Муслиманска (Полумесечина)</option>
+                <option value="star">Давидова ѕвезда</option>
+              </select>
+            </div>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 pt-4">
             <div className="space-y-1"><label className={labelClass}>Контакт мејл</label><input type="email" name="email" value={post.email || ''} onChange={handleChange} placeholder="пр. kontakt@email.com" className={inputClass} /></div>
             <div className="space-y-1"><label className={labelClass}>Телефон</label><input type="tel" name="phone" value={post.phone || ''} onChange={handleChange} placeholder="пр. 07X XXX XXX" className={inputClass} /></div>
           </div>
@@ -242,6 +255,19 @@ export const Step2: React.FC<Step2Props> = ({ post, updatePost }) => {
             <input type="text" name="senderName" value={post.senderName || ''} onChange={handleChange} placeholder="пр. Од сопругата, децата и внуците" className={inputClass} />
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8 border-t border-stone-100 pt-10">
+            <div className="space-y-1">
+              <label className={labelClass}>Дизајн на рамка</label>
+              <select name="selectedFrameStyle" value={post.selectedFrameStyle || ''} onChange={handleChange} className={inputClass}>
+                <option value="">Стандардна (Чиста)</option>
+                <option value="elegant">Елеганција (Црна лента)</option>
+                <option value="orthodox">Православна (Крст)</option>
+                <option value="catholic">Католичка (Крст)</option>
+                <option value="muslim">Муслиманска (Полумесечина)</option>
+                <option value="star">Давидова ѕвезда</option>
+              </select>
+            </div>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 pt-4">
             <div className="space-y-1"><label className={labelClass}>Контакт мејл</label><input type="email" name="email" value={post.email || ''} onChange={handleChange} placeholder="пр. kontakt@email.com" className={inputClass} /></div>
             <div className="space-y-1"><label className={labelClass}>Телефон</label><input type="tel" name="phone" value={post.phone || ''} onChange={handleChange} placeholder="пр. 07X XXX XXX" className={inputClass} /></div>
           </div>
@@ -284,6 +310,19 @@ export const Step2: React.FC<Step2Props> = ({ post, updatePost }) => {
             <input type="text" name="senderName" value={post.senderName || ''} onChange={handleChange} placeholder="пр. Од семејството Јовановски" className={inputClass} />
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8 border-t border-stone-100 pt-10">
+            <div className="space-y-1">
+              <label className={labelClass}>Дизајн на рамка</label>
+              <select name="selectedFrameStyle" value={post.selectedFrameStyle || ''} onChange={handleChange} className={inputClass}>
+                <option value="">Стандардна (Чиста)</option>
+                <option value="elegant">Елеганција (Црна лента)</option>
+                <option value="orthodox">Православна (Крст)</option>
+                <option value="catholic">Католичка (Крст)</option>
+                <option value="muslim">Муслиманска (Полумесечина)</option>
+                <option value="star">Давидова ѕвезда</option>
+              </select>
+            </div>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 pt-4">
             <div className="space-y-1"><label className={labelClass}>Контакт мејл</label><input type="email" name="email" value={post.email || ''} onChange={handleChange} placeholder="пр. kontakt@email.com" className={inputClass} /></div>
             <div className="space-y-1"><label className={labelClass}>Телефон</label><input type="tel" name="phone" value={post.phone || ''} onChange={handleChange} placeholder="пр. 07X XXX XXX" className={inputClass} /></div>
           </div>
@@ -357,6 +396,19 @@ export const Step2: React.FC<Step2Props> = ({ post, updatePost }) => {
             <input type="text" name="familyNote" value={post.familyNote || ''} onChange={handleChange} placeholder="пр. Сопругата, децата, внуците и роднините" className={inputClass} />
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8 border-t border-stone-100 pt-10">
+            <div className="space-y-1">
+              <label className={labelClass}>Дизајн на рамка</label>
+              <select name="selectedFrameStyle" value={post.selectedFrameStyle || ''} onChange={handleChange} className={inputClass}>
+                <option value="">Стандардна (Чиста)</option>
+                <option value="elegant">Елеганција (Црна лента)</option>
+                <option value="orthodox">Православна (Крст)</option>
+                <option value="catholic">Католичка (Крст)</option>
+                <option value="muslim">Муслиманска (Полумесечина)</option>
+                <option value="star">Давидова ѕвезда</option>
+              </select>
+            </div>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 pt-4">
             <div className="space-y-1"><label className={labelClass}>Контакт мејл</label><input type="email" name="email" value={post.email || ''} onChange={handleChange} placeholder="пр. kontakt@email.com" className={inputClass} /></div>
             <div className="space-y-1"><label className={labelClass}>Телефон</label><input type="tel" name="phone" value={post.phone || ''} onChange={handleChange} placeholder="пр. 07X XXX XXX" className={inputClass} /></div>
           </div>

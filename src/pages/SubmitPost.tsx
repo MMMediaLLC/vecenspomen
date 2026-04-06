@@ -115,8 +115,9 @@ export const SubmitPost: React.FC<SubmitPostProps> = ({ onComplete, initialPost,
     try {
       const finalPost: MemorialPost = {
         ...post,
-        id: crypto.randomUUID?.() || `post-${Date.now()}`,
-        slug: generateSlug(post.fullName || 'memorial', post.deathYear),
+        // Only generate new ID and slug if we are creating a NEW post
+        id: isEditMode && post.id ? post.id : (crypto.randomUUID?.() || `post-${Date.now()}`),
+        slug: isEditMode && post.slug ? post.slug : generateSlug(post.fullName || 'memorial', post.deathYear),
         guestbookEnabled: post.package === 'Истакнат',
       } as MemorialPost;
 

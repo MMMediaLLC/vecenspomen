@@ -33,8 +33,6 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
   const [activeTab, setActiveTab] = useState<AdminTab>('На чекање');
   const [postToDelete, setPostToDelete] = useState<MemorialPost | null>(null);
   const [selectedPost, setSelectedPost] = useState<MemorialPost | null>(null);
-  const [isEditing, setIsEditing] = useState(false);
-  const [editFormData, setEditFormData] = useState<Partial<MemorialPost>>({});
   const [previewPhoto, setPreviewPhoto] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
 
@@ -80,55 +78,9 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
     await signOut(auth);
   };
 
-  const handleEdit = (post: MemorialPost) => {
-    setEditFormData({ ...post });
-    setIsEditing(true);
-  };
 
-  const handleCancel = () => {
-    setIsEditing(false);
-    setEditFormData({});
-  };
 
-  const handleSave = async () => {
-    if (!selectedPost) return;
-    try {
-      await onUpdatePost(selectedPost.id, editFormData);
-      setSelectedPost({ ...selectedPost, ...editFormData } as MemorialPost);
-      setIsEditing(false);
-      setEditFormData({});
-    } catch (err) {
-      console.error("Failed to save post:", err);
-    }
-  };
 
-  const handleEditChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
-    const { name, value } = e.target;
-    setEditFormData(prev => ({ ...prev, [name]: value }));
-  };
-
-  const renderEditField = (label: string, name: string, type: 'text' | 'textarea' | 'date' = 'text') => (
-    <div className="space-y-2">
-      <label className="text-[10px] font-black uppercase tracking-widest text-stone-400">{label}</label>
-      {type === 'textarea' ? (
-        <textarea
-          name={name}
-          value={(editFormData as any)[name] || ''}
-          onChange={handleEditChange}
-          rows={name === 'mainText' ? 6 : 3}
-          className="w-full p-4 border border-stone-200 bg-white focus:border-stone-900 focus:outline-none transition-all text-sm font-light leading-relaxed resize-none"
-        />
-      ) : (
-        <input
-          type={type}
-          name={name}
-          value={(editFormData as any)[name] || ''}
-          onChange={handleEditChange}
-          className="w-full p-4 border border-stone-200 bg-white focus:border-stone-900 focus:outline-none transition-all text-sm font-light"
-        />
-      )}
-    </div>
-  );
 
   // Helper: Format Date
   const formatDate = (dateStr?: string) => {
@@ -700,43 +652,23 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
                     <p className="text-[9px] font-black uppercase tracking-widest text-stone-300">Модераторска контрола на содржината</p>
                   </div>
                 </div>
-                <div className="flex items-center gap-4">
-                  {!isEditing ? (
-                    <button 
-                      onClick={() => handleEdit(selectedPost)}
-                      className="px-6 py-4 bg-white border border-stone-200 text-stone-600 font-black uppercase tracking-widest text-[10px] hover:bg-stone-50 transition-all flex items-center gap-2"
-                    >
-                      Редактирај содржина
-                    </button>
-                  ) : (
-                    <button 
-                      onClick={handleSave}
-                      className="px-8 py-4 bg-green-600 text-white font-black uppercase tracking-[0.2em] text-[10px] hover:bg-green-700 transition-all shadow-lg flex items-center gap-3"
-                    >
-                      Зачувај промени
-                    </button>
-                  )}
+                 <div className="flex items-center gap-4">
+                  <button 
+                    onClick={() => navigate(`/admin/posts/${selectedPost.id}/edit`)}
+                    className="px-6 py-4 bg-white border border-stone-200 text-stone-600 font-black uppercase tracking-widest text-[10px] hover:bg-stone-50 transition-all flex items-center gap-2"
+                  >
+                    Редактирај содржина
+                  </button>
                   
-                  {!isEditing && (
-                    <button 
-                      onClick={() => onUpdateStatus(selectedPost.id, 'Објавено')}
-                      className="px-8 py-4 bg-stone-900 text-white font-black uppercase tracking-[0.2em] text-[10px] hover:bg-stone-800 transition-all flex items-center gap-3 shadow-lg"
-                    >
-                      <CheckCircle size={14} /> Одобри и објави
-                    </button>
-                  )}
-
-                  {isEditing && (
-                    <button 
-                      onClick={handleCancel}
-                      className="px-6 py-4 bg-white border border-stone-200 text-stone-400 font-black uppercase tracking-widest text-[10px] hover:text-red-500 hover:border-red-100 transition-all"
-                    >
-                      Откажи
-                    </button>
-                  )}
+                  <button 
+                    onClick={() => onUpdateStatus(selectedPost.id, 'Објавено')}
+                    className="px-8 py-4 bg-stone-900 text-white font-black uppercase tracking-[0.2em] text-[10px] hover:bg-stone-800 transition-all flex items-center gap-3 shadow-lg"
+                  >
+                    <CheckCircle size={14} /> Одобри и објави
+                  </button>
 
                   <button 
-                    onClick={() => { setSelectedPost(null); setIsEditing(false); }}
+                    onClick={() => setSelectedPost(null)}
                     className="w-12 h-12 flex items-center justify-center text-stone-400 hover:bg-stone-100 hover:text-stone-900 transition-all border border-stone-100"
                   >
                     <X size={24} />
@@ -774,58 +706,16 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
                   </div>
 
                   {/* Actual Memorial Card Rendering OR Edit Form */}
-                  <div>
+                   <div>
                     <h4 className="text-[10px] font-black uppercase tracking-[0.3em] text-stone-300 mb-8 flex items-center gap-4">
                       <div className="flex-grow h-[1px] bg-stone-200" />
-                      {isEditing ? 'Уредување на Содржина' : 'Визуелен Приказ на Јавна Објава'}
+                      Визуелен Приказ на Јавна Објава
                       <div className="flex-grow h-[1px] bg-stone-200" />
                     </h4>
                     
-                    {isEditing ? (
-                      <div className="bg-white p-10 border border-stone-200 shadow-xl space-y-8 animate-in fade-in zoom-in-95 duration-500">
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                          {renderEditField('Име и Презиме', 'fullName')}
-                          {renderEditField('Град', 'city')}
-                        </div>
-
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                          {renderEditField('Година на раѓање', 'birthYear', 'text')}
-                          {renderEditField('Датум на смрт', 'dateOfDeath', 'date')}
-                        </div>
-
-                        {selectedPost.type === 'ТАЖНА ВЕСТ' && (
-                          <div className="space-y-8">
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                              {renderEditField('Датум на погреб', 'dateOfFuneral', 'date')}
-                              {renderEditField('Време на погреб', 'timeOfFuneral')}
-                            </div>
-                            {renderEditField('Локација на погреб', 'placeOfFuneral')}
-                            {renderEditField('Вовед во објавата (над сликата)', 'introText', 'textarea')}
-                          </div>
-                        )}
-
-                        {selectedPost.type === 'ПОСЛЕДЕН ПОЗДРАВ' && renderEditField('Наслов на поздрав', 'farewellTitle')}
-
-                        {selectedPost.type === 'ПОМЕН' && (
-                           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                            {renderEditField('Датум на помен', 'pomenDate', 'date')}
-                            {renderEditField('Време на помен', 'pomenTime')}
-                           </div>
-                        )}
-
-                        {renderEditField('Главна порака / Содржина', 'mainText', 'textarea')}
-                        {renderEditField('Ожалостени / Потпис', 'familyNote', 'textarea')}
-                        
-                        <div className="pt-6 border-t border-stone-100 flex justify-end gap-4">
-                           <button onClick={handleCancel} className="px-6 py-3 text-[10px] font-black uppercase tracking-widest text-stone-400 hover:text-red-600 transition-colors">Откажи</button>
-                           <button onClick={handleSave} className="px-10 py-3 bg-green-600 text-white text-[10px] font-black uppercase tracking-widest hover:bg-green-700 transition-colors shadow-lg">Зачувај</button>
-                        </div>
-                      </div>
-                    ) : (
-                      <div className="bg-white p-2 border border-stone-100 shadow-2xl">
-                        <MemorialTemplate post={selectedPost} isPreview />
-                      </div>
-                    )}
+                    <div className="bg-white p-2 border border-stone-100 shadow-2xl">
+                      <MemorialTemplate post={selectedPost} isPreview />
+                    </div>
                   </div>
                 </div>
               </div>
