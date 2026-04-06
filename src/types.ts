@@ -62,6 +62,7 @@ export interface MemorialPost {
   paymentStatus?: 'unpaid' | 'paid' | 'cancelled' | 'failed' | 'refunded';
   paymentCheckoutId?: string;
   paymentOrderId?: string;
+  shareImageUrl?: string;
   paidAt?: string;
   featuredUntil?: string;
   refundAt?: string;

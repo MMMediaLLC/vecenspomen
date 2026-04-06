@@ -37,6 +37,30 @@ export const SinglePost: React.FC = () => {
           }
         }
         setPost(data);
+        
+        // Update client-side meta tags
+        if (data) {
+          const title = `Во Вечен Спомен — ${data.fullName}`;
+          const description = data.introText || data.mainText || 'Меморијална објава на порталот Вечен Спомен.';
+          const shareImageUrl = data.shareImageUrl || 'https://vecenspomen.mk/og-placeholder.jpg';
+          
+          document.title = title;
+          
+          // Meta description
+          let metaDesc = document.querySelector('meta[name="description"]');
+          if (metaDesc) metaDesc.setAttribute('content', description);
+          
+          // Open Graph
+          let ogTitle = document.querySelector('meta[property="og:title"]');
+          if (ogTitle) ogTitle.setAttribute('content', title);
+          
+          let ogDesc = document.querySelector('meta[property="og:description"]');
+          if (ogDesc) ogDesc.setAttribute('content', description);
+          
+          let ogImg = document.querySelector('meta[property="og:image"]');
+          if (ogImg) ogImg.setAttribute('content', shareImageUrl);
+        }
+
       } catch (err) {
         console.error('Error fetching post:', err);
       } finally {

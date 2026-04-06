@@ -6,8 +6,10 @@ import { Step1 } from '../components/SubmissionFlow/Step1';
 import { Step2 } from '../components/SubmissionFlow/Step2';
 import { Step3 } from '../components/SubmissionFlow/Step3';
 import { Step5 } from '../components/SubmissionFlow/Step5'; // Now becomes conceptual Step 4
+import { OGImageTemplate } from '../components/OGImageTemplate';
+import { generateAndUploadOGImage } from '../lib/og';
 import { PACKAGES } from '../constants';
-import { Check, ArrowRight, ArrowLeft, Loader2, AlertCircle } from 'lucide-react';
+import { Check, ArrowRight, ArrowLeft, Loader2, AlertCircle, Share2 } from 'lucide-react';
 
 const DEFAULT_PHOTO = 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&q=80&w=400';
 
@@ -22,6 +24,7 @@ export const SubmitPost: React.FC<SubmitPostProps> = ({ onComplete, initialPost,
   const [step, setStep] = useState(1);
   const [validationError, setValidationError] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isGeneratingOG, setIsGeneratingOG] = useState(false);
   
   const [post, setPost] = useState<Partial<MemorialPost>>(initialPost || {
     status: 'Во проверка',
@@ -113,11 +116,24 @@ export const SubmitPost: React.FC<SubmitPostProps> = ({ onComplete, initialPost,
   const handleFinalSubmit = async () => {
     setIsSubmitting(true);
     try {
+      const tempId = isEditMode && post.id ? post.id : (crypto.randomUUID?.() || `post-${Date.now()}`);
+      const tempSlug = isEditMode && post.slug ? post.slug : generateSlug(post.fullName || 'memorial', post.deathYear);
+
+      // 1. Generate OG Image BEFORE final submission if possible
+      // We need to render the template first (it's in the JSX below)
+      setIsGeneratingOG(true);
+      
+      // Small delay to ensure the hidden template is rendered with current 'post' state
+      await new Promise(resolve => setTimeout(resolve, 500));
+      
+      const shareImageUrl = await generateAndUploadOGImage({ ...post, id: tempId, slug: tempSlug }, 'og-image-container');
+      setIsGeneratingOG(false);
+
       const finalPost: MemorialPost = {
         ...post,
-        // Only generate new ID and slug if we are creating a NEW post
-        id: isEditMode && post.id ? post.id : (crypto.randomUUID?.() || `post-${Date.now()}`),
-        slug: isEditMode && post.slug ? post.slug : generateSlug(post.fullName || 'memorial', post.deathYear),
+        id: tempId,
+        slug: tempSlug,
+        shareImageUrl: shareImageUrl || post.shareImageUrl || '',
         guestbookEnabled: post.package === 'Истакнат',
       } as MemorialPost;
 
@@ -135,6 +151,7 @@ export const SubmitPost: React.FC<SubmitPostProps> = ({ onComplete, initialPost,
       }
     } catch (err) {
       console.error(err);
+      setIsGeneratingOG(false);
       setValidationError('Настана грешка при процесирање. Ве молиме обидете се повторно.');
       setIsSubmitting(false);
     }
@@ -274,10 +291,12 @@ export const SubmitPost: React.FC<SubmitPostProps> = ({ onComplete, initialPost,
 
             <button
               onClick={nextStep}
-              disabled={isSubmitting}
+              disabled={isSubmitting || isGeneratingOG}
               className="bg-stone-900 text-white px-10 py-4 text-sm font-bold uppercase tracking-[0.2em] hover:bg-stone-800 transition-all flex items-center gap-3 shadow-xl disabled:opacity-50"
             >
-              {isSubmitting ? (
+              {isGeneratingOG ? (
+                <><Share2 className="animate-pulse" size={16} /> Генерирање преглед...</>
+              ) : isSubmitting ? (
                 <><Loader2 className="animate-spin" size={16} /> Обработка...</>
               ) : step === 4 ? (
                 <>{isEditMode ? 'Зачувај промени' : 'Поднеси Објава'} <ArrowRight size={18} /></>
@@ -287,6 +306,12 @@ export const SubmitPost: React.FC<SubmitPostProps> = ({ onComplete, initialPost,
             </button>
           </div>
         )}
+      </div>
+      {/* Hidden OG image template for capture */}
+      <div className="overflow-hidden h-0 w-0 absolute pointer-events-none opacity-0" aria-hidden="true">
+        <div id="og-image-container">
+          <OGImageTemplate post={post} />
+        </div>
       </div>
     </div>
   );
