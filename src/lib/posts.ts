@@ -9,8 +9,17 @@ const postsCollection = isMock ? ({} as any) : collection(db, 'posts');
 
 export const getPosts = async (): Promise<MemorialPost[]> => {
   if (isMock) return mockPosts;
-  const snapshot = await getDocs(postsCollection);
-  return snapshot.docs.map(doc => ({ ...(doc.data() as object), id: doc.id } as MemorialPost));
+  console.log('--- FIRESTORE READ ---');
+  console.log('Querying collection: posts');
+  console.log('Exact path: projects/[VITE_FIREBASE_PROJECT_ID]/databases/(default)/documents/posts');
+  console.log('----------------------');
+  try {
+    const snapshot = await getDocs(postsCollection);
+    return snapshot.docs.map(doc => ({ ...(doc.data() as object), id: doc.id } as MemorialPost));
+  } catch (err) {
+    console.error('Firestore Read Error in getPosts:', err);
+    throw err;
+  }
 };
 
 export const addPost = async (post: MemorialPost): Promise<string> => {

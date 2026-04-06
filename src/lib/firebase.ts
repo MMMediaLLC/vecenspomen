@@ -18,4 +18,10 @@ export const app = isMock ? ({} as any) : initializeApp(firebaseConfig);
 export const db = isMock ? ({} as any) : getFirestore(app);
 export const storage = isMock ? ({} as any) : getStorage(app);
 export const auth = isMock ? ({} as any) : getAuth(app);
+
+console.log('--- FIREBASE INIT (CLIENT) ---');
+console.log('isMock:', isMock);
+console.log('VITE_FIREBASE_PROJECT_ID:', import.meta.env.VITE_FIREBASE_PROJECT_ID);
+console.log('------------------------------');
+
 export { isMock };

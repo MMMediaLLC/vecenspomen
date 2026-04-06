@@ -1,6 +1,6 @@
 import React, { useState, useRef } from 'react';
 import { Upload, Check, Image as ImageIcon, Loader2, AlertCircle, RefreshCw } from 'lucide-react';
-import { ref, uploadBytesResumable, getDownloadURL } from 'firebase/storage';
+import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import { storage, isMock } from '../../lib/firebase';
 
 interface Step3Props {
@@ -22,7 +22,7 @@ export const Step3: React.FC<Step3Props> = ({ photoUrl, onPhotoChange }) => {
     setIsUploading(true);
     setUploadError(null);
     setUploadSuccess(false);
-    setUploadProgress(0);
+    setUploadProgress(10);
 
     try {
       if (isMock) {
@@ -42,28 +42,24 @@ export const Step3: React.FC<Step3Props> = ({ photoUrl, onPhotoChange }) => {
 
       const filename = `posts/${Date.now()}_${file.name}`;
       const storageRef = ref(storage, filename);
-      const uploadTask = uploadBytesResumable(storageRef, file);
-
-      uploadTask.on('state_changed', 
-        (snapshot) => {
-          const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-          setUploadProgress(Math.round(progress));
-        }, 
-        (error) => {
-          setUploadError('Грешка при прикачување на сликата. Обидете се повторно.');
-          console.error('Firebase Storage upload error:', error);
-          setIsUploading(false);
-        }, 
-        async () => {
-          const downloadURL = await getDownloadURL(uploadTask.snapshot.ref);
-          onPhotoChange(downloadURL);
-          setUploadSuccess(true);
-          setIsUploading(false);
-        }
-      );
-    } catch (err) {
-      setUploadError('Неочекувана грешка при прикачувањето.');
-      console.error('Upload Error:', err);
+      
+      setUploadProgress(40);
+      const snapshot = await uploadBytes(storageRef, file);
+      
+      setUploadProgress(80);
+      const downloadURL = await getDownloadURL(snapshot.ref);
+      
+      setUploadProgress(100);
+      onPhotoChange(downloadURL);
+      setUploadSuccess(true);
+      setIsUploading(false);
+    } catch (err: any) {
+      console.error('Firebase Storage upload error:', err);
+      if (err.code === 'storage/unauthorized') {
+        setUploadError('Firebase врати "Unauthorized". Ве молиме отворете Firebase Console -> Storage -> Rules и ставете allow read, write: if true;');
+      } else {
+         setUploadError('Грешка при прикачување. Проверете Firebase конфигурацијата (.env) и CORS полисите.');
+      }
       setIsUploading(false);
     }
   };
