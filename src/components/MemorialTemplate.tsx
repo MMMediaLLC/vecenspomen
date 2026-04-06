@@ -102,21 +102,21 @@ export const MemorialTemplate: React.FC<MemorialTemplateProps> = ({ post, isPrev
           {fullName || 'Име и Презиме'}
         </h2>
         
-        <div className="flex items-center justify-center gap-4 text-stone-400">
-           <div className="h-[1px] w-12 bg-stone-100" />
-           <div className={`text-stone-500 font-serif tracking-[0.2em] transition-all duration-700 ${isPremium ? 'text-2xl font-normal' : 'text-xl font-light'}`}>
-              {birthYear || '·'} – {deathYear || (post.dateOfDeath ? new Date(post.dateOfDeath).getFullYear() : '·')}
-           </div>
-           <div className="h-[1px] w-12 bg-stone-100" />
-        </div>
-
-        {age && (
-          <div className="text-stone-400 text-[10px] uppercase tracking-widest mt-3 font-normal">
-            {age} години
+        <div className="flex flex-col items-center justify-center gap-2">
+          <div className="flex items-center justify-center gap-4 text-stone-400">
+             <div className="h-[1px] w-12 bg-stone-100" />
+             <div className={`text-stone-500 font-serif tracking-[0.2em] transition-all duration-700 ${isPremium ? 'text-2xl font-normal' : 'text-xl font-light'}`}>
+                {birthYear || '·'} – {deathYear || (post.dateOfDeath ? new Date(post.dateOfDeath).getFullYear() : '·')}
+             </div>
+             <div className="h-[1px] w-12 bg-stone-100" />
           </div>
-        )}
 
-
+          {(birthYear && (deathYear || post.dateOfDeath)) && (
+            <div className="text-stone-400 text-[11px] uppercase tracking-[0.3em] font-normal">
+              { (deathYear || new Date(post.dateOfDeath!).getFullYear()) - birthYear } години
+            </div>
+          )}
+        </div>
       </div>
 
       {/* Farewell Title / Condolence Family Hint */}

@@ -79,6 +79,11 @@ export const OGImageTemplate: React.FC<OGImageTemplateProps> = ({ post }) => {
           <div className={`text-stone-500 font-serif tracking-[0.25em] ${isPremium ? 'text-3xl font-bold' : 'text-2xl font-light'}`}>
             {birthYear || '...'} – {deathYear || (post.dateOfDeath ? new Date(post.dateOfDeath).getFullYear() : '...')}
           </div>
+          {(birthYear && (deathYear || post.dateOfDeath)) && (
+            <div className="text-stone-400 font-sans text-xs uppercase tracking-[0.4em] mt-3 font-semibold">
+              { (deathYear || new Date(post.dateOfDeath!).getFullYear()) - birthYear } години
+            </div>
+          )}
         </div>
 
         <div className="relative mb-10 overflow-hidden">
