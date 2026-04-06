@@ -56,14 +56,19 @@ const AppRoutes = () => {
     fetchPosts();
   }, []);
 
-  const addPost = async (newPost: MemorialPost) => {
+  const addPost = async (newPost: MemorialPost): Promise<string | void> => {
     // Optimistic UI update
     setPosts(prev => [newPost, ...prev]);
-    // Save to Firebase
+    // Save to Firebase and return real doc ID
     try {
-      await firebaseAddPost(newPost);
+      const realId = await firebaseAddPost(newPost);
+      if (realId && typeof realId === 'string') {
+        // Optionally update the optimistic post with real ID later if needed
+        return realId;
+      }
     } catch (err) {
       console.error("Failed to add post tracking:", err);
+      throw err;
     }
   };
 

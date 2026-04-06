@@ -1,4 +1,4 @@
-import { collection, doc, getDocs, setDoc, getDoc, updateDoc, deleteDoc, serverTimestamp } from 'firebase/firestore';
+import { collection, doc, getDocs, setDoc, getDoc, updateDoc, deleteDoc, serverTimestamp, addDoc } from 'firebase/firestore';
 import { db, isMock } from './firebase';
 import { MemorialPost, PostStatus } from '../types';
 import { SEEDED_POSTS } from '../constants';
@@ -13,21 +13,34 @@ export const getPosts = async (): Promise<MemorialPost[]> => {
   return snapshot.docs.map(doc => ({ ...(doc.data() as object), id: doc.id } as MemorialPost));
 };
 
-export const addPost = async (post: MemorialPost): Promise<void> => {
-  const now = new Date().toISOString();
-  const enrichedPost: MemorialPost = {
+export const addPost = async (post: MemorialPost): Promise<string> => {
+  console.log('saving draft to Firestore...', post);
+  const enrichedPost: any = {
     ...post,
-    createdAt: post.createdAt || now,
-    status: 'Во плаќање',
+    status: 'pending_payment',
     paymentStatus: 'unpaid',
     isFeatured: post.package === 'Истакнат' ? true : (post.isFeatured ?? false),
   };
+  
   if (isMock) {
-    mockPosts = [enrichedPost, ...mockPosts];
-    return;
+    enrichedPost.createdAt = new Date().toISOString();
+    enrichedPost.id = 'mock-' + Date.now();
+    mockPosts = [enrichedPost as MemorialPost, ...mockPosts];
+    console.log('generated postId (mock):', enrichedPost.id);
+    return enrichedPost.id;
   }
-  const docRef = doc(postsCollection, enrichedPost.id);
-  await setDoc(docRef, enrichedPost);
+  
+  enrichedPost.createdAt = serverTimestamp();
+  delete enrichedPost.id; // Let Firestore auto-generate the document ID
+
+  try {
+    const docRef = await addDoc(postsCollection, enrichedPost);
+    console.log('generated postId (Firestore):', docRef.id);
+    return docRef.id;
+  } catch (err) {
+    console.error('Firestore save failed:', err);
+    throw err;
+  }
 };
 
 /**

@@ -12,7 +12,7 @@ import { Check, ArrowRight, ArrowLeft, Loader2, AlertCircle } from 'lucide-react
 const DEFAULT_PHOTO = 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&q=80&w=400';
 
 interface SubmitPostProps {
-  onComplete: (post: MemorialPost) => void;
+  onComplete: (post: MemorialPost) => Promise<string | void> | void;
   initialPost?: MemorialPost;
   isEditMode?: boolean;
 }
@@ -120,10 +120,12 @@ export const SubmitPost: React.FC<SubmitPostProps> = ({ onComplete, initialPost,
         guestbookEnabled: post.package === 'Истакнат',
       } as MemorialPost;
 
-      await onComplete(finalPost);
+      const savedId = await onComplete(finalPost);
+      const checkoutPostId = (typeof savedId === 'string' && savedId) ? savedId : finalPost.id;
 
       if (!isEditMode && finalPost.package) {
-        const checkoutUrl = await createLemonCheckout(finalPost.id, finalPost.package);
+        console.log('redirecting to Lemon with postId:', checkoutPostId);
+        const checkoutUrl = await createLemonCheckout(checkoutPostId, finalPost.package);
         window.location.href = checkoutUrl;
       } else {
         // If edit mode, skip checkout and show success
