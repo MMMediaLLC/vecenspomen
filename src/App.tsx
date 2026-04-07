@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { BrowserRouter, Routes, Route, useNavigate } from 'react-router-dom';
+import { HelmetProvider } from 'react-helmet-async';
 import { Layout } from './components/Layout';
 import { Home } from './pages/Home';
 import { Pochinati } from './pages/Pochinati';
@@ -27,8 +28,6 @@ const AppRoutes = () => {
     const fetchPosts = async () => {
       try {
         const liveData = await getPosts();
-        
-        // Ensure SEEDED_POSTS are always included as examples
         const examples = SEEDED_POSTS.map(p => ({ ...p, status: 'Објавено' as const }));
         
         const combined = [...liveData];
@@ -38,7 +37,6 @@ const AppRoutes = () => {
           }
         });
 
-        // Sort: Real posts first (by date), then examples if needed
         combined.sort((a, b) => {
           const dateA = new Date(a.createdAt).getTime();
           const dateB = new Date(b.createdAt).getTime();
@@ -57,15 +55,10 @@ const AppRoutes = () => {
   }, []);
 
   const addPost = async (newPost: MemorialPost): Promise<string | void> => {
-    // Optimistic UI update
     setPosts(prev => [newPost, ...prev]);
-    // Save to Firebase and return real doc ID
     try {
       const realId = await firebaseAddPost(newPost);
-      if (realId && typeof realId === 'string') {
-        // Optionally update the optimistic post with real ID later if needed
-        return realId;
-      }
+      return realId;
     } catch (err) {
       console.error("Failed to add post tracking:", err);
       throw err;
@@ -101,7 +94,8 @@ const AppRoutes = () => {
       return p;
     }));
     try {
-      await import('./lib/posts').then(m => m.updateGuestbookEntryStatus(postId, entryId, status));
+      const { updateGuestbookEntryStatus } = await import('./lib/posts');
+      await updateGuestbookEntryStatus(postId, entryId, status);
     } catch (err) {
       console.error("Failed to update guestbook status:", err);
     }
@@ -189,8 +183,10 @@ const AppRoutes = () => {
 
 export default function App() {
   return (
-    <BrowserRouter>
-      <AppRoutes />
-    </BrowserRouter>
+    <HelmetProvider>
+      <BrowserRouter>
+        <AppRoutes />
+      </BrowserRouter>
+    </HelmetProvider>
   );
 }

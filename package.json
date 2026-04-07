@@ -6,6 +6,7 @@
   "scripts": {
     "dev": "vite --port=3000 --host=0.0.0.0",
     "build": "vite build",
+    "postbuild": "node ./scripts/generate-sitemap.js",
     "preview": "vite preview",
     "lint": "tsc --noEmit"
   },
@@ -20,9 +21,12 @@
     "motion": "^12.23.24",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
-    "react-router-dom": "^7.14.0"
+    "react-router-dom": "^7.14.0",
+    "react-helmet-async": "^2.0.5"
   },
   "devDependencies": {
+    "vite-plugin-prerender": "*",
+    "vite-plugin-sitemap": "*",
     "@types/node": "^22.14.0",
     "@vercel/node": "^5.7.0",
     "autoprefixer": "^10.4.21",

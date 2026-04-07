@@ -83,13 +83,13 @@ export const Home: React.FC<HomeProps> = ({ posts }) => {
       {/* 1) PREMIUM HERO SECTION */}
       <section className="relative pt-6 pb-8 md:pt-20 md:pb-28 overflow-hidden">
         <div 
-          className="absolute inset-0 -z-10 opacity-[0.35] transition-opacity duration-1000"
+          className="absolute inset-0 -z-10 opacity-[0.4] transition-opacity duration-1000"
           style={{ 
             backgroundImage: `url('/bg-hero.png')`,
             backgroundSize: 'cover',
             backgroundPosition: 'center 40%',
-            maskImage: 'linear-gradient(to bottom, black 0%, black 60%, transparent 100%)',
-            WebkitMaskImage: 'linear-gradient(to bottom, black 0%, black 60%, transparent 100%)'
+            maskImage: 'linear-gradient(to bottom, black 0%, black 70%, transparent 100%)',
+            WebkitMaskImage: 'linear-gradient(to bottom, black 0%, black 70%, transparent 100%)'
           }}
         />
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
@@ -137,10 +137,10 @@ export const Home: React.FC<HomeProps> = ({ posts }) => {
       {/* 2) LATEST MEMORIALS */}
       <section id="latest-memorials" className="pt-4 pb-6 md:pt-12 md:pb-24 relative overflow-hidden bg-stone-50">
         <div 
-          className="absolute inset-0 -z-10 opacity-[0.14] grayscale-[0.2]"
+          className="absolute inset-0 -z-10 opacity-[0.12] grayscale-[0.3] contrast-[0.95]"
           style={{ 
-            backgroundImage: `url('/bg-marble.png')`,
-            backgroundSize: '800px',
+            backgroundImage: `url('/background.webp')`,
+            backgroundSize: '1200px',
             backgroundRepeat: 'repeat'
           }}
         />
@@ -197,9 +197,9 @@ export const Home: React.FC<HomeProps> = ({ posts }) => {
       </section>
 
       {/* 3) PREMIUM BOTTOM CTA */}
-      <section className="relative overflow-hidden bg-[#111111] pt-12 pb-10 md:py-24 mt-0">
+      <section className="relative overflow-hidden bg-stone-900 pt-12 pb-10 md:py-24 mt-0">
         <div 
-          className="absolute inset-0 -z-10 opacity-30 transform-gpu"
+          className="absolute inset-0 -z-10 opacity-60 transform-gpu"
           style={{ 
             backgroundImage: "url('/bg-hero-memorial.webp')",
             backgroundSize: 'cover',
@@ -207,8 +207,8 @@ export const Home: React.FC<HomeProps> = ({ posts }) => {
             backgroundRepeat: 'no-repeat'
           }}
         />
-        {/* Dark Overlay for Readability */}
-        <div className="absolute inset-0 z-10 bg-black/60 md:bg-transparent md:bg-gradient-to-r md:from-[#111111]/95 md:via-[#111111]/80 md:to-transparent" />
+        {/* Subtle Dark Overlay */}
+        <div className="absolute inset-0 z-10 bg-black/40 md:bg-transparent md:bg-gradient-to-r md:from-stone-900/90 md:via-stone-900/60 md:to-transparent" />
         
         <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 text-center relative z-20">
           <h2 className="text-2xl md:text-5xl font-serif text-white mb-2 md:mb-8 tracking-tight">
