@@ -78,10 +78,10 @@ export const Home: React.FC<HomeProps> = ({ posts }) => {
   const latestPosts = filteredPosts.slice(0, 8);
 
   return (
-    <div className="relative pb-24 md:pb-0"> {/* Padding bottom for mobile sticky CTA */}
+    <div className="relative"> {/* Removed pb-24 as it was causing a white gap on mobile */}
 
       {/* 1) PREMIUM HERO SECTION */}
-      <section className="relative pt-14 pb-20 md:pt-20 md:pb-28 overflow-hidden">
+      <section className="relative pt-6 pb-8 md:pt-20 md:pb-28 overflow-hidden">
         <div 
           className="absolute inset-0 -z-10 opacity-[0.35] transition-opacity duration-1000"
           style={{ 
@@ -96,15 +96,15 @@ export const Home: React.FC<HomeProps> = ({ posts }) => {
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
             
             {/* Left side text */}
-            <div className="space-y-8 animate-in fade-in duration-1000 slide-in-from-bottom-4">
-              <h1 className="text-5xl md:text-6xl lg:text-6xl font-serif text-stone-900 leading-[1.05] tracking-tight font-normal">
+            <div className="space-y-8 animate-in fade-in duration-1000 slide-in-from-bottom-4 text-center lg:text-left">
+              <h1 className="text-4xl md:text-6xl lg:text-6xl font-serif text-stone-900 leading-[1.1] tracking-tight font-normal mx-auto lg:mx-0 max-w-sm lg:max-w-none">
                 Со достоинство, во спомен на оние што ги сакаме.
               </h1>
-              <p className="text-lg md:text-xl text-stone-600 leading-relaxed max-w-lg font-light">
+              <p className="text-base md:text-xl text-stone-600 leading-relaxed max-w-sm lg:max-w-lg mx-auto lg:mx-0 font-light">
                 Во мигови на тишина и тага, споделете тажна вест, последен поздрав, сочувство или помен со почит и љубов.
               </p>
 
-              <div className="flex flex-col sm:flex-row gap-4 pt-4">
+              <div className="hidden sm:flex flex-col sm:flex-row gap-4 pt-4">
                 <button
                   onClick={onNavigateSubmit}
                   className="bg-stone-900 text-white px-8 py-4 text-base font-semibold font-sans transition-all hover:bg-stone-800 flex items-center justify-center gap-2"
@@ -132,10 +132,10 @@ export const Home: React.FC<HomeProps> = ({ posts }) => {
       </section>
 
       {/* Soft visual bridge */}
-      <div className="h-14 bg-gradient-to-b from-white to-stone-50" />
+      <div className="h-4 md:h-14 bg-gradient-to-b from-white to-stone-50" />
 
       {/* 2) LATEST MEMORIALS */}
-      <section id="latest-memorials" className="pt-12 pb-24 relative overflow-hidden bg-stone-50">
+      <section id="latest-memorials" className="pt-4 pb-6 md:pt-12 md:pb-24 relative overflow-hidden bg-stone-50">
         <div 
           className="absolute inset-0 -z-10 opacity-[0.14] grayscale-[0.2]"
           style={{ 
@@ -146,10 +146,10 @@ export const Home: React.FC<HomeProps> = ({ posts }) => {
         />
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
           <div className="text-center mb-6">
-            <h2 className="text-3xl md:text-4xl font-serif text-stone-900 mb-4">
+            <h2 className="text-2xl md:text-4xl font-serif text-stone-900 mb-4">
               Последни спомени и посвети
             </h2>
-            <div className="w-8 h-[1px] bg-stone-300 mx-auto mb-10 opacity-70"></div>
+            <div className="w-8 h-[1px] bg-stone-300 mx-auto mb-6 md:mb-10 opacity-70"></div>
             
             {/* Horizontal scrollable pills for mobile */}
             <div className="flex overflow-x-auto pb-4 snap-x hide-scrollbar justify-start md:justify-center gap-2">
@@ -169,7 +169,7 @@ export const Home: React.FC<HomeProps> = ({ posts }) => {
             </div>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 md:gap-8">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 md:gap-8">
             {latestPosts.map(post => (
               <div key={post.id} className="h-full">
                 <PostCard post={post} onClick={onPostClick} />
@@ -183,7 +183,7 @@ export const Home: React.FC<HomeProps> = ({ posts }) => {
             </div>
           )}
 
-          <div className="flex items-center justify-center gap-6 mt-16">
+          <div className="flex items-center justify-center gap-6 mt-8 md:mt-16">
             <div className="h-[1px] w-8 bg-stone-200" />
             <button
               onClick={() => { navigate('/pochinati'); window.scrollTo(0, 0); }}
@@ -197,38 +197,34 @@ export const Home: React.FC<HomeProps> = ({ posts }) => {
       </section>
 
       {/* 3) PREMIUM BOTTOM CTA */}
-      <section className="relative overflow-hidden bg-[#111111] py-24 mt-0">
+      <section className="relative overflow-hidden bg-[#111111] pt-12 pb-10 md:py-24 mt-0">
         <div 
-          className="absolute inset-0 z-0 transition-opacity duration-1000"
+          className="absolute inset-0 z-0"
           style={{ 
             backgroundImage: `url('/bg-hero-memorial.png')`,
-            backgroundSize: '110%',
-            backgroundPosition: '75% 70%',
+            backgroundSize: 'cover',
+            backgroundPosition: 'center',
           }}
         />
-        {/* Dark Gradient Overlay */}
-        <div 
-          className="absolute inset-0 z-10"
-          style={{
-            background: 'linear-gradient(to right, rgba(17, 17, 17, 0.95) 0%, rgba(17, 17, 17, 0.8) 40%, rgba(17, 17, 17, 0.3) 100%)'
-          }}
-        />
+        {/* Dark Overlay for Readability */}
+        <div className="absolute inset-0 z-10 bg-black/60 md:bg-transparent md:bg-gradient-to-r md:from-[#111111]/95 md:via-[#111111]/80 md:to-transparent" />
+        
         <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 text-center relative z-20">
-          <h2 className="text-4xl md:text-5xl font-serif text-white mb-6 leading-tight">
+          <h2 className="text-2xl md:text-5xl font-serif text-white mb-2 md:mb-8 tracking-tight">
             Информирајте ги пријателите и семејството за тажната вест.
           </h2>
-          <p className="text-stone-400 text-sm md:text-base font-light mb-12 max-w-xl mx-auto leading-relaxed">
+          <p className="text-stone-400 text-sm md:text-xl font-light mb-6 md:mb-12 max-w-xl mx-auto leading-relaxed">
             Поднесете објава за неколку минути, а нашиот тим ќе ја провери пред објавување.
           </p>
           <button
             onClick={onNavigateSubmit}
-            className="bg-white text-stone-900 px-10 py-4 text-base font-bold font-sans transition-all hover:bg-stone-100 inline-flex items-center justify-center gap-2 uppercase tracking-normal"
+            className="bg-white text-stone-900 px-7 py-3 md:px-10 md:py-4 text-sm md:text-base font-bold font-sans transition-all hover:bg-stone-100 inline-flex items-center justify-center gap-2 uppercase tracking-normal"
           >
             Поднесете објава <ArrowRight size={18} />
           </button>
         </div>
       </section>
-
+ 
       {/* 4) MOBILE STICKY CTA */}
       <div className="md:hidden fixed bottom-0 left-0 right-0 p-4 bg-white/95 backdrop-blur-md border-t border-stone-200 z-50 animate-in slide-in-from-bottom-full duration-500">
         <button

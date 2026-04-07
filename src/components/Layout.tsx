@@ -121,12 +121,13 @@ export const Layout: React.FC<LayoutProps> = ({ children }) => {
       </main>
 
       {/* Footer */}
-      <footer className="bg-[#f8f6f3] border-t border-stone-200/70 text-stone-500 py-12 no-print">
+      {/* Footer */}
+      <footer className="bg-[#f8f6f3] border-t border-stone-200/70 text-stone-500 pt-4 pb-8 md:py-12 no-print">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex flex-col md:flex-row justify-between items-center gap-6">
             
-            {/* Brand Minimal */}
-            <div className="flex items-center gap-3">
+            {/* Brand Minimal - Centered on Mobile */}
+            <div className="flex flex-col items-center gap-3">
               <img src="/logo.png" alt="Вечен Спомен" className="h-[48px] w-auto object-contain invert mix-blend-multiply" />
               <div className="flex items-center">
                 <span className="font-serif text-[14px] font-bold tracking-[0.08em] text-stone-900">ВЕЧЕН СПОМЕН</span>
@@ -134,7 +135,7 @@ export const Layout: React.FC<LayoutProps> = ({ children }) => {
             </div>
 
             {/* Editorial Links */}
-            <ul className="flex flex-wrap justify-center gap-6 text-[12px] font-semibold font-sans uppercase tracking-wider">
+            <ul className="flex flex-wrap justify-center gap-6 text-[12px] font-semibold font-sans uppercase tracking-wider md:order-last">
               <li><Link to="/kako-raboti" onClick={() => window.scrollTo(0, 0)} className="hover:text-stone-900 transition-colors">Како работи</Link></li>
               <li><button className="hover:text-stone-900 transition-colors">Контакт</button></li>
               <li><Link to="/politika-na-privatnost" onClick={() => window.scrollTo(0, 0)} className="hover:text-stone-900 transition-colors">Политика на приватност</Link></li>

@@ -281,7 +281,7 @@ export const SubmitPost: React.FC<SubmitPostProps> = ({ onComplete, initialPost,
         </div>
 
         {step > 1 && step < 5 && (
-          <div className="mt-12 flex justify-between items-center">
+          <div className="mt-8 md:mt-12 flex justify-between items-center">
             <button
               onClick={prevStep}
               className="flex items-center gap-2 text-stone-400 hover:text-stone-900 font-bold uppercase tracking-widest text-[10px] transition-all"
@@ -292,7 +292,7 @@ export const SubmitPost: React.FC<SubmitPostProps> = ({ onComplete, initialPost,
             <button
               onClick={nextStep}
               disabled={isSubmitting || isGeneratingOG}
-              className="bg-stone-900 text-white px-10 py-4 text-sm font-bold uppercase tracking-[0.2em] hover:bg-stone-800 transition-all flex items-center gap-3 shadow-xl disabled:opacity-50"
+              className="bg-stone-900 text-white px-6 py-3 md:px-10 md:py-4 text-[11px] md:text-sm font-bold uppercase tracking-wider md:tracking-[0.2em] hover:bg-stone-800 transition-all flex items-center gap-3 shadow-xl disabled:opacity-50"
             >
               {isGeneratingOG ? (
                 <><Share2 className="animate-pulse" size={16} /> Генерирање преглед...</>

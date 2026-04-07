@@ -22,7 +22,7 @@ const SYMBOLS = [
 
 export const Step5: React.FC<Step5Props> = ({ post, selectedPackage, onSelect, updatePost }) => {
   return (
-    <div className="space-y-12 animate-in fade-in duration-700">
+    <div className="space-y-6 md:space-y-12 animate-in fade-in duration-700">
       
       {/* 1) PACKAGE SELECTION */}
       <div className="space-y-8">
@@ -41,7 +41,7 @@ export const Step5: React.FC<Step5Props> = ({ post, selectedPackage, onSelect, u
                   updatePost({ selectedFrameStyle: 'clean' });
                 }
               }}
-              className={`relative p-8 border rounded-sm cursor-pointer transition-all duration-300 flex flex-col group ${
+              className={`relative p-5 md:p-8 border rounded-sm cursor-pointer transition-all duration-300 flex flex-col group ${
                 selectedPackage === pkg.name 
                   ? 'border-stone-900 bg-stone-50 shadow-xl scale-[1.02] z-10' 
                   : 'border-stone-200 hover:border-stone-400 bg-white'
@@ -53,14 +53,14 @@ export const Step5: React.FC<Step5Props> = ({ post, selectedPackage, onSelect, u
                 </div>
               )}
 
-              <div className="mb-6">
-                <h3 className={`text-lg font-serif mb-1 ${selectedPackage === pkg.name ? 'text-stone-900' : 'text-stone-700'}`}>
+              <div className="mb-4 md:mb-6">
+                <h3 className={`text-base md:text-lg font-serif mb-1 ${selectedPackage === pkg.name ? 'text-stone-900' : 'text-stone-700'}`}>
                   {pkg.name}
                 </h3>
-                <div className="text-2xl font-bold text-stone-900">{pkg.price}</div>
+                <div className="text-xl md:text-2xl font-bold text-stone-900">{pkg.price}</div>
               </div>
 
-              <ul className="space-y-3 mb-8 flex-grow">
+              <ul className="space-y-2 md:space-y-3 mb-6 md:mb-8 flex-grow">
                 {pkg.features.map((f, i) => (
                   <li key={i} className="flex items-start gap-2 text-sm text-stone-500 leading-tight">
                     <Check size={16} className={`${selectedPackage === pkg.name ? 'text-stone-900' : 'text-stone-300'} mt-0.5 flex-shrink-0 transition-colors`} />
@@ -89,19 +89,19 @@ export const Step5: React.FC<Step5Props> = ({ post, selectedPackage, onSelect, u
 
       {/* 2) SYMBOL SELECTOR FOR PREMIUM */}
       {selectedPackage === 'Истакнат' && (
-        <div className="space-y-6 pt-8 border-t border-stone-100 animate-in fade-in slide-in-from-bottom-4 duration-500">
+        <div className="space-y-4 md:space-y-6 pt-4 md:pt-8 border-t border-stone-100 animate-in fade-in slide-in-from-bottom-4 duration-500">
           <div className="text-center">
-            <h3 className="text-xl font-serif text-stone-900 mb-2">Изберете рамка за објавата</h3>
+            <h3 className="text-lg md:text-xl font-serif text-stone-900 mb-1 md:mb-2">Изберете рамка за објавата</h3>
           </div>
           
-          <div className="flex justify-center flex-wrap gap-3">
+          <div className="flex justify-center flex-nowrap md:flex-wrap gap-2 md:gap-3 overflow-x-auto hide-scrollbar pb-2">
             {SYMBOLS.map((sym) => {
               const isSelected = post.selectedFrameStyle === sym.id || (!post.selectedFrameStyle && sym.id === 'clean');
               return (
                 <button
                   key={sym.id}
                   onClick={() => updatePost?.({ selectedFrameStyle: sym.id as any })}
-                  className={`w-14 h-14 flex items-center justify-center text-2xl rounded-sm transition-all duration-300
+                  className={`w-11 h-11 md:w-14 md:h-14 flex flex-shrink-0 items-center justify-center text-xl md:text-2xl rounded-sm transition-all duration-300
                     ${isSelected 
                       ? 'border-2 border-stone-800 bg-stone-50 text-stone-900 shadow-md scale-105' 
                       : 'border border-stone-200 bg-white text-stone-500 hover:border-stone-400 hover:text-stone-800 hover:shadow-sm'
@@ -116,15 +116,15 @@ export const Step5: React.FC<Step5Props> = ({ post, selectedPackage, onSelect, u
       )}
 
       {/* 3) FINAL PREVIEW */}
-      <div className="space-y-6 pt-8 border-t border-stone-100">
+      <div className="space-y-4 md:space-y-6 pt-4 md:pt-8 border-t border-stone-100">
         <div className="text-center">
-          <h3 className="text-2xl font-serif text-stone-900 mb-2">Конечен преглед</h3>
-          <p className="text-stone-500 text-sm">
+          <h3 className="text-xl md:text-2xl font-serif text-stone-900 mb-1 md:mb-2">Конечен преглед</h3>
+          <p className="text-stone-500 text-xs md:text-sm">
             Вака ќе изгледа вашата објава на порталот. Проверете ги сите детали пред да продолжите.
           </p>
         </div>
         
-        <div className="bg-stone-50 p-4 md:p-12 rounded-sm border border-stone-100 shadow-inner overflow-hidden">
+        <div className="bg-stone-50 p-2 md:p-12 rounded-sm border border-stone-100 shadow-inner overflow-hidden">
           <div className="max-w-4xl mx-auto bg-white shadow-2xl">
             <MemorialTemplate post={post as MemorialPost} isPreview={true} />
           </div>
@@ -133,23 +133,23 @@ export const Step5: React.FC<Step5Props> = ({ post, selectedPackage, onSelect, u
 
       {/* 4) PAYMENT INFO (Restyled to White) */}
       {selectedPackage && (
-        <div className="bg-white border border-stone-200 p-10 rounded-sm space-y-6 shadow-sm animate-in slide-in-from-bottom-8 duration-700">
-          <div className="flex items-center gap-4 mb-4">
-            <div className="w-12 h-12 bg-stone-50 rounded-full flex items-center justify-center border border-stone-100">
-              <CreditCard className="text-stone-900" size={24} />
+        <div className="bg-white border border-stone-200 p-6 md:p-10 rounded-sm space-y-4 md:space-y-6 shadow-sm animate-in slide-in-from-bottom-8 duration-700">
+          <div className="flex items-center gap-3 md:gap-4 mb-2 md:mb-4">
+            <div className="w-10 h-10 md:w-12 md:h-12 bg-stone-50 rounded-full flex items-center justify-center border border-stone-100">
+              <CreditCard className="text-stone-900" size={20} md:size={24} />
             </div>
             <div>
-              <h4 className="text-lg font-serif text-stone-900">Сигурно плаќање</h4>
-              <p className="text-stone-500 text-sm">Вашата трансакција е заштитена и безбедна.</p>
+              <h4 className="text-base md:text-lg font-serif text-stone-900">Сигурно плаќање</h4>
+              <p className="text-stone-500 text-xs md:text-sm">Вашата трансакција е заштитена и безбедна.</p>
             </div>
           </div>
 
-          <div className="p-6 bg-stone-50 border border-stone-100 rounded-sm space-y-4">
-            <div className="flex justify-between text-sm">
+          <div className="p-4 md:p-6 bg-stone-50 border border-stone-100 rounded-sm space-y-3 md:space-y-4">
+            <div className="flex justify-between text-xs md:text-sm">
               <span className="text-stone-500">Избран пакет:</span>
               <span className="font-bold text-stone-900 underline decoration-stone-300 decoration-2 underline-offset-4">{selectedPackage}</span>
             </div>
-            <div className="flex justify-between text-lg font-bold border-t border-stone-200 pt-4 text-stone-900">
+            <div className="flex justify-between text-base md:text-lg font-bold border-t border-stone-200 pt-3 md:pt-4 text-stone-900">
               <span>Вкупно за плаќање:</span>
               <span className="text-stone-900">{PACKAGES.find(p => p.name === selectedPackage)?.price}</span>
             </div>

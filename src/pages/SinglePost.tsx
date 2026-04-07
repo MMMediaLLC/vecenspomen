@@ -160,10 +160,10 @@ export const SinglePost: React.FC = () => {
       {/* Soft overlay over the background image to ensure the card pops */}
       <div className="fixed inset-0 z-0 bg-white/60 backdrop-blur-[1px]" />
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 relative z-10">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 md:py-16 relative z-10">
 
         {/* Top bar */}
-        <div className="flex flex-col md:flex-row justify-between items-center gap-4 mb-10 no-print animate-in fade-in slide-in-from-top-4 duration-1000">
+        <div className="flex flex-col md:flex-row justify-between items-center gap-4 mb-4 md:mb-10 no-print animate-in fade-in slide-in-from-top-4 duration-1000">
           
           {/* Navigation */}
           <div className="flex items-center gap-4 order-2 md:order-1">
@@ -179,37 +179,37 @@ export const SinglePost: React.FC = () => {
           </div>
 
           {/* Share Action Bar */}
-          <div className="flex flex-wrap items-center justify-center md:justify-end gap-[8px] text-stone-500 font-sans order-1 md:order-2 w-full md:w-auto mb-4 md:mb-0">
+          <div className="flex flex-row flex-nowrap items-center justify-center md:justify-end gap-[4px] md:gap-[8px] text-stone-500 font-sans order-1 md:order-2 w-full md:w-auto mb-2 md:mb-0 overflow-x-auto hide-scrollbar py-1">
             <button
               onClick={handleFacebookShare}
-              className="flex items-center justify-center gap-1.5 h-8 px-3 bg-white border border-stone-200 rounded-[8px] text-xs font-medium text-stone-500 hover:border-stone-300 hover:text-stone-700 hover:-translate-y-[1px] transition-all shadow-[0_1px_4px_-1px_rgba(0,0,0,0.05)]"
+              className="flex items-center justify-center gap-1 h-7 px-1.5 bg-white border border-stone-200 rounded-[6px] text-[9px] md:text-xs font-medium text-stone-500 hover:border-stone-300 hover:text-stone-700 transition-all shadow-sm flex-shrink-0"
               aria-label="Сподели на Facebook"
             >
-              <Facebook size={14} /> Facebook
+              <Facebook size={11} /> <span>Facebook</span>
             </button>
             <button
               onClick={handleViberShare}
-              className="flex items-center justify-center gap-1.5 h-8 px-3 bg-white border border-stone-200 rounded-[8px] text-xs font-medium text-stone-500 hover:border-stone-300 hover:text-stone-700 hover:-translate-y-[1px] transition-all shadow-[0_1px_4px_-1px_rgba(0,0,0,0.05)]"
+              className="flex items-center justify-center gap-1 h-7 px-1.5 bg-white border border-stone-200 rounded-[6px] text-[9px] md:text-xs font-medium text-stone-500 hover:border-stone-300 hover:text-stone-700 transition-all shadow-sm flex-shrink-0"
               aria-label="Сподели на Viber"
             >
-              <MessageCircle size={14} /> Viber
+              <MessageCircle size={11} /> <span>Viber</span>
             </button>
             <button
               onClick={handleCopyLink}
-              className="flex items-center justify-center gap-1.5 h-8 px-3 bg-white border border-stone-200 rounded-[8px] text-xs font-medium text-stone-500 hover:border-stone-300 hover:text-stone-700 hover:-translate-y-[1px] transition-all shadow-[0_1px_4px_-1px_rgba(0,0,0,0.05)]"
+              className="flex items-center justify-center gap-1 h-7 px-1.5 bg-white border border-stone-200 rounded-[6px] text-[9px] md:text-xs font-medium text-stone-500 hover:border-stone-300 hover:text-stone-700 transition-all shadow-sm flex-shrink-0"
               aria-label="Копирај линк"
             >
-              {copied ? <Check size={14} className="text-green-600" /> : <LinkIcon size={14} />}
-              {copied ? 'Копирано' : 'Линк'}
+              {copied ? <Check size={11} className="text-green-600" /> : <LinkIcon size={11} />}
+              <span>{copied ? 'Ископирано' : 'Линк'}</span>
             </button>
             <button
               onClick={handleDownloadImage}
               disabled={isDownloading}
-              className="flex items-center justify-center gap-1.5 h-8 px-3 bg-white border border-stone-200 rounded-[8px] text-xs font-medium text-stone-500 hover:border-stone-300 hover:text-stone-700 hover:-translate-y-[1px] transition-all shadow-[0_1px_4px_-1px_rgba(0,0,0,0.05)] disabled:opacity-50 disabled:hover:-translate-y-0"
+              className="flex items-center justify-center gap-1 h-7 px-1.5 bg-white border border-stone-200 rounded-[6px] text-[9px] md:text-xs font-medium text-stone-500 hover:border-stone-300 hover:text-stone-700 transition-all shadow-sm disabled:opacity-50 flex-shrink-0"
               aria-label="Преземи слика"
             >
-              <Download size={14} />
-              {isDownloading ? '...' : 'Слика'}
+              <Download size={11} />
+              <span>{isDownloading ? '...' : 'Слика'}</span>
             </button>
           </div>
         </div>
