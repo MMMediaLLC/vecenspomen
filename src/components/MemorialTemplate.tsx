@@ -48,10 +48,10 @@ export const MemorialTemplate: React.FC<MemorialTemplateProps> = ({ post, isPrev
   const isPremium = packageType === 'Истакнат';
 
   const ContentBody = () => (
-    <div className={`${isPreview ? 'px-4 md:px-6' : 'px-8 md:px-20'} pb-12 relative z-10 ${type === 'ТАЖНА ВЕСТ' ? 'pt-5' : 'pt-10 md:pt-12'}`}>
+    <div className={`${isPreview ? 'px-4 md:px-6' : 'px-6 md:px-14'} pb-10 relative z-10 ${type === 'ТАЖНА ВЕСТ' ? 'pt-7' : 'pt-9 md:pt-10'}`}>
       {/* Type Label (Very Top) */}
-      <div className={`text-center ${type === 'ТАЖНА ВЕСТ' ? 'mb-5' : 'mb-10 md:mb-12'}`}>
-        <h1 className={`uppercase tracking-normal text-stone-900 font-serif ${isPremium ? 'text-2xl md:text-3xl font-bold' : 'text-xl md:text-2xl font-semibold'} ${type === 'ТАЖНА ВЕСТ' ? 'mt-4' : ''}`}>
+      <div className={`text-center ${type === 'ТАЖНА ВЕСТ' ? 'mb-3' : 'mb-5 md:mb-6'}`}>
+        <h1 className={`uppercase tracking-normal text-stone-900 font-serif ${isPremium ? 'text-xl md:text-2xl font-bold' : 'text-base md:text-lg font-semibold'} ${type === 'ТАЖНА ВЕСТ' ? 'mt-2' : ''}`}>
           {type === 'ПОМЕН' ? (
             pomenSubtype === '40 дена' ? 'Четриесетдневен помен' :
             pomenSubtype === '6 месеци' ? 'Шестмесечен помен' :
@@ -67,19 +67,19 @@ export const MemorialTemplate: React.FC<MemorialTemplateProps> = ({ post, isPrev
       
       {/* Hierarchy 1: Intro Message (Above Photo) */}
       {type === 'ТАЖНА ВЕСТ' && introText && (
-        <div className={`text-center max-w-full mx-auto ${isPreview ? 'mb-4' : 'mb-6'}`}>
-          <p className={`text-stone-500 font-serif text-lg leading-relaxed ${isPreview ? 'px-1 line-clamp-2' : 'px-4'}`}>
+        <div className={`text-center max-w-full mx-auto ${isPreview ? 'mb-3' : 'mb-4'}`}>
+          <p className={`text-stone-500 font-serif text-base leading-snug ${isPreview ? 'px-1 line-clamp-2' : 'px-4'}`}>
             {introText}
           </p>
-          <div className={`w-12 h-[1px] bg-stone-100 mx-auto mt-6 ${isPreview ? 'hidden' : 'block'}`} />
+          <div className={`w-10 h-[1px] bg-stone-100 mx-auto mt-3 ${isPreview ? 'hidden' : 'block'}`} />
         </div>
       )}
 
       {/* Photo Container */}
-      <div className={`flex justify-center ${isPreview ? 'mb-4' : 'mb-6'}`}>
+      <div className={`flex justify-center ${isPreview ? 'mb-3' : 'mb-4'}`}>
         <div className="relative group">
           <div className={`absolute inset-0 bg-stone-900/5 rotate-1 scale-105 rounded-sm transition-transform duration-700 ${isPremium ? 'scale-110' : ''}`} />
-          <div className={`relative w-44 h-60 md:w-56 md:h-74 overflow-hidden rounded-sm shadow-xl border-[6px] border-white ring-1 ring-stone-100 transition-all duration-700 ${isPremium ? 'scale-105 shadow-2xl' : ''}`}>
+          <div className={`relative w-36 h-48 md:w-44 md:h-60 overflow-hidden rounded-sm shadow-lg border-[5px] border-white ring-1 ring-stone-100 transition-all duration-700 ${isPremium ? 'scale-105 shadow-2xl' : ''}`}>
             {photoUrl ? (
               <img
                 src={photoUrl}
@@ -98,21 +98,21 @@ export const MemorialTemplate: React.FC<MemorialTemplateProps> = ({ post, isPrev
 
       {/* Name & Years */}
       <div className={`text-center ${isPreview ? 'mb-2' : 'mb-6'}`}>
-        <h2 className="font-serif text-stone-900 mb-2 leading-tight tracking-tight transition-all duration-700 text-3xl md:text-5xl font-normal">
+        <h2 className="font-serif text-stone-900 mb-1 leading-tight tracking-tight transition-all duration-700 text-2xl md:text-4xl font-normal">
           {fullName || 'Име и Презиме'}
         </h2>
         
-        <div className="flex flex-col items-center justify-center gap-2">
-          <div className="flex items-center justify-center gap-4 text-stone-400">
-             <div className="h-[1px] w-12 bg-stone-100" />
-             <div className={`text-stone-500 font-serif tracking-[0.2em] transition-all duration-700 ${isPremium ? 'text-2xl font-normal' : 'text-xl font-light'}`}>
+        <div className="flex flex-col items-center justify-center gap-1">
+          <div className="flex items-center justify-center gap-3 text-stone-400">
+             <div className="h-[1px] w-8 bg-stone-100" />
+             <div className={`text-stone-500 font-serif tracking-[0.2em] transition-all duration-700 ${isPremium ? 'text-lg font-normal' : 'text-base font-light'}`}>
                 {birthYear || '·'} – {deathYear || (post.dateOfDeath ? new Date(post.dateOfDeath).getFullYear() : '·')}
              </div>
-             <div className="h-[1px] w-12 bg-stone-100" />
+             <div className="h-[1px] w-8 bg-stone-100" />
           </div>
 
           {(birthYear && (deathYear || post.dateOfDeath)) && (
-            <div className="text-stone-400 font-serif text-[13px] uppercase tracking-normal mt-3 font-semibold">
+            <div className="text-stone-400 font-serif text-[11px] uppercase tracking-normal mt-1 font-semibold">
               { (deathYear || new Date(post.dateOfDeath!).getFullYear()) - birthYear } години
             </div>
           )}
@@ -121,30 +121,30 @@ export const MemorialTemplate: React.FC<MemorialTemplateProps> = ({ post, isPrev
 
       {/* Farewell Title / Condolence Family Hint */}
       {farewellTitle && type === 'ПОСЛЕДЕН ПОЗДРАВ' && (
-        <div className="text-center mb-4">
-           <h3 className="text-stone-900 font-serif text-2xl font-bold">
+        <div className="text-center mb-3">
+           <h3 className="text-stone-900 font-serif text-xl font-bold">
               {farewellTitle}
            </h3>
-           <div className="w-8 h-[1px] bg-stone-100 mx-auto mt-4" />
+           <div className="w-8 h-[1px] bg-stone-100 mx-auto mt-2" />
         </div>
       )}
 
       {condolenceFamily && type === 'СОЧУВСТВО' && (
-        <div className="text-center mb-4">
-           <h3 className="text-stone-900 font-serif text-xl">
+        <div className="text-center mb-3">
+           <h3 className="text-stone-900 font-serif text-lg">
               До {condolenceFamily}
            </h3>
-           <div className="w-8 h-[1px] bg-stone-100 mx-auto mt-4" />
+           <div className="w-8 h-[1px] bg-stone-100 mx-auto mt-2" />
         </div>
       )}
 
-      <div className="space-y-6 text-stone-800 leading-[1.55] text-center max-w-2xl mx-auto mb-6 px-1">
+      <div className="space-y-3 text-stone-800 leading-snug text-center max-w-2xl mx-auto mb-6 px-1">
         {displayText ? (
-          <p className="whitespace-pre-wrap text-lg md:text-xl font-serif text-stone-700 leading-[1.55] tracking-tight">
+          <p className="whitespace-pre-wrap text-base md:text-lg font-serif text-stone-700 leading-[1.45] tracking-tight">
             {displayText}
           </p>
         ) : (
-          <div className="h-20 flex items-center justify-center border border-dashed border-stone-100 rounded-sm">
+          <div className="h-14 flex items-center justify-center border border-dashed border-stone-100 rounded-sm">
               <p className="text-stone-300 text-sm">Текстот ќе биде прикажан овде...</p>
           </div>
         )}
@@ -152,33 +152,33 @@ export const MemorialTemplate: React.FC<MemorialTemplateProps> = ({ post, isPrev
 
       {/* Detail Blocks */}
       {(type === 'ТАЖНА ВЕСТ' || type === 'ПОМЕН') && (
-         <div className="max-w-md mx-auto mb-6">
-            <div className="p-5 bg-stone-50/50 rounded-sm border border-stone-100 text-center space-y-2 shadow-sm">
+         <div className="max-w-md mx-auto mb-4">
+            <div className="p-3 bg-stone-50/50 rounded-sm border border-stone-100 text-center space-y-1 shadow-sm">
               <div className="w-8 h-[1px] bg-stone-200 mx-auto" />
               
               {type === 'ТАЖНА ВЕСТ' && (dateOfFuneral || timeOfFuneral || placeOfFuneral) && (
                 <>
-                  <h4 className="text-[11px] font-semibold uppercase tracking-normal text-stone-400 font-serif">Погреб</h4>
-                  <div className="text-stone-900 font-medium text-lg font-serif">
+                  <h4 className="text-[10px] font-semibold uppercase tracking-normal text-stone-400 font-serif">Погреб</h4>
+                  <div className="text-stone-900 font-medium text-base font-serif">
                     {dateOfFuneral && <span>{formatDate(dateOfFuneral)}</span>}
                     {timeOfFuneral && <span> во {timeOfFuneral} часот</span>}
                   </div>
-                  {placeOfFuneral && <div className="text-stone-500 text-sm font-light">{placeOfFuneral}</div>}
+                  {placeOfFuneral && <div className="text-stone-500 text-xs font-light">{placeOfFuneral}</div>}
                 </>
               )}
 
               {type === 'ПОМЕН' && (pomenDate || pomenTime || pomenPlace) && (
                 <>
-                  <h4 className="text-[11px] font-semibold uppercase tracking-normal text-stone-400 font-serif">
+                  <h4 className="text-[10px] font-semibold uppercase tracking-normal text-stone-400 font-serif">
                     {pomenSubtype === 'Сеќавање' ? 'Сеќавање' : 'Парастос'}
                   </h4>
                   {pomenDate && (
-                    <div className="text-stone-900 font-medium text-lg font-serif">
+                    <div className="text-stone-900 font-medium text-base font-serif">
                       {formatDate(pomenDate)}
                       {pomenTime && <span> во {pomenTime} часот</span>}
                     </div>
                   )}
-                  {pomenPlace && <div className="text-stone-500 text-sm font-light">{pomenPlace}</div>}
+                  {pomenPlace && <div className="text-stone-500 text-xs font-light">{pomenPlace}</div>}
                 </>
               )}
             </div>
@@ -186,21 +186,21 @@ export const MemorialTemplate: React.FC<MemorialTemplateProps> = ({ post, isPrev
       )}
 
       {/* Sender / Family Section */}
-      <div className="text-center pt-4 relative">
-        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-20 h-[1px] bg-stone-200/50" />
+      <div className="text-center pt-3 relative">
+        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-16 h-[1px] bg-stone-200/50" />
         
-        <h4 className="text-[11px] font-semibold uppercase tracking-normal text-stone-400 mb-4 font-serif">
+        <h4 className="text-[10px] font-semibold uppercase tracking-normal text-stone-400 mb-2 font-serif">
           {type === 'СОЧУВСТВО' ? 'Искрено сочувство' : 
            type === 'ПОСЛЕДЕН ПОЗДРАВ' ? 'Последен поздрав од' : 
            'Со љубов и почит од:'}
         </h4>
         
-        <p className="text-lg md:text-xl font-serif text-stone-800 leading-[1.55] tracking-tight whitespace-pre-wrap max-w-2xl mx-auto px-1">
+        <p className="text-base md:text-lg font-serif text-stone-800 leading-snug tracking-tight whitespace-pre-wrap max-w-2xl mx-auto px-1">
           {familyNote || senderName || 'Најблиските'}
         </p>
         
         {senderType && type === 'ПОСЛЕДЕН ПОЗДРАВ' && (
-          <p className="mt-4 text-stone-400 text-[10px] uppercase tracking-widest font-bold">
+          <p className="mt-2 text-stone-400 text-[10px] uppercase tracking-widest font-bold">
             {senderType}
           </p>
         )}
