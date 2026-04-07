@@ -85,7 +85,7 @@ export const Home: React.FC<HomeProps> = ({ posts }) => {
         <div 
           className="absolute inset-0 -z-10 opacity-[0.35] transition-opacity duration-1000"
           style={{ 
-            backgroundImage: `url('/bg-hero.png')`,
+            backgroundImage: `url('/bg-hero.webp')`,
             backgroundSize: 'cover',
             backgroundPosition: 'center 40%',
             maskImage: 'linear-gradient(to bottom, black 0%, black 60%, transparent 100%)',
@@ -201,7 +201,7 @@ export const Home: React.FC<HomeProps> = ({ posts }) => {
         <div 
           className="absolute inset-0 -z-10 opacity-30 transform-gpu"
           style={{ 
-            backgroundImage: "url('/bg-hero-memorial.png')",
+            backgroundImage: "url('/bg-hero-memorial.webp')",
             backgroundSize: 'cover',
             backgroundPosition: 'center',
             backgroundRepeat: 'no-repeat'
