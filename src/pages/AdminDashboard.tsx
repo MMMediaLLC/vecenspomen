@@ -159,7 +159,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
     const list = posts.filter(p => {
       const matchesSearch = p.fullName.toLowerCase().includes(searchQuery.toLowerCase()) || 
                            p.city.toLowerCase().includes(searchQuery.toLowerCase());
-      if (activeTab === 'На чекање') return (p.status === 'Во проверка' || p.status === 'Чека одобрување') && matchesSearch;
+      if (activeTab === 'На чекање') return (p.status === 'Во проверка' || p.status === 'Чека одобрување' || p.status === 'pending_payment') && matchesSearch;
       if (activeTab === 'Објавени') return p.status === 'Објавено' && matchesSearch;
       return false;
     });
@@ -167,7 +167,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
   }, [posts, activeTab, searchQuery]);
 
   const stats = {
-    pending: posts.filter(p => p.status === 'Во проверка' || p.status === 'Чека одобрување').length,
+    pending: posts.filter(p => p.status === 'Во проверка' || p.status === 'Чека одобрување' || p.status === 'pending_payment').length,
     published: posts.filter(p => p.status === 'Објавено').length,
     condolences: pendingCondolences.length,
     reminders: allReminders.filter(r => r.status === 'Предстоен').length
@@ -373,6 +373,11 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
                         <span className={`text-[9px] font-black uppercase tracking-widest px-2 py-0.5 border ${
                           post.package === 'Истакнат' ? 'border-stone-900 text-stone-900 bg-stone-50' : 'border-stone-200 text-stone-400'
                         }`}>{post.package}</span>
+                        {post.status === 'pending_payment' && (
+                          <span className="text-[9px] font-black uppercase tracking-widest px-2 py-0.5 bg-red-50 text-red-600 border border-red-100 flex items-center gap-1">
+                            <Clock size={10} /> Неплатено
+                          </span>
+                        )}
                       </div>
                       <div className="grid grid-cols-2 md:grid-cols-4 gap-x-8 gap-y-2 text-[10px] font-bold text-stone-500 uppercase tracking-widest">
                         <div className="flex flex-col gap-0.5">
