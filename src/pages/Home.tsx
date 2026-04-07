@@ -83,7 +83,7 @@ export const Home: React.FC<HomeProps> = ({ posts }) => {
       {/* 1) PREMIUM HERO SECTION */}
       <section className="relative pt-6 pb-8 md:pt-20 md:pb-28 overflow-hidden">
         <div 
-          className="absolute inset-0 -z-10 opacity-[0.4] transition-opacity duration-1000"
+          className="absolute inset-0 z-0 opacity-[0.4] transition-opacity duration-1000"
           style={{ 
             backgroundImage: `url('/bg-hero.png')`,
             backgroundSize: 'cover',
@@ -109,7 +109,7 @@ export const Home: React.FC<HomeProps> = ({ posts }) => {
                   onClick={onNavigateSubmit}
                   className="bg-stone-900 text-white px-8 py-4 text-base font-semibold font-sans transition-all hover:bg-stone-800 flex items-center justify-center gap-2"
                 >
-                  Поднеси објава <ArrowRight size={18} />
+                  Објави тажна вест <ArrowRight size={18} />
                 </button>
               </div>
             </div>
@@ -137,7 +137,7 @@ export const Home: React.FC<HomeProps> = ({ posts }) => {
       {/* 2) LATEST MEMORIALS */}
       <section id="latest-memorials" className="pt-4 pb-6 md:pt-12 md:pb-24 relative overflow-hidden bg-stone-50">
         <div 
-          className="absolute inset-0 -z-10 opacity-[0.12] grayscale-[0.3] contrast-[0.95]"
+          className="absolute inset-0 z-0 opacity-[0.12] grayscale-[0.3] contrast-[0.95]"
           style={{ 
             backgroundImage: `url('/background.webp')`,
             backgroundSize: '1200px',
@@ -197,9 +197,13 @@ export const Home: React.FC<HomeProps> = ({ posts }) => {
       </section>
 
       {/* 3) PREMIUM BOTTOM CTA */}
-      <section className="relative overflow-hidden bg-stone-900 pt-12 pb-10 md:py-24 mt-0">
+      <section className="relative overflow-hidden pt-12 pb-10 md:py-24 mt-0 bg-transparent">
+        {/* Base Layer Color */}
+        <div className="absolute inset-0 bg-[#0a0a0a] -z-20" />
+        
+        {/* Background Image Layer */}
         <div 
-          className="absolute inset-0 -z-10 opacity-60 transform-gpu"
+          className="absolute inset-0 z-0 opacity-70 transform-gpu"
           style={{ 
             backgroundImage: "url('/bg-hero-memorial.webp')",
             backgroundSize: 'cover',
@@ -207,15 +211,15 @@ export const Home: React.FC<HomeProps> = ({ posts }) => {
             backgroundRepeat: 'no-repeat'
           }}
         />
-        {/* Subtle Dark Overlay */}
-        <div className="absolute inset-0 z-10 bg-black/40 md:bg-transparent md:bg-gradient-to-r md:from-stone-900/90 md:via-stone-900/60 md:to-transparent" />
+        {/* Gradient Overlay for Readability */}
+        <div className="absolute inset-0 z-10 bg-black/40 md:bg-transparent md:bg-gradient-to-r md:from-black/90 md:via-black/40 md:to-transparent" />
         
         <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 text-center relative z-20">
           <h2 className="text-2xl md:text-5xl font-serif text-white mb-2 md:mb-8 tracking-tight">
             Информирајте ги пријателите и семејството за тажната вест.
           </h2>
           <p className="text-stone-400 text-sm md:text-xl font-light mb-6 md:mb-12 max-w-xl mx-auto leading-relaxed">
-            Поднесете објава за неколку минути, а нашиот тим ќе ја провери пред објавување.
+            Поднесете објава за неколку минути, нашиот тим ќе ја провери и одобри.
           </p>
           <button
             onClick={onNavigateSubmit}
