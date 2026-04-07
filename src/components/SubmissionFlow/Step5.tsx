@@ -24,24 +24,8 @@ export const Step5: React.FC<Step5Props> = ({ post, selectedPackage, onSelect, u
   return (
     <div className="space-y-12 animate-in fade-in duration-700">
       
-      {/* 1) FINAL PREVIEW */}
-      <div className="space-y-6">
-        <div className="text-center">
-          <h3 className="text-2xl font-serif text-stone-900 mb-2">Конечен преглед</h3>
-          <p className="text-stone-500 text-sm">
-            Вака ќе изгледа вашата објава на порталот. Проверете ги сите детали пред да продолжите.
-          </p>
-        </div>
-        
-        <div className="bg-stone-50 p-4 md:p-12 rounded-sm border border-stone-100 shadow-inner overflow-hidden">
-          <div className="max-w-4xl mx-auto bg-white shadow-2xl">
-            <MemorialTemplate post={post as MemorialPost} isPreview={true} />
-          </div>
-        </div>
-      </div>
-
-      {/* 2) PACKAGE SELECTION */}
-      <div className="space-y-8 pt-8 border-t border-stone-100">
+      {/* 1) PACKAGE SELECTION */}
+      <div className="space-y-8">
         <div className="text-center">
           <h3 className="text-2xl font-serif text-stone-900 mb-2">Изберете пакет за објава</h3>
           <p className="text-stone-500 text-sm">Изберете опција која најдобро одговара на вашите потреби.</p>
@@ -103,9 +87,9 @@ export const Step5: React.FC<Step5Props> = ({ post, selectedPackage, onSelect, u
         </div>
       </div>
 
-      {/* 2.5) SYMBOL SELECTOR FOR PREMIUM */}
+      {/* 2) SYMBOL SELECTOR FOR PREMIUM */}
       {selectedPackage === 'Истакнат' && (
-        <div className="space-y-6 pt-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
+        <div className="space-y-6 pt-8 border-t border-stone-100 animate-in fade-in slide-in-from-bottom-4 duration-500">
           <div className="text-center">
             <h3 className="text-xl font-serif text-stone-900 mb-2">Изберете рамка за објавата</h3>
           </div>
@@ -131,32 +115,48 @@ export const Step5: React.FC<Step5Props> = ({ post, selectedPackage, onSelect, u
         </div>
       )}
 
-      {/* 3) PAYMENT INFO PLACEHOLDER */}
+      {/* 3) FINAL PREVIEW */}
+      <div className="space-y-6 pt-8 border-t border-stone-100">
+        <div className="text-center">
+          <h3 className="text-2xl font-serif text-stone-900 mb-2">Конечен преглед</h3>
+          <p className="text-stone-500 text-sm">
+            Вака ќе изгледа вашата објава на порталот. Проверете ги сите детали пред да продолжите.
+          </p>
+        </div>
+        
+        <div className="bg-stone-50 p-4 md:p-12 rounded-sm border border-stone-100 shadow-inner overflow-hidden">
+          <div className="max-w-4xl mx-auto bg-white shadow-2xl">
+            <MemorialTemplate post={post as MemorialPost} isPreview={true} />
+          </div>
+        </div>
+      </div>
+
+      {/* 4) PAYMENT INFO (Restyled to White) */}
       {selectedPackage && (
-        <div className="bg-stone-950 text-white p-10 rounded-sm space-y-6 animate-in slide-in-from-bottom-8 duration-700">
+        <div className="bg-white border border-stone-200 p-10 rounded-sm space-y-6 shadow-sm animate-in slide-in-from-bottom-8 duration-700">
           <div className="flex items-center gap-4 mb-4">
-            <div className="w-12 h-12 bg-white/10 rounded-full flex items-center justify-center">
-              <CreditCard className="text-[var(--color-gold)]" size={24} />
+            <div className="w-12 h-12 bg-stone-50 rounded-full flex items-center justify-center border border-stone-100">
+              <CreditCard className="text-stone-900" size={24} />
             </div>
             <div>
-              <h4 className="text-lg font-serif">Сигурно плаќање</h4>
-              <p className="text-stone-400 text-sm">Вашата трансакција е заштитена и безбедна.</p>
+              <h4 className="text-lg font-serif text-stone-900">Сигурно плаќање</h4>
+              <p className="text-stone-500 text-sm">Вашата трансакција е заштитена и безбедна.</p>
             </div>
           </div>
 
-          <div className="p-6 bg-white/5 border border-white/10 rounded-sm space-y-4">
+          <div className="p-6 bg-stone-50 border border-stone-100 rounded-sm space-y-4">
             <div className="flex justify-between text-sm">
-              <span className="text-stone-400">Избран пакет:</span>
-              <span className="font-bold underline decoration-[var(--color-gold)] decoration-2 underline-offset-4">{selectedPackage}</span>
+              <span className="text-stone-500">Избран пакет:</span>
+              <span className="font-bold text-stone-900 underline decoration-stone-300 decoration-2 underline-offset-4">{selectedPackage}</span>
             </div>
-            <div className="flex justify-between text-lg font-bold border-t border-white/10 pt-4">
+            <div className="flex justify-between text-lg font-bold border-t border-stone-200 pt-4 text-stone-900">
               <span>Вкупно за плаќање:</span>
-              <span className="text-[var(--color-gold)]">{PACKAGES.find(p => p.name === selectedPackage)?.price}</span>
+              <span className="text-stone-900">{PACKAGES.find(p => p.name === selectedPackage)?.price}</span>
             </div>
           </div>
 
-          <div className="flex items-center gap-2 text-[10px] text-stone-500 uppercase tracking-widest font-bold">
-            <ShieldCheck size={14} className="text-green-500" />
+          <div className="flex items-center gap-2 text-[10px] text-stone-400 uppercase tracking-widest font-bold">
+            <ShieldCheck size={14} className="text-green-600" />
             Безбедно онлајн плаќање • SSL заштитено
           </div>
         </div>

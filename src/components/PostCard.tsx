@@ -49,7 +49,7 @@ export const PostCard: React.FC<PostCardProps> = ({ post, onClick }) => {
         <img 
           src={post.photoUrl} 
           alt={post.fullName} 
-          className="w-full h-full object-cover grayscale-[0.2] group-hover:grayscale-0 transition-all duration-700 scale-100 group-hover:scale-105"
+          className={`w-full h-full object-cover transition-all duration-700 scale-100 group-hover:scale-105 ${post.selectedFrameStyle === 'muslim' ? '' : 'grayscale-[0.2] group-hover:grayscale-0'}`}
           referrerPolicy="no-referrer"
         />
         <div className="absolute top-4 left-4 flex flex-col gap-2">

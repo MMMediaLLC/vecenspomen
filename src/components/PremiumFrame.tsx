@@ -9,12 +9,8 @@ interface PremiumFrameProps {
 }
 
 export const PremiumFrame: React.FC<PremiumFrameProps> = ({ style = 'elegant', children, className = '' }) => {
-  // If not a recognized premium style (e.g., standard layout), just return children un-framed.
-  // Wait, if we use PremiumFrame only when isPremium is true, we assume it's always one of these.
-  const isGrayscale = style === 'muslim';
-
   return (
-    <div className={`relative w-full h-full overflow-hidden ${isGrayscale ? 'grayscale' : ''} ${className}`}>
+    <div className={`relative w-full h-full overflow-hidden ${className}`}>
       
       {/* 
         Outer decorations based on style 
@@ -73,10 +69,6 @@ export const PremiumFrame: React.FC<PremiumFrameProps> = ({ style = 'elegant', c
         {style === 'star' && (
           <div className="absolute inset-x-3 inset-y-3 md:inset-x-5 md:inset-y-5 border border-stone-800 pointer-events-none">
             <div className="absolute inset-x-1 inset-y-1 border border-dashed border-stone-300" />
-            <div className="absolute top-[-10px] left-[-4px] text-stone-800 text-sm">★</div>
-            <div className="absolute top-[-10px] right-[-4px] text-stone-800 text-sm">★</div>
-            <div className="absolute bottom-[-10px] left-[-4px] text-stone-800 text-sm">★</div>
-            <div className="absolute bottom-[-10px] right-[-4px] text-stone-800 text-sm">★</div>
             {/* Center Top Symbol */}
             <div className="absolute -top-[0.8rem] left-1/2 -translate-x-1/2 bg-white px-2">
                <span className="text-lg text-stone-800 block leading-none">★</span>

@@ -84,7 +84,7 @@ export const MemorialTemplate: React.FC<MemorialTemplateProps> = ({ post, isPrev
               <img
                 src={photoUrl}
                 alt={fullName || 'Фотографија'}
-                className="w-full h-full object-cover grayscale-[0.1] contrast-[1.05]"
+                className={`w-full h-full object-cover contrast-[1.05] ${selectedFrameStyle === 'muslim' ? '' : 'grayscale-[0.1]'}`}
                 referrerPolicy="no-referrer"
               />
             ) : (
