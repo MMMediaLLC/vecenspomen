@@ -48,10 +48,10 @@ export const MemorialTemplate: React.FC<MemorialTemplateProps> = ({ post, isPrev
   const isPremium = packageType === 'Истакнат';
 
   const ContentBody = () => (
-    <div className={`${isPreview ? 'px-4 md:px-6' : 'px-8 md:px-20'} pb-12 relative z-10 pt-6`}>
+    <div className={`${isPreview ? 'px-4 md:px-6' : 'px-8 md:px-20'} pb-12 relative z-10 ${type === 'ТАЖНА ВЕСТ' ? 'pt-5' : 'pt-10 md:pt-12'}`}>
       {/* Type Label (Very Top) */}
-      <div className="text-center mb-4">
-        <h1 className={`uppercase tracking-normal text-stone-900 font-serif ${isPremium ? 'text-2xl md:text-3xl font-bold' : 'text-xl md:text-2xl font-semibold'}`}>
+      <div className={`text-center ${type === 'ТАЖНА ВЕСТ' ? 'mb-5' : 'mb-10 md:mb-12'}`}>
+        <h1 className={`uppercase tracking-normal text-stone-900 font-serif ${isPremium ? 'text-2xl md:text-3xl font-bold' : 'text-xl md:text-2xl font-semibold'} ${type === 'ТАЖНА ВЕСТ' ? 'mt-4' : ''}`}>
           {type === 'ПОМЕН' ? (
             pomenSubtype === '40 дена' ? 'Четриесетдневен помен' :
             pomenSubtype === '6 месеци' ? 'Шестмесечен помен' :
@@ -195,12 +195,12 @@ export const MemorialTemplate: React.FC<MemorialTemplateProps> = ({ post, isPrev
            'Со љубов и почит од:'}
         </h4>
         
-        <p className="text-stone-900 font-serif text-2xl tracking-tight">
+        <p className="text-lg md:text-xl font-serif text-stone-800 leading-[1.55] tracking-tight whitespace-pre-wrap max-w-2xl mx-auto px-1">
           {familyNote || senderName || 'Најблиските'}
         </p>
         
         {senderType && type === 'ПОСЛЕДЕН ПОЗДРАВ' && (
-          <p className="mt-2 text-stone-400 text-[10px] uppercase tracking-widest font-bold">
+          <p className="mt-4 text-stone-400 text-[10px] uppercase tracking-widest font-bold">
             {senderType}
           </p>
         )}
@@ -210,7 +210,7 @@ export const MemorialTemplate: React.FC<MemorialTemplateProps> = ({ post, isPrev
 
   return (
     <div
-      className={`max-w-2xl mx-auto bg-white border rounded-sm shadow-[0_30px_60px_-15px_rgba(0,0,0,0.05)] relative overflow-hidden paper-texture transition-all duration-700 ${
+      className={`max-w-2xl mx-auto bg-white border rounded-sm memorial-card-shadow relative overflow-hidden paper-texture transition-all duration-700 ${
         isPreview ? 'scale-[0.98] origin-top' : ''
       } ${isPremium ? 'border-transparent' : 'border-stone-200/60'}`}
     >

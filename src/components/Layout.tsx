@@ -31,9 +31,9 @@ export const Layout: React.FC<LayoutProps> = ({ children }) => {
   return (
     <div className="min-h-screen flex flex-col">
       {/* Navigation */}
-      <nav className="sticky top-0 z-50" style={{ background: '#141414', borderBottom: '1px solid rgba(255,255,255,0.08)' }}>
+      <nav className="sticky top-0 z-50 shadow-[0_2px_12px_rgba(0,0,0,0.35)]" style={{ background: '#141414', borderBottom: '1px solid rgba(255,255,255,0.06)' }}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between h-20">
+          <div className="flex justify-between h-16">
             {/* Logo */}
             <div className="flex items-center">
               <Link
@@ -44,10 +44,10 @@ export const Layout: React.FC<LayoutProps> = ({ children }) => {
                 title="Почетна"
               >
                 <div className="flex items-center justify-center transition-transform group-hover:scale-105">
-                  <img src="/logo.png" alt="Вечен Спомен" className="h-[60px] w-auto object-contain mix-blend-screen" />
+                  <img src="/logo.png" alt="Вечен Спомен" className="h-[44px] w-auto object-contain mix-blend-screen" />
                 </div>
                 <div className="flex items-center ml-1 text-white">
-                  <span className="font-serif text-[18px] font-bold tracking-[0.08em]">ВЕЧЕН СПОМЕН</span>
+                  <span className="font-serif text-[16px] font-bold tracking-[0.08em]">ВЕЧЕН СПОМЕН</span>
                 </div>
               </Link>
             </div>
@@ -60,7 +60,7 @@ export const Layout: React.FC<LayoutProps> = ({ children }) => {
               <Link
                 to="/objavi"
                 onClick={() => { window.scrollTo(0, 0); }}
-                className="bg-white text-stone-900 px-6 py-2.5 rounded-sm text-[13px] font-bold font-sans uppercase tracking-normal hover:bg-stone-200 transition-all shadow-sm"
+                className="bg-white text-stone-900 px-6 py-2.5 rounded-[3px] text-[13px] font-bold font-sans uppercase tracking-[0.05em] hover:bg-stone-200 transition-all shadow-sm"
                 aria-label="Поднеси нова објава"
               >
                 Поднеси објава
@@ -107,7 +107,7 @@ export const Layout: React.FC<LayoutProps> = ({ children }) => {
             <Link
               to="/objavi"
               onClick={() => { setIsMenuOpen(false); window.scrollTo(0, 0); }}
-              className="block w-full text-center bg-white text-stone-900 py-3 rounded-sm font-medium mt-2"
+              className="block w-full text-center bg-white text-stone-900 py-3 rounded-[3px] font-medium font-sans uppercase tracking-[0.05em] text-[13px] mt-2"
             >
               Поднеси објава
             </Link>

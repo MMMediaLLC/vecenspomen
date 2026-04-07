@@ -151,8 +151,16 @@ export const SinglePost: React.FC = () => {
   }
 
   return (
-    <div className="bg-stone-50 border-t border-stone-100/80 min-h-screen pb-32">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+    <div className="bg-stone-50 border-t border-stone-100/80 min-h-screen pb-32 relative">
+      {/* Background Image Setup */}
+      <div 
+        className="fixed inset-0 z-0 bg-cover bg-center bg-no-repeat bg-fixed"
+        style={{ backgroundImage: `url('/background.png')` }}
+      />
+      {/* Soft overlay over the background image to ensure the card pops */}
+      <div className="fixed inset-0 z-0 bg-white/60 backdrop-blur-[1px]" />
+
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 relative z-10">
 
         {/* Top bar */}
         <div className="flex flex-col md:flex-row justify-between items-center gap-4 mb-10 no-print animate-in fade-in slide-in-from-top-4 duration-1000">
