@@ -199,11 +199,12 @@ export const Home: React.FC<HomeProps> = ({ posts }) => {
       {/* 3) PREMIUM BOTTOM CTA */}
       <section className="relative overflow-hidden bg-[#111111] pt-12 pb-10 md:py-24 mt-0">
         <div 
-          className="absolute inset-0 z-0"
+          className="absolute inset-0 -z-10 opacity-30 transform-gpu"
           style={{ 
-            backgroundImage: `url('/bg-hero-memorial.png')`,
+            backgroundImage: "url('/bg-hero-memorial.png')",
             backgroundSize: 'cover',
             backgroundPosition: 'center',
+            backgroundRepeat: 'no-repeat'
           }}
         />
         {/* Dark Overlay for Readability */}

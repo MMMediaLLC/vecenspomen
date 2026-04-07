@@ -154,7 +154,7 @@ export const SinglePost: React.FC = () => {
     <div className="bg-stone-50 border-t border-stone-100/80 min-h-screen pb-32 relative">
       {/* Background Image Setup */}
       <div 
-        className="fixed inset-0 z-0 bg-cover bg-center bg-no-repeat bg-fixed"
+        className="fixed inset-0 z-0 bg-cover bg-center bg-no-repeat bg-fixed transform-gpu"
         style={{ backgroundImage: `url('/background.png')` }}
       />
       {/* Soft overlay over the background image to ensure the card pops */}
