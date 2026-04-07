@@ -249,10 +249,12 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
       <aside className="w-full md:w-72 bg-white border-r border-stone-200 flex flex-col pt-12 shrink-0 z-20">
         <div className="px-8 mb-16">
           <h2 className="text-xl font-serif font-black tracking-tighter">ВЕЧЕН СПОМЕН</h2>
-          <div className="flex items-center gap-2 mt-2">
-            <div className="w-1.5 h-1.5 rounded-full bg-green-500 shadow-[0_0_8px_rgba(34,197,94,0.5)]" />
-            <span className="text-[9px] font-black uppercase tracking-[0.2em] text-stone-400">Админ Мод</span>
-          </div>
+            <div className={`flex items-center gap-2 mt-2 ${isMock ? 'text-amber-500' : 'text-green-500'}`}>
+              <div className={`w-1.5 h-1.5 rounded-full ${isMock ? 'bg-amber-500' : 'bg-green-500 shadow-[0_0_8px_rgba(34,197,94,0.5)]'}`} />
+              <span className="text-[9px] font-black uppercase tracking-[0.2em]">
+                {isMock ? 'Тест Режим (Mock)' : 'Систем во живо'}
+              </span>
+            </div>
         </div>
 
         <nav className="space-y-1 px-4 flex-grow">
