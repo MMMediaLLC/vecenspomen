@@ -47,7 +47,7 @@ export const Layout: React.FC<LayoutProps> = ({ children }) => {
                   <img src="/logo.png" alt="Вечен Спомен" className="h-[44px] w-auto object-contain mix-blend-screen" />
                 </div>
                 <div className="flex items-center ml-1 text-white">
-                  <span className="font-serif text-[16px] font-bold tracking-[0.08em]">ВЕЧЕН СПОМЕН</span>
+                  <span className="text-[17px] font-bold tracking-[0.1em]" style={{ fontFamily: 'Georgia, serif' }}>ВЕЧЕН СПОМЕН</span>
                 </div>
               </Link>
             </div>
@@ -55,7 +55,7 @@ export const Layout: React.FC<LayoutProps> = ({ children }) => {
             {/* Desktop Nav */}
             <div className="hidden md:flex items-center gap-8">
               {navLink('Почетна', '/')}
-              {navLink('Починати', '/pochinati')}
+              {navLink('Спомени', '/pochinati')}
               {navLink('Цени', '/ceni')}
               <Link
                 to="/objavi"
@@ -95,7 +95,7 @@ export const Layout: React.FC<LayoutProps> = ({ children }) => {
               onClick={() => { setIsMenuOpen(false); }}
               className="block w-full text-left px-4 py-2.5 text-white/90 font-medium rounded-sm hover:bg-white/10"
             >
-              Починати
+              Спомени
             </Link>
             <Link
               to="/ceni"
