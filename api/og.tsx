@@ -1,174 +1,169 @@
 import { ImageResponse } from '@vercel/og';
+import admin from 'firebase-admin';
 
-// ── REVERT TO EDGE: Optimized for speed and zero cold-start crashes ──────────
-export const config = { runtime: 'edge' };
+// ── 1. RUNTIME CONFIGURATION ────────────────────────────────────────────────
+export const config = { runtime: 'nodejs' };
 
-// ── Design Tokens ───────────────────────────────────────────────────────────
-const GOLD        = '#B08D57';
-const CREAM       = '#F7F4EB';
-const STONE_900   = '#1c1917';
-const STONE_800   = '#292524';
-const STONE_500   = '#78716c';
-const STONE_400   = '#a8a29e';
-const STONE_200   = '#e7e5e4';
-const STONE_100   = '#f5f5f4';
+// ── 2. FIREBASE ADMIN (SINGLETON-SAFE) ──────────────────────────────────────
+let _db: admin.firestore.Firestore | null = null;
 
-interface StyleDef {
-  symbol:      string;
-  borderColor: string;
-  bg:          string;
-  symbolColor: string;
-}
-
-const STYLES: Record<string, StyleDef> = {
-  elegant:  { symbol: '',  borderColor: STONE_900, bg: '#ffffff', symbolColor: '' },
-  orthodox: { symbol: '☦', borderColor: STONE_800, bg: CREAM,     symbolColor: STONE_800 },
-  catholic: { symbol: '✝', borderColor: STONE_800, bg: '#ffffff', symbolColor: STONE_800 },
-  muslim:   { symbol: '☾', borderColor: STONE_800, bg: '#ffffff', symbolColor: STONE_800 },
-  star:     { symbol: '★', borderColor: STONE_800, bg: '#ffffff', symbolColor: STONE_800 },
-  clean:    { symbol: '',  borderColor: STONE_400, bg: '#ffffff', symbolColor: '' },
-};
-
-async function fetchWithTimeout(url: string, options: any = {}, timeout = 3000): Promise<Response> {
-  const controller = new AbortController();
-  const id = setTimeout(() => controller.abort(), timeout);
+function getDb() {
   try {
-    const res = await fetch(url, { ...options, signal: controller.signal });
-    clearTimeout(id);
-    return res;
-  } catch (e) {
-    clearTimeout(id);
-    throw e;
+    if (_db) return _db;
+
+    const raw = process.env.FIREBASE_SERVICE_ACCOUNT;
+    if (!raw) {
+      console.error('[og] ERROR: INIT Missing FIREBASE_SERVICE_ACCOUNT');
+      throw new Error('INIT FAILED');
+    }
+
+    // Normalize private key newlines
+    const normalized = raw.replace(/\\n/g, '\n');
+    const serviceAccount = JSON.parse(normalized);
+
+    if (!admin.apps.length) {
+      admin.initializeApp({
+        credential: admin.credential.cert(serviceAccount)
+      });
+      console.log('[og] FIREBASE INIT OK');
+    }
+
+    _db = admin.firestore();
+    return _db;
+  } catch (err: any) {
+    console.error('[og] FIREBASE INIT ERROR: %s', err.message);
+    throw new Error('INIT FAILED');
   }
 }
 
-// ── Helper: Extract string from Firestore REST format ──────────────────────
-const fsVal = (path: string, doc: any) => {
-  const val = doc?.fields?.[path];
-  if (!val) return '';
-  return val.stringValue || val.integerValue || '';
-};
+// ── 3. DATA FETCHING WITH TIMEOUT GUARD ─────────────────────────────────────
+async function getPostBySlug(slug: string, timeoutMs = 4000) {
+  const db = getDb();
+  
+  // Custom timeout wrapper
+  const timeoutPromise = new Promise((_, reject) =>
+    setTimeout(() => reject(new Error('FETCH TIMEOUT')), timeoutMs)
+  );
+
+  const fetchPromise = (async () => {
+    console.log('[og] FETCH START');
+    const postsRef = db.collection('posts');
+    
+    // Attempt 1: slug field query
+    let q = await postsRef.where('slug', '==', slug).limit(1).get();
+    
+    // Attempt 2: doc ID fallback
+    if (q.empty) {
+      const docSnap = await postsRef.doc(slug).get();
+      if (docSnap.exists) {
+        console.log('[og] FETCH OK (by ID)');
+        return docSnap.data();
+      }
+      return null;
+    }
+
+    console.log('[og] FETCH OK (by slug)');
+    return q.docs[0].data();
+  })();
+
+  return Promise.race([fetchPromise, timeoutPromise]);
+}
+
+// ── 4. RENDERING HELPERS ───────────────────────────────────────────────────
+
+function renderCard(data: any, slug: string) {
+  const nameLabel = data.fullName || 'Вечен Спомен';
+  const statusLabel = data.status || '';
+
+  return new ImageResponse(
+    (
+      <div style={{
+        width: 1200, height: 630, display: 'flex', flexDirection: 'column',
+        alignItems: 'center', justifyContent: 'center', background: '#1c1917',
+        color: '#ffffff', padding: 80, textAlign: 'center'
+      }}>
+        {/* Minimal Stable Design */}
+        <h1 style={{ fontSize: 90, margin: 0, fontWeight: 'bold' }}>
+          {nameLabel}
+        </h1>
+        
+        <div style={{ display: 'flex', flexDirection: 'column', marginTop: 40, gap: 15, fontSize: 32, color: '#B08D57' }}>
+          <div style={{ display: 'flex' }}>SLUG: {slug}</div>
+          {statusLabel && <div style={{ display: 'flex' }}>STATUS: {statusLabel}</div>}
+        </div>
+
+        <div style={{ marginTop: 80, border: '1px solid rgba(255,255,255,0.2)', padding: '10px 20px', fontSize: 20, color: 'rgba(255,255,255,0.5)' }}>
+          FOUND POST | VECENSPOMEN.MK
+        </div>
+      </div>
+    ),
+    { width: 1200, height: 630 }
+  );
+}
+
+function renderErrorCard(errorType: string, message: string) {
+  return new ImageResponse(
+    (
+      <div style={{
+        width: 1200, height: 630, display: 'flex', flexDirection: 'column',
+        alignItems: 'center', justifyContent: 'center', background: '#292524',
+        color: '#ef4444', padding: 80, textAlign: 'center'
+      }}>
+        <h1 style={{ fontSize: 100, margin: 0 }}>{errorType}</h1>
+        <p style={{ fontSize: 32, color: '#ffffff', marginTop: 20 }}>{message}</p>
+        
+        <div style={{ marginTop: 60, padding: '10px 20px', background: 'rgba(239, 68, 68, 0.1)', border: '1px solid #ef4444', color: '#ef4444' }}>
+          DIAGNOSTIC SCREEN
+        </div>
+      </div>
+    ),
+    { width: 1200, height: 630 }
+  );
+}
+
+// ── 5. MAIN HANDLER (ULTIMATE CATCH-ALL) ───────────────────────────────────
 
 export default async function handler(req: Request) {
-  const { searchParams } = new URL(req.url);
-  const slug = searchParams.get('slug') || '';
-  const mode = searchParams.get('mode') || '';
-
-  console.log('[og] Edge handler started. slug=%s', slug);
-
-  // ── TEST MODE ─────────────────────────────────────────────────────────────
-  if (slug === 'test-render' || searchParams.get('test') === 'true') {
-     return new ImageResponse(
-       <div style={{ width: 1200, height: 630, background: '#1c1917', border: '10px solid #B08D57', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff' }}>
-         <h1 style={{ fontSize: 80 }}>EDGE TEST SUCCESS</h1>
-       </div>
-     );
-  }
+  console.log('[og] START');
+  let currentSlug = 'none';
 
   try {
-    // ── 1. Get Project ID ──
-    const saRaw = process.env.FIREBASE_SERVICE_ACCOUNT;
-    let projectId = '';
-    if (saRaw) {
-      try { projectId = JSON.parse(saRaw.replace(/\\n/g, '\n')).project_id; } catch {}
-    }
-    if (!projectId) projectId = 'tazna-vest'; // Hardcoded fallback based on file paths seen
+    const { searchParams } = new URL(req.url);
+    const slug = searchParams.get('slug') || '';
+    currentSlug = slug;
+    console.log('[og] SLUG: %s', slug);
 
-    // ── 2. Firestore REST Fetch ──
-    console.log('[og] REST FETCH START: %s', slug);
-    const queryUrl = `https://firestore.googleapis.com/v1/projects/${projectId}/databases/(default)/documents:runQuery`;
-    
-    const queryBody = {
-      structuredQuery: {
-        from: [{ collectionId: 'posts' }],
-        where: {
-          fieldFilter: {
-            field: { fieldPath: 'slug' },
-            op: 'EQUAL',
-            value: { stringValue: slug }
-          }
-        },
-        limit: 1
+    if (!slug) {
+      console.log('[og] POST NOT FOUND');
+      return renderErrorCard('POST NOT FOUND', 'No slug provided in request');
+    }
+
+    // Attempt Fetch with Timeout
+    let postData: any = null;
+    try {
+      postData = await getPostBySlug(slug);
+    } catch (fetchErr: any) {
+      if (fetchErr.message === 'FETCH TIMEOUT') {
+        console.error('[og] ERROR: FETCH TIMEOUT');
+        return renderErrorCard('FETCH FAILED', 'Database response timed out (4s)');
       }
-    };
-
-    const fsRes = await fetchWithTimeout(queryUrl, {
-      method: 'POST',
-      body: JSON.stringify(queryBody),
-      headers: { 'Content-Type': 'application/json' }
-    });
-
-    if (!fsRes.ok) {
-      const errText = await fsRes.text();
-      throw new Error(`Firestore REST Error: ${fsRes.status} ${errText}`);
+      throw fetchErr;
     }
 
-    const fsData = await fsRes.json();
-    console.log('[og] REST DATA RECEIVED: records=%s', fsData?.length);
-
-    const postDoc = fsData[0]?.document;
-    if (!postDoc) {
-      // Try ID fallback
-       const idUrl = `https://firestore.googleapis.com/v1/projects/${projectId}/databases/(default)/documents/posts/${slug}`;
-       const idRes = await fetchWithTimeout(idUrl);
-       if (idRes.ok) {
-          const idData = await idRes.json();
-          if (idData?.fields) postDoc.fields = idData.fields; // simplified merging for debug
-       }
+    if (!postData) {
+      console.log('[og] POST NOT FOUND');
+      return renderErrorCard('POST NOT FOUND', `Slug "${slug}" does not exist`);
     }
 
-    if (mode === 'trace' && postDoc) {
-      return new Response(`TRACE SUCCESS: Document fields follow -> ${JSON.stringify(postDoc.fields)}`, { status: 200 });
-    }
-
-    // ── 3. Data Extraction ──
-    const name      = fsVal('fullName', postDoc) || 'Вечен Спомен';
-    const status    = fsVal('status', postDoc);
-    const styleKey  = fsVal('selectedFrameStyle', postDoc) || 'clean';
-    const pkg       = fsVal('package', postDoc) || 'Основен';
-    const msg       = fsVal('aiRefinedText', postDoc) || fsVal('mainText', postDoc);
-
-    // ── 4. Font Loading (Same as before) ──
-    const [f1, f2] = await Promise.all([
-      fetch('https://cdn.jsdelivr.net/npm/@fontsource/noto-serif/files/noto-serif-cyrillic-400-normal.woff2').then(r => r.arrayBuffer()),
-      fetch('https://cdn.jsdelivr.net/npm/@fontsource/noto-serif/files/noto-serif-cyrillic-700-normal.woff2').then(r => r.arrayBuffer()),
-    ]);
-
-    const fonts: any[] = [
-      { name: 'NotoSerif', data: f1, weight: 400, style: 'normal' },
-      { name: 'NotoSerif', data: f2, weight: 700, style: 'normal' }
-    ];
-
-    // ── 5. Minimal Render ──
-    return new ImageResponse(
-      (
-        <div style={{
-          width: 1200, height: 630, display: 'flex', background: '#1c1917', color: '#fff',
-          fontFamily: 'NotoSerif', padding: '0 60px', alignItems: 'center'
-        }}>
-           <div style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
-             <h1 style={{ fontSize: 80, margin: 0, color: GOLD }}>{postDoc ? 'FOUND POST' : 'NOT FOUND'}</h1>
-             <div style={{ display: 'flex', flexDirection: 'column', gap: 10, fontSize: 32, marginTop: 20 }}>
-               <div style={{ display: 'flex' }}><span style={{ width: 150, color: STONE_400 }}>NAME:</span> {name}</div>
-               <div style={{ display: 'flex' }}><span style={{ width: 150, color: STONE_400 }}>SLUG:</span> {slug}</div>
-               <div style={{ display: 'flex' }}><span style={{ width: 150, color: STONE_400 }}>STATUS:</span> {status || 'N/A'}</div>
-               <div style={{ display: 'flex' }}><span style={{ width: 150, color: STONE_400 }}>PKG:</span> {pkg}</div>
-             </div>
-           </div>
-           
-           <div style={{
-             width: 300, height: 400, border: '5px solid #fff', display: 'flex',
-             alignItems: 'center', justifyContent: 'center', background: '#292524'
-           }}>
-             <span style={{ color: GOLD, fontSize: 30 }}>PHOTO</span>
-           </div>
-        </div>
-      ),
-      { width: 1200, height: 630, fonts }
-    );
+    console.log('[og] POST FOUND');
+    console.log('[og] RENDER START');
+    const response = renderCard(postData, slug);
+    console.log('[og] RENDER OK');
+    return response;
 
   } catch (err: any) {
-    console.error('[og] CRITICAL ERROR:', err.message);
-    return new Response(`OG CRITICAL ERROR: ${err.message}`, { status: 500 });
+    const stage = err.message === 'INIT FAILED' ? 'INIT FAILED' : 'OG ERROR';
+    console.error('[og] ERROR: %s %s', stage, err.message);
+    return renderErrorCard(stage, err.message || 'Complete runtime failure');
   }
 }
