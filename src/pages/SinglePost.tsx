@@ -5,7 +5,8 @@ import { MemorialPost } from '../types';
 import { MemorialTemplate } from '../components/MemorialTemplate';
 import { OGImageTemplate } from '../components/OGImageTemplate';
 import { Guestbook } from '../components/Guestbook';
-import { getRelatedPosts, getPostById, getPostBySlug, addGuestbookEntry } from '../lib/posts';
+import { getRelatedPosts, getPostById, getPostBySlug, addGuestbookEntry, updatePost as savePost } from '../lib/posts';
+import { generateAndUploadOGImage } from '../lib/og';
 import { format } from 'date-fns';
 import { mk } from 'date-fns/locale';
 import {
@@ -99,6 +100,27 @@ export const SinglePost: React.FC = () => {
     fetchPost();
     window.scrollTo(0, 0);
   }, [id, slug]);
+
+  // Auto-generate shareImageUrl for posts that don't have one yet.
+  // The hidden OGImageTemplate is already in the DOM — just capture it.
+  useEffect(() => {
+    if (!post || post.shareImageUrl) return;
+
+    const timer = setTimeout(async () => {
+      try {
+        const url = await generateAndUploadOGImage(post, 'og-image-container');
+        if (url) {
+          await savePost(post.id, { shareImageUrl: url });
+          setPost(prev => prev ? { ...prev, shareImageUrl: url } : prev);
+          console.log('[SinglePost] shareImageUrl generated and saved:', url);
+        }
+      } catch (err) {
+        console.error('[SinglePost] Failed to auto-generate share image:', err);
+      }
+    }, 1500); // wait for fonts/images to render
+
+    return () => clearTimeout(timer);
+  }, [post?.id]);
 
   const handleCopyLink = async () => {
     try {
