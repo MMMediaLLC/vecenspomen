@@ -2,7 +2,10 @@ import { ImageResponse } from '@vercel/og';
 
 export const config = { runtime: 'edge' };
 
-export default function handler() {
+export default function handler(req: Request) {
+  const { searchParams } = new URL(req.url);
+  const slug = searchParams.get('slug') || 'NO SLUG';
+
   return new ImageResponse(
     (
       <div
@@ -18,7 +21,7 @@ export default function handler() {
           fontWeight: '700',
         }}
       >
-        OG WORKS
+        {slug}
       </div>
     ),
     {
