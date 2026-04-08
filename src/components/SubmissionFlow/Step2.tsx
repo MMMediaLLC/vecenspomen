@@ -274,14 +274,14 @@ export const Step2: React.FC<Step2Props> = ({ post, updatePost }) => {
             </div>
 
             <div className="space-y-1">
-              <label className={labelClass}>Ожалостени (опционално)</label>
-              <textarea 
-                name="familyNote" 
-                value={post.familyNote || ''} 
-                onChange={handleChange} 
-                rows={2} 
-                placeholder="пр. Сопругата Марија, синот Никола со семејството, ќерката Елена со семејството и останатите роднини и пријатели." 
-                className={`${textareaClass} h-24`} 
+              <label className={labelClass}>Со љубов и почит од *</label>
+              <textarea
+                name="familyNote"
+                value={post.familyNote || ''}
+                onChange={handleChange}
+                rows={2}
+                placeholder="пр. Сопругата Марија, синот Никола со семејството, ќерката Елена со семејството и останатите роднини и пријатели."
+                className={`${textareaClass} h-24`}
               />
             </div>
           </div>
@@ -445,7 +445,7 @@ export const Step2: React.FC<Step2Props> = ({ post, updatePost }) => {
             <textarea name="mainText" value={post.mainText || ''} onChange={handleChange} className={`${textareaClass} h-40`} placeholder="Со љубов и тага те споменуваме и по 40 дена од твоето заминување. Засекогаш ќе живееш во нашите мисли и молитви." />
           </div>
           <div className="space-y-1">
-            <label className={labelClass}>Ожалостени (опционално)</label>
+            <label className={labelClass}>Со љубов и почит од *</label>
             <input type="text" name="familyNote" value={post.familyNote || ''} onChange={handleChange} placeholder="пр. Сопругата, децата, внуците и роднините" className={inputClass} />
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8 border-t border-stone-100 pt-10">

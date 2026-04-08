@@ -71,7 +71,7 @@ export const PostCard: React.FC<PostCardProps> = ({ post, onClick }) => {
         
         {(post.birthYear || post.deathYear) && (
           <div className="text-stone-500 font-serif tracking-widest mb-2">
-            {post.birthYear || '...'} – {post.deathYear || '...'}
+            {post.birthYear ?? '...'} - {post.deathYear ?? '...'}
           </div>
         )}
         

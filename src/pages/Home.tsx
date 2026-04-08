@@ -75,7 +75,9 @@ export const Home: React.FC<HomeProps> = ({ posts }) => {
     ? posts 
     : posts.filter(p => p.city === selectedCity);
     
-  const latestPosts = filteredPosts.slice(0, 8);
+  const latestPosts = [...filteredPosts]
+    .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
+    .slice(0, 8);
 
   return (
     <div className="relative"> {/* Removed pb-24 as it was causing a white gap on mobile */}

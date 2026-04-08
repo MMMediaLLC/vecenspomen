@@ -83,6 +83,7 @@ export const SubmitPost: React.FC<SubmitPostProps> = ({ onComplete, initialPost,
           if (!post.placeOfFuneral?.trim()) return 'Внесете локација на погреб.';
           if (!post.introText?.trim()) return 'Внесете воведна порака (над фотографијата).';
           if (!post.mainText?.trim()) return 'Внесете главна порака (под фотографијата).';
+          if (!post.familyNote?.trim()) return 'Внесете „Со љубов и почит од".';
         } else if (post.type === 'ПОСЛЕДЕН ПОЗДРАВ') {
           if (!post.mainText?.trim()) return 'Внесете текст на последниот поздрав.';
           if (!post.senderName?.trim()) return 'Внесете од кого е последниот поздрав.';
@@ -95,6 +96,7 @@ export const SubmitPost: React.FC<SubmitPostProps> = ({ onComplete, initialPost,
           if (!post.pomenDate) return 'Внесете датум на помен.';
           if (!post.pomenTime) return 'Внесете време на помен.';
           if (!post.pomenPlace?.trim()) return 'Внесете локација на помен.';
+          if (!post.familyNote?.trim()) return 'Внесете „Со љубов и почит од".';
         }
         break;
       case 3: // Photo step
