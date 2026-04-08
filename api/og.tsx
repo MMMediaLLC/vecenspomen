@@ -8,23 +8,35 @@ export const config = { runtime: 'nodejs' };
 let _db: admin.firestore.Firestore | null = null;
 
 function getDb() {
-  if (_db) return _db;
-  const raw = process.env.FIREBASE_SERVICE_ACCOUNT;
-  if (!raw) {
-    console.error('[og] FIREBASE_SERVICE_ACCOUNT is missing');
-    return null;
-  }
   try {
-    const serviceAccount = JSON.parse(raw.replace(/\\n/g, '\n'));
-    if (!admin.apps.length) {
-      admin.initializeApp({ credential: admin.credential.cert(serviceAccount) });
-      console.log('[og] Firebase initialized');
+    if (_db) return _db;
+    
+    const raw = process.env.FIREBASE_SERVICE_ACCOUNT;
+    if (!raw) {
+      console.error('[og] FIREBASE_SERVICE_ACCOUNT is NOT defined in environment');
+      throw new Error('Missing FIREBASE_SERVICE_ACCOUNT');
     }
+
+    console.log('[og] Found FIREBASE_SERVICE_ACCOUNT. Attempting JSON parse...');
+    
+    // Normalize newlines in private key
+    const normalizedRaw = raw.replace(/\\n/g, '\n');
+    const serviceAccount = JSON.parse(normalizedRaw);
+    
+    console.log('[og] Parse SUCCESS. Project ID: %s', serviceAccount.project_id);
+
+    if (!admin.apps.length) {
+      admin.initializeApp({
+        credential: admin.credential.cert(serviceAccount)
+      });
+      console.log('[og] Firebase Admin Initialized SUCCESS');
+    }
+
     _db = admin.firestore();
     return _db;
-  } catch (err) {
-    console.error('[og] Firebase init failed:', err);
-    return null;
+  } catch (err: any) {
+    console.error('[og] CRITICAL INIT ERROR:', err.message);
+    throw err; // Propagate to handler
   }
 }
 
@@ -100,30 +112,39 @@ export default async function handler(req: Request) {
 
   try {
     // ── 1. Firestore Fetch Phase ───────────────────────────────────────────
-    console.log('[og] FETCH START: collection=posts slug=%s', slug);
-    const db = getDb();
-    if (!db) throw new Error('Firestore connection failed (Admin Init)');
+    let db;
+    try {
+      db = getDb();
+      if (!db) throw new Error('Firestore connection failed (Admin Init returned null)');
+    } catch (initErr: any) {
+      console.error('[og] Handler: Firebase Init Crash:', initErr.message);
+      return new Response(`CRITICAL INIT FAILURE: ${initErr.message}`, { status: 500 });
+    }
 
     let post: any = null;
     let traceData = { found: false, source: 'none', status: '' };
 
-    if (slug) {
-      // Trace: Field query
-      const q = await db.collection('posts').where('slug', '==', slug).limit(1).get();
-      console.log('[og] SNAPSHOT RECEIVED: empty=%s docs=%s', q.empty, q.docs.length);
-      
-      if (!q.empty) {
-        post = q.docs[0].data();
-        traceData = { found: true, source: 'slug_field', status: post.status };
-      } else {
-        // Trace: Doc ID fallback
-        console.log('[og] Not found by slug field, trying doc ID...');
-        const docSnap = await db.collection('posts').doc(slug).get();
-        if (docSnap.exists) {
-          post = docSnap.data();
-          traceData = { found: true, source: 'doc_id', status: post.status };
+    try {
+      if (slug) {
+        console.log('[og] FETCH START: collection=posts slug=%s', slug);
+        const q = await db.collection('posts').where('slug', '==', slug).limit(1).get();
+        console.log('[og] SNAPSHOT RECEIVED: empty=%s docs=%s', q.empty, q.docs.length);
+        
+        if (!q.empty) {
+          post = q.docs[0].data();
+          traceData = { found: true, source: 'slug_field', status: post.status };
+        } else {
+          console.log('[og] Not found by slug field, trying doc ID...');
+          const docSnap = await db.collection('posts').doc(slug).get();
+          if (docSnap.exists) {
+            post = docSnap.data();
+            traceData = { found: true, source: 'doc_id', status: post.status };
+          }
         }
       }
+    } catch (fetchErr: any) {
+      console.error('[og] Handler: Firebase Fetch Crash:', fetchErr.message);
+      return new Response(`FETCH FAILURE: ${fetchErr.message}`, { status: 500 });
     }
 
     console.log('[og] DOCUMENT VALIDATION: %j', traceData);
