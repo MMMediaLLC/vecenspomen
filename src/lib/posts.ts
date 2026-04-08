@@ -172,6 +172,23 @@ export const getPostBySlug = async (slug: string): Promise<MemorialPost | null> 
   return docSnap ? { ...(docSnap.data() as object), id: docSnap.id } as MemorialPost : null;
 };
 
+export const getRelatedPosts = async (identifier: string): Promise<MemorialPost[]> => {
+  if (isMock) {
+    return mockPosts.filter(p => 
+      (p.relatedToId === identifier || p.relatedToSlug === identifier) && 
+      p.status === 'Објавено'
+    );
+  }
+  
+  // For Real Firestore, we query the whole collection and filter locally for simplicity 
+  // (unless we want to add multiple queries, but given the scale, local filter is fine for now)
+  const allPosts = await getPosts();
+  return allPosts.filter(p => 
+    (p.relatedToId === identifier || p.relatedToSlug === identifier) && 
+    p.status === 'Објавено'
+  );
+};
+
 export const addGuestbookEntry = async (postId: string, entry: MemorialPost['guestbookEntries'][0]): Promise<void> => {
   if (isMock) {
     mockPosts = mockPosts.map(p => 

@@ -21,7 +21,7 @@ export const Step1: React.FC<Step1Props> = ({ selectedType, onSelect }) => {
         <button
           key={t.id}
           onClick={() => onSelect(t.id as PostType)}
-          className={`p-8 text-left border rounded-sm transition-all duration-300 group ${
+          className={`px-8 py-3 text-left border rounded-sm transition-all duration-300 group ${
             selectedType === t.id 
               ? 'bg-stone-900 border-stone-900 text-white shadow-xl' 
               : 'bg-white border-stone-200 hover:border-stone-400 text-stone-900'

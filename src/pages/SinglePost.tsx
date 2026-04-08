@@ -5,6 +5,9 @@ import { MemorialPost } from '../types';
 import { getPostById, getPostBySlug } from '../lib/posts';
 import { MemorialTemplate } from '../components/MemorialTemplate';
 import { Guestbook } from '../components/Guestbook';
+import { getRelatedPosts } from '../lib/posts';
+import { format } from 'date-fns';
+import { mk } from 'date-fns/locale';
 import { 
   ArrowLeft, Share2, Printer, Heart, 
   MessageSquare, Calendar, ChevronRight, 
@@ -20,6 +23,18 @@ export const SinglePost: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const [showShareMenu, setShowShareMenu] = useState(false);
   const [copySuccess, setCopySuccess] = useState(false);
+  const [relatedPosts, setRelatedPosts] = useState<MemorialPost[]>([]);
+
+  useEffect(() => {
+    if (post?.id || post?.slug) {
+      const fetchRelated = async () => {
+        const idToUse = post.id || post.slug;
+        const related = await getRelatedPosts(idToUse);
+        setRelatedPosts(related);
+      };
+      fetchRelated();
+    }
+  }, [post]);
 
   useEffect(() => {
     const fetchPost = async () => {
@@ -108,7 +123,12 @@ export const SinglePost: React.FC = () => {
         {post.shareImageUrl && <meta name="twitter:image" content={post.shareImageUrl} />}
       </Helmet>
 
-      <div className="bg-stone-50 border-t border-stone-100/80 min-h-screen pb-32 relative">
+      <div className="border-t border-stone-100/80 min-h-screen pb-32 relative" style={{ 
+        backgroundColor: '#f0ede8',
+        backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='60' height='60' viewBox='0 0 60 60'%3E%3Crect x='27' y='10' width='6' height='40' fill='%231c1917' opacity='0.06'/%3E%3Crect x='10' y='22' width='40' height='6' fill='%231c1917' opacity='0.06'/%3E%3Crect x='27' y='16' width='6' height='8' fill='%231c1917' opacity='0.06'/%3E%3C/svg%3E")`,
+        backgroundRepeat: 'repeat',
+        backgroundSize: '60px 60px'
+      }}>
         {/* Background Image Setup */}
         <div 
           className="fixed inset-0 z-0 bg-cover bg-center bg-no-repeat bg-fixed transform-gpu"
@@ -116,7 +136,7 @@ export const SinglePost: React.FC = () => {
         />
         
         {/* Soft overlay over the background image to ensure the card pops */}
-        <div className="fixed inset-0 z-0 bg-white/60 backdrop-blur-[1px]" />
+        <div className="fixed inset-0 z-0 backdrop-blur-[1px]" style={{ backgroundColor: 'rgba(240, 237, 232, 0.7)' }} />
 
         <div className="max-w-5xl mx-auto px-4 pt-4 md:pt-12 relative z-10">
           {/* Breadcrumbs / Navigation */}
@@ -207,6 +227,85 @@ export const SinglePost: React.FC = () => {
               <div className="shadow-[0_20px_50px_rgba(0,0,0,0.1)]">
                 <MemorialTemplate post={post} />
               </div>
+
+              {/* Action Buttons - Only for ТАЖНА ВЕСТ */}
+              {post.type === 'ТАЖНА ВЕСТ' && (
+                <div className="mt-12 flex flex-col sm:flex-row justify-center gap-4">
+                  <Link
+                    to={`/objavi?type=СОЧУВСТВО&fullName=${encodeURIComponent(post.fullName)}&relId=${post.id}&relSlug=${post.slug}`}
+                    className="flex-1 max-w-xs mx-auto sm:mx-0 flex items-center justify-center gap-2 py-4 px-6 border border-stone-800 text-stone-800 text-[11px] font-black uppercase tracking-widest hover:bg-stone-800 hover:text-white transition-all duration-300"
+                  >
+                    <Heart size={14} /> Изрази сочувство
+                  </Link>
+                  <Link
+                    to={`/objavi?type=ПОСЛЕДЕН ПОЗДРАВ&fullName=${encodeURIComponent(post.fullName)}&relId=${post.id}&relSlug=${post.slug}`}
+                    className="flex-1 max-w-xs mx-auto sm:mx-0 flex items-center justify-center gap-2 py-4 px-6 border border-stone-800 text-stone-800 text-[11px] font-black uppercase tracking-widest hover:bg-stone-800 hover:text-white transition-all duration-300"
+                  >
+                    <MessageSquare size={14} /> Испрати Последен поздрав
+                  </Link>
+                </div>
+              )}
+
+              {/* Related Posts Section (Condolences & Farewells) */}
+              {relatedPosts.length > 0 && (
+                <div className="mt-20 space-y-16">
+                  {/* Last Farewells Group */}
+                  {relatedPosts.filter(p => p.type === 'ПОСЛЕДЕН ПОЗДРАВ').length > 0 && (
+                    <div className="animate-in fade-in duration-1000">
+                      <h3 className="text-xl font-serif text-stone-900 mb-8 border-b border-stone-100 pb-4">Последни поздрави</h3>
+                      <div className="space-y-12">
+                        {relatedPosts
+                          .filter(p => p.type === 'ПОСЛЕДЕН ПОЗДРАВ')
+                          .map((relPost, idx) => (
+                            <div key={relPost.id} className="relative pl-0 md:pl-8 group">
+                              <div className="absolute left-0 top-0 bottom-0 w-px bg-stone-100 group-hover:bg-stone-300 transition-colors hidden md:block" />
+                              <div className="space-y-4">
+                                <p className="text-stone-700 font-light leading-relaxed italic text-lg">"{relPost.mainText}"</p>
+                                <div className="flex flex-col gap-1">
+                                  <span className="text-[10px] font-black uppercase tracking-[0.2em] text-stone-900">{relPost.senderName}</span>
+                                  <span className="text-[9px] uppercase tracking-widest text-stone-400 font-bold">
+                                    {format(new Date(relPost.createdAt), 'dd MMMM yyyy', { locale: mk })}
+                                  </span>
+                                </div>
+                              </div>
+                              {idx < relatedPosts.filter(p => p.type === 'ПОСЛЕДЕН ПОЗДРАВ').length - 1 && (
+                                <div className="h-px bg-stone-50 mt-12 w-1/3" />
+                              )}
+                            </div>
+                          ))}
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Condolences Group */}
+                  {relatedPosts.filter(p => p.type === 'СОЧУВСТВО').length > 0 && (
+                    <div className="animate-in fade-in duration-1000">
+                      <h3 className="text-xl font-serif text-stone-900 mb-8 border-b border-stone-100 pb-4">Сочувства</h3>
+                      <div className="space-y-12">
+                        {relatedPosts
+                          .filter(p => p.type === 'СОЧУВСТВО')
+                          .map((relPost, idx) => (
+                            <div key={relPost.id} className="relative pl-0 md:pl-8 group">
+                              <div className="absolute left-0 top-0 bottom-0 w-px bg-stone-100 group-hover:bg-stone-300 transition-colors hidden md:block" />
+                              <div className="space-y-4">
+                                <p className="text-stone-700 font-light leading-relaxed text-lg">"{relPost.mainText}"</p>
+                                <div className="flex flex-col gap-1">
+                                  <span className="text-[10px] font-black uppercase tracking-[0.2em] text-stone-900">{relPost.senderName}</span>
+                                  <span className="text-[9px] uppercase tracking-widest text-stone-400 font-bold">
+                                    {format(new Date(relPost.createdAt), 'dd MMMM yyyy', { locale: mk })}
+                                  </span>
+                                </div>
+                              </div>
+                              {idx < relatedPosts.filter(p => p.type === 'СОЧУВСТВО').length - 1 && (
+                                <div className="h-px bg-stone-50 mt-12 w-1/3" />
+                              )}
+                            </div>
+                          ))}
+                      </div>
+                    </div>
+                  )}
+                </div>
+              )}
 
                {/* Guestbook / Condolences Section */}
               <div className="mt-20">

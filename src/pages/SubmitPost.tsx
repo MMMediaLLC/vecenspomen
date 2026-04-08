@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { createLemonCheckout } from '../lib/payments';
 import { MemorialPost, PostType, PackageType } from '../types';
 import { Step1 } from '../components/SubmissionFlow/Step1';
@@ -21,16 +21,36 @@ interface SubmitPostProps {
 
 export const SubmitPost: React.FC<SubmitPostProps> = ({ onComplete, initialPost, isEditMode }) => {
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
   const [step, setStep] = useState(1);
   const [validationError, setValidationError] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isGeneratingOG, setIsGeneratingOG] = useState(false);
   
-  const [post, setPost] = useState<Partial<MemorialPost>>(initialPost || {
-    status: 'Во проверка',
-    createdAt: new Date().toISOString(),
-    photoUrl: DEFAULT_PHOTO,
-    guestbookEnabled: true,
+  const [post, setPost] = useState<Partial<MemorialPost>>(() => {
+    const type = searchParams.get('type') as PostType | null;
+    const fullName = searchParams.get('fullName') || '';
+    const relId = searchParams.get('relId') || '';
+    const relSlug = searchParams.get('relSlug') || '';
+
+    return {
+      ...(initialPost || {}),
+      status: 'Во проверка',
+      createdAt: new Date().toISOString(),
+      photoUrl: DEFAULT_PHOTO,
+      guestbookEnabled: true,
+      ...(type ? { type } : {}),
+      ...(fullName ? { fullName } : {}),
+      ...(relId ? { relatedToId: relId } : {}),
+      ...(relSlug ? { relatedToSlug: relSlug } : {}),
+    };
+  });
+
+  // Pre-advance to step 2 if type is pre-filled
+  useState(() => {
+    if (searchParams.get('type') && !isEditMode) {
+      setStep(2);
+    }
   });
 
   const updatePost = (data: Partial<MemorialPost>) => {

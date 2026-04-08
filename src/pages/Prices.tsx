@@ -44,12 +44,6 @@ export const Prices: React.FC = () => {
                   isPremium ? 'border-stone-900 bg-[#fdfbf6]' : 'border-stone-200'
                 }`}
               >
-                {isPremium && (
-                  <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-stone-900 text-white text-[9px] font-bold uppercase tracking-[0.3em] px-4 py-1.5 rounded-full ring-4 ring-stone-50">
-                    Препорачано
-                  </div>
-                )}
-
                 <div className="mb-6 md:mb-10 text-center">
                   <div className={`w-12 h-12 md:w-14 md:h-14 mx-auto mb-4 md:mb-6 flex items-center justify-center rounded-full transition-transform duration-700 group-hover:scale-110 ${
                     isPremium ? 'bg-stone-900 text-white' : 'bg-stone-50 text-stone-400'
@@ -79,7 +73,7 @@ export const Prices: React.FC = () => {
                   {isPremium && (
                     <li className="flex gap-4 text-sm text-stone-600 leading-tight">
                       <Check size={16} className="text-stone-900 shrink-0" />
-                      <span className="font-bold">Книга на сочувство</span>
+                      <span>Книга на сочувство</span>
                     </li>
                   )}
                 </ul>

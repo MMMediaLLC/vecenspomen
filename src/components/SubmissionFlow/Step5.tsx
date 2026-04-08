@@ -68,7 +68,7 @@ export const Step5: React.FC<Step5Props> = ({ post, selectedPackage, onSelect, u
                   </li>
                 ))}
                 {pkg.name === 'Истакнат' && (
-                  <li className="flex items-start gap-2 text-sm text-stone-900 leading-tight font-bold">
+                  <li className="flex items-start gap-2 text-sm text-stone-900 leading-tight">
                     <Check size={16} className="text-stone-900 mt-0.5 flex-shrink-0" />
                     <span>Книга на сочувство</span>
                   </li>
@@ -88,7 +88,7 @@ export const Step5: React.FC<Step5Props> = ({ post, selectedPackage, onSelect, u
       </div>
 
       {/* 2) SYMBOL SELECTOR FOR PREMIUM */}
-      {selectedPackage === 'Истакнат' && (
+      {selectedPackage === 'Истакнат' && post.type !== 'ПОСЛЕДЕН ПОЗДРАВ' && (
         <div className="space-y-4 md:space-y-6 pt-4 md:pt-8 border-t border-stone-100 animate-in fade-in slide-in-from-bottom-4 duration-500">
           <div className="text-center">
             <h3 className="text-lg md:text-xl font-serif text-stone-900 mb-1 md:mb-2">Изберете рамка за објавата</h3>

@@ -66,6 +66,9 @@ export interface MemorialPost {
   paidAt?: string;
   featuredUntil?: string;
   refundAt?: string;
+  // Link to a main memorial post (e.g. For condolences or farewells)
+  relatedToId?: string;
+  relatedToSlug?: string;
 }
 
 export interface City {
