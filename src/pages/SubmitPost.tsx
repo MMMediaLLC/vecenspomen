@@ -153,7 +153,11 @@ export const SubmitPost: React.FC<SubmitPostProps> = ({ onComplete, initialPost,
     setIsSubmitting(true);
     try {
       const tempId = isEditMode && post.id ? post.id : (crypto.randomUUID?.() || `post-${Date.now()}`);
-      const tempSlug = isEditMode && post.slug ? post.slug : generateSlug(post.fullName || 'memorial', post.deathYear);
+      // Always generate a fresh Latin slug — never reuse an existing Cyrillic slug
+      const isLatinSlug = (s: string) => /^[a-z0-9-]+$/.test(s);
+      const tempSlug = (isEditMode && post.slug && isLatinSlug(post.slug))
+        ? post.slug
+        : generateSlug(post.fullName || 'memorial', post.deathYear);
 
       // 1. Generate OG Image BEFORE final submission if possible
       // We need to render the template first (it's in the JSX below)

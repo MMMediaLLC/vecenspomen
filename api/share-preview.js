@@ -33,10 +33,28 @@ function getDb() {
   }
 }
 
-export default async function handler(req, res) {
-  const { slug } = req.query;
+/**
+ * Safely decode a slug that may have been percent-encoded once or twice.
+ * After migration all slugs are plain Latin, but this handles legacy URLs.
+ */
+function safeDecodeSlug(raw) {
+  if (!raw) return raw;
+  try {
+    const once = decodeURIComponent(raw);
+    // If the result still looks percent-encoded (legacy double-encode), decode again
+    if (once !== raw && /%[0-9A-Fa-f]{2}/.test(once)) {
+      try { return decodeURIComponent(once); } catch { return once; }
+    }
+    return once;
+  } catch {
+    return raw;
+  }
+}
 
-  if (!slug) {
+export default async function handler(req, res) {
+  const { slug: rawSlug } = req.query;
+
+  if (!rawSlug) {
     return serveGenericMeta(null, res);
   }
 
@@ -46,25 +64,31 @@ export default async function handler(req, res) {
   // at least gets a 200 with valid OG tags instead of a 500.
   if (!db) {
     console.warn('[Preview API] Firebase unavailable — serving generic fallback');
-    return serveGenericMeta(slug, res);
+    return serveGenericMeta(rawSlug, res);
   }
 
-  // Decode in case the middleware double-encoded the slug
-  const decodedSlug = decodeURIComponent(slug);
+  const slug = safeDecodeSlug(rawSlug);
+  console.log('[Preview API] slug raw=%s decoded=%s', rawSlug, slug);
 
   try {
     const postsRef = db.collection('posts');
 
-    // Try slug match first (decoded), then raw, then by doc ID
-    let q = await postsRef.where('slug', '==', decodedSlug).limit(1).get();
-    if (q.empty && decodedSlug !== slug) {
-      q = await postsRef.where('slug', '==', slug).limit(1).get();
+    // 1. Exact slug field match (handles both Latin and legacy Cyrillic slugs)
+    let q = await postsRef.where('slug', '==', slug).limit(1).get();
+
+    // 2. Try the raw value too in case decoding changed something unexpectedly
+    if (q.empty && rawSlug !== slug) {
+      q = await postsRef.where('slug', '==', rawSlug).limit(1).get();
     }
 
+    // 3. Fall back to Firestore doc ID
     if (q.empty) {
-      const doc = await postsRef.doc(decodedSlug).get();
-      if (!doc.exists) return serveGenericMeta(decodedSlug, res);
-      return serveMeta(doc.id, doc.data(), res);
+      const docSnap = await postsRef.doc(slug).get();
+      if (!docSnap.exists) {
+        console.warn('[Preview API] Post not found for slug:', slug);
+        return serveGenericMeta(slug, res);
+      }
+      return serveMeta(docSnap.id, docSnap.data(), res);
     }
 
     return serveMeta(q.docs[0].id, q.docs[0].data(), res);
