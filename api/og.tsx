@@ -10,6 +10,7 @@ export default function handler(req: Request) {
   const dYear   = searchParams.get('deathYear') || '';
   const city    = searchParams.get('city')    || '';
   const message = searchParams.get('message') || '';
+  const photo   = searchParams.get('photo')   || '';
 
   const years = [bYear, dYear].filter(Boolean).join(' – ');
 
@@ -63,6 +64,42 @@ export default function handler(req: Request) {
           "{message}"
         </div>
 
+        {/* Photo Section */}
+        <div style={{
+          width: '300px',
+          height: '400px',
+          display: 'flex',
+          background: '#292524',
+          position: 'absolute',
+          right: '80px',
+          top: '80px',
+        }}>
+          {photo ? (
+            <img 
+              src={photo} 
+              style={{ 
+                width: '100%', 
+                height: '100%', 
+                objectFit: 'cover',
+                border: '8px solid #ffffff',
+                display: 'flex',
+              }} 
+            />
+          ) : (
+            <div style={{ 
+              width: '100%', 
+              height: '100%', 
+              background: '#44403c', 
+              border: '8px solid #ffffff',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+            }}>
+              <div style={{ width: '80px', height: '80px', borderRadius: '50%', background: '#57534e', display: 'flex' }} />
+            </div>
+          )}
+        </div>
+
         {/* Footer (Trace Info) */}
         <div style={{ 
           position: 'absolute', 
@@ -73,7 +110,7 @@ export default function handler(req: Request) {
           alignItems: 'flex-end',
           gap: '5px'
         }}>
-           <span style={{ fontSize: '12px', color: '#44403c', letterSpacing: '2px' }}>PHASE 3: STATIC UI TEST</span>
+           <span style={{ fontSize: '12px', color: '#44403c', letterSpacing: '2px' }}>PHASE 5: REAL DATA + PHOTO</span>
            <span style={{ fontSize: '16px', fontWeight: 'bold', color: '#B08D57' }}>SLUG: {slug}</span>
         </div>
       </div>

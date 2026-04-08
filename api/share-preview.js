@@ -164,6 +164,7 @@ function serveMeta(id, post, baseUrl, res) {
     style:     post.selectedFrameStyle || 'elegant',
     package:   post.package || 'Основен',
     message:   post.aiRefinedText || post.mainText || '',
+    photo:     post.photoUrl || '',
   });
 
   const url = `${baseUrl}/spomen/${post.slug || id}`;
