@@ -146,131 +146,54 @@ export default async function handler(req: Request) {
     return new ImageResponse(
       (
         <div style={{
-          width: 1200, height: 630, display: 'flex',
+          width: 1200, height: 630, display: 'flex', flexDirection: 'row',
           fontFamily: serif, position: 'relative', overflow: 'hidden',
-          background: '#ffffff', // base fallback
+          background: '#1c1917', color: '#ffffff', // Dark debug background
         }}>
-          {/* Diagnostic Overlay (Top-Left) */}
+          {/* ── LEFT: PHOTO PLACEHOLDER ── */}
           <div style={{
-            position: 'absolute', top: 35, left: 35, zIndex: 100,
-            background: 'rgba(0,0,0,0.85)', color: '#fff', padding: '10px 15px',
-            fontSize: 12, display: 'flex', flexDirection: 'column', gap: 2,
-            border: '1px solid #B08D57',
+            width: 400, height: 630, display: 'flex', alignItems: 'center', justifyContent: 'center',
+            borderRight: '2px solid #B08D57', background: '#292524',
           }}>
-            <div style={{ display: 'flex' }}>DEBUG: ACTIVE</div>
-            <div style={{ display: 'flex' }}>PKGR: {pkg}</div>
-            <div style={{ display: 'flex' }}>STAT: {status || 'N/A'}</div>
-            <div style={{ display: 'flex' }}>STYL: {styleKey}</div>
+            <div style={{
+              width: 250, height: 350, border: '5px solid #ffffff',
+              display: 'flex', alignItems: 'center', justifyContent: 'center',
+              flexDirection: 'column', color: '#B08D57',
+            }}>
+              <span style={{ fontSize: 24, fontWeight: 'bold' }}>PHOTO</span>
+              <span style={{ fontSize: 16 }}>PLACEHOLDER</span>
+            </div>
           </div>
 
-          <Frame />
-
+          {/* ── RIGHT: DATA RENDER ── */}
           <div style={{
-            display: 'flex', width: '100%', height: '100%',
-            padding: '70px 80px', boxSizing: 'border-box',
+            flex: 1, display: 'flex', flexDirection: 'column',
+            justifyContent: 'center', padding: '0 60px',
           }}>
-            {/* ── LEFT: Photo ── */}
-            <div style={{
-              width: '35%', height: '100%', display: 'flex',
-              alignItems: 'center', justifyContent: 'center', flexShrink: 0,
-            }}>
-              <div style={{ position: 'relative', display: 'flex' }}>
-                <div style={{
-                  position: 'absolute', inset: 0, background: 'rgba(0,0,0,0.05)',
-                  transform: 'rotate(2deg) scale(1.05)', display: 'flex',
-                }} />
-                {photo ? (
-                  <img
-                    src={photo}
-                    style={{
-                      width: 250, height: 350, objectFit: 'cover',
-                      border: '10px solid #ffffff', boxShadow: '0 20px 40px rgba(0,0,0,0.15)',
-                      display: 'flex', position: 'relative',
-                    }}
-                  />
-                ) : (
-                  <div style={{
-                    width: 250, height: 350, background: STONE_100,
-                    border: '10px solid #ffffff', display: 'flex',
-                    alignItems: 'center', justifyContent: 'center',
-                  }}>
-                    <div style={{ width: 60, height: 60, background: STONE_200, borderRadius: '50%', display: 'flex' }} />
-                  </div>
-                )}
-              </div>
+            <h1 style={{ fontSize: 80, margin: '0 0 20px 0', color: '#ffffff', display: 'flex' }}>
+              FOUND POST
+            </h1>
+            
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 10, fontSize: 32 }}>
+               <div style={{ display: 'flex' }}>
+                  <span style={{ color: '#B08D57', marginRight: 20 }}>NAME:</span> {name || 'N/A'}
+               </div>
+               <div style={{ display: 'flex' }}>
+                  <span style={{ color: '#B08D57', marginRight: 20 }}>SLUG:</span> {searchParams.get('slug') || 'asda'}
+               </div>
+               <div style={{ display: 'flex' }}>
+                  <span style={{ color: '#B08D57', marginRight: 20 }}>STATUS:</span> {status || 'N/A'}
+               </div>
+               <div style={{ display: 'flex' }}>
+                  <span style={{ color: '#B08D57', marginRight: 20 }}>STYLE:</span> {styleKey}
+               </div>
             </div>
 
-            {/* Vertical Divider */}
-            <div style={{ width: 1, background: STONE_100, margin: '20px 60px', display: 'flex' }} />
-
-            {/* ── RIGHT: Content ── */}
-            <div style={{
-              flex: 1, display: 'flex', flexDirection: 'column',
-              justifyContent: 'center', minWidth: 0,
+            <div style={{ 
+              marginTop: 60, padding: 20, border: '1px solid #B08D57', 
+              fontSize: 20, color: '#B08D57', display: 'flex' 
             }}>
-              {/* Header Label */}
-              <div style={{ display: 'flex', alignItems: 'center', gap: 15, marginBottom: 20 }}>
-                <div style={{ width: 40, height: 2, background: style.symbol ? style.borderColor : STONE_200, display: 'flex' }} />
-                <span style={{ fontSize: 13, letterSpacing: 5, color: STONE_400, textTransform: 'uppercase' }}>
-                  Во Вечен Спомен
-                </span>
-              </div>
-
-              {/* Personal Info */}
-              <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
-                <div style={{
-                  fontSize: name.length > 20 ? 44 : 54,
-                  color: STONE_900, lineHeight: 1.1, fontWeight: 700, display: 'flex',
-                }}>
-                  {name || 'Вечен Спомен'}
-                </div>
-                
-                {years && (
-                  <div style={{ fontSize: 24, color: STONE_500, letterSpacing: 6, fontWeight: 400, display: 'flex' }}>
-                    {years}
-                  </div>
-                )}
-                
-                {city && (
-                  <div style={{ fontSize: 12, color: STONE_400, letterSpacing: 4, textTransform: 'uppercase', display: 'flex' }}>
-                    {city}
-                  </div>
-                )}
-              </div>
-
-              {/* Message Section */}
-              <div style={{ flex: 1, display: 'flex', flexDirection: 'column', marginTop: 30, gap: 12, minHeight: 0 }}>
-                <div style={{ height: 1, background: STONE_100, width: '100%', display: 'flex' }} />
-                
-                {message ? (
-                  <div style={{
-                    fontSize: message.length > 140 ? 16 : 19,
-                    color: STONE_900, fontFamily: serif, fontStyle: 'italic',
-                    lineHeight: 1.5, flex: 1, overflow: 'hidden', display: 'flex',
-                  }}>
-                    "{message.slice(0, 240)}{message.length > 240 ? '...' : ''}"
-                  </div>
-                ) : <div style={{ flex: 1, display: 'flex' }} />}
-
-                {/* Footer Attribution */}
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', paddingTop: 10 }}>
-                  {lovedBy && (
-                    <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
-                      <span style={{ fontSize: 10, letterSpacing: 2, color: STONE_400, textTransform: 'uppercase', display: 'flex' }}>
-                        Со љубов и почит од:
-                      </span>
-                      <span style={{ fontSize: 20, color: STONE_900, fontWeight: 400, display: 'flex' }}>
-                        {lovedBy.slice(0, 35)}{lovedBy.length > 35 ? '...' : ''}
-                      </span>
-                    </div>
-                  )}
-                  
-                  <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: 2 }}>
-                     <span style={{ fontSize: 9, letterSpacing: 1, color: STONE_400, display: 'flex' }}>ОБЈАВЕНО НА</span>
-                     <span style={{ fontSize: 18, fontWeight: 700, color: STONE_900, letterSpacing: 1, display: 'flex' }}>VECENSPOMEN.MK</span>
-                  </div>
-                </div>
-              </div>
+              MINIMAL RENDER MODE: ALL ADVANCED CSS DISABLED
             </div>
           </div>
         </div>
