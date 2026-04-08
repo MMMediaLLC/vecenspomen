@@ -1,9 +1,35 @@
 import { ImageResponse } from '@vercel/og';
+import admin from 'firebase-admin';
 
-export const config = { runtime: 'edge' };
+// ── Runtime Config: nodejs is required for firebase-admin execution tracing ──
+export const config = { runtime: 'nodejs' };
+
+// ── Firebase Admin lazy singleton ───────────────────────────────────────────
+let _db: admin.firestore.Firestore | null = null;
+
+function getDb() {
+  if (_db) return _db;
+  const raw = process.env.FIREBASE_SERVICE_ACCOUNT;
+  if (!raw) {
+    console.error('[og] FIREBASE_SERVICE_ACCOUNT is missing');
+    return null;
+  }
+  try {
+    const serviceAccount = JSON.parse(raw.replace(/\\n/g, '\n'));
+    if (!admin.apps.length) {
+      admin.initializeApp({ credential: admin.credential.cert(serviceAccount) });
+      console.log('[og] Firebase initialized');
+    }
+    _db = admin.firestore();
+    return _db;
+  } catch (err) {
+    console.error('[og] Firebase init failed:', err);
+    return null;
+  }
+}
 
 // ── Design Tokens ───────────────────────────────────────────────────────────
-const GOLD        = '#B08D57'; // Consistent with index.css
+const GOLD        = '#B08D57';
 const CREAM       = '#F7F4EB';
 const STONE_900   = '#1c1917';
 const STONE_800   = '#292524';
@@ -17,11 +43,11 @@ interface StyleDef {
   borderColor: string;
   bg:          string;
   symbolColor: string;
-  double:      boolean;  // double-line border
-  dashed:      boolean;  // inner dashed ring
-  arcs:        boolean;  // rounded corner arcs
-  diamonds:    boolean;  // rotated-square corner diamonds
-  squares:     boolean;  // rotated square corner badges
+  double:      boolean;
+  dashed:      boolean;
+  arcs:        boolean;
+  diamonds:    boolean;
+  squares:     boolean;
 }
 
 const STYLES: Record<string, StyleDef> = {
@@ -33,7 +59,7 @@ const STYLES: Record<string, StyleDef> = {
   clean:    { symbol: '',  borderColor: STONE_400, bg: '#ffffff', symbolColor: '',        double: false, dashed: false, arcs: false, diamonds: false, squares: false },
 };
 
-async function fetchWithTimeout(url: string, timeout = 2000): Promise<ArrayBuffer | null> {
+async function fetchWithTimeout(url: string, timeout = 2500): Promise<ArrayBuffer | null> {
   const controller = new AbortController();
   const id = setTimeout(() => controller.abort(), timeout);
   try {
@@ -48,109 +74,120 @@ async function fetchWithTimeout(url: string, timeout = 2000): Promise<ArrayBuffe
 }
 
 export default async function handler(req: Request) {
+  const { searchParams } = new URL(req.url);
+  const slug = searchParams.get('slug') || '';
+  const mode = searchParams.get('mode') || ''; // e.g. 'trace'
+  const isHardcodedTest = searchParams.get('test') === 'true' || searchParams.get('name') === 'TEST OG';
+
+  console.log('[og] handler started. slug=%s mode=%s', slug, mode);
+
+  // ── Hardcoded Test Path (Zero dependencies, bypasses fetch) ───────────────
+  if (isHardcodedTest) {
+    console.log('[og] Returning hardcoded TEST OG');
+    return new ImageResponse(
+      (
+        <div style={{
+          width: 1200, height: 630, background: '#1c1917', border: '20px solid #B08D57',
+          display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', color: '#ffffff',
+        }}>
+          <h1 style={{ fontSize: 120, margin: 0 }}>TEST OG</h1>
+          <p style={{ fontSize: 40, color: '#B08D57' }}>RENDER TREE IS ALIVE (Hardcoded)</p>
+        </div>
+      ),
+      { width: 1200, height: 630 }
+    );
+  }
+
   try {
-    const { searchParams } = new URL(req.url);
-    const name      = searchParams.get('name')      || '';
-    const birthYear = searchParams.get('birthYear') || '';
-    const deathYear = searchParams.get('deathYear') || '';
-    const city      = searchParams.get('city')      || '';
-    const photo     = searchParams.get('photo')     || '';
-    const lovedBy   = searchParams.get('lovedBy')   || '';
-    const pkg       = searchParams.get('package')   || 'Основен';
-    const message   = searchParams.get('message')   || '';
-    const status    = searchParams.get('status')    || '';
-    const styleKeyParam = searchParams.get('style') || '';
-    const isTest    = searchParams.get('test') === 'true' || name === 'TEST OG' || name === 'Вечен Спомен';
+    // ── 1. Firestore Fetch Phase ───────────────────────────────────────────
+    console.log('[og] FETCH START: collection=posts slug=%s', slug);
+    const db = getDb();
+    if (!db) throw new Error('Firestore connection failed (Admin Init)');
 
-    console.log('[og] handler started. name=%s pkg=%s status=%s', name, pkg, status);
+    let post: any = null;
+    let traceData = { found: false, source: 'none', status: '' };
 
-    // ── Pre-fetch Test Mode Render (Garanteed Visible) ───────────────────
-    if (isTest && name === 'TEST OG') {
+    if (slug) {
+      // Trace: Field query
+      const q = await db.collection('posts').where('slug', '==', slug).limit(1).get();
+      console.log('[og] SNAPSHOT RECEIVED: empty=%s docs=%s', q.empty, q.docs.length);
+      
+      if (!q.empty) {
+        post = q.docs[0].data();
+        traceData = { found: true, source: 'slug_field', status: post.status };
+      } else {
+        // Trace: Doc ID fallback
+        console.log('[og] Not found by slug field, trying doc ID...');
+        const docSnap = await db.collection('posts').doc(slug).get();
+        if (docSnap.exists) {
+          post = docSnap.data();
+          traceData = { found: true, source: 'doc_id', status: post.status };
+        }
+      }
+    }
+
+    console.log('[og] DOCUMENT VALIDATION: %j', traceData);
+
+    // ── 2. Forced Trace Return Branch ──────────────────────────────────────
+    if (mode === 'trace' && post) {
+      console.log('[og] TRACE SUCCESS branch triggered');
       return new ImageResponse(
         (
           <div style={{
-            width: 1200, height: 630, background: '#1c1917', border: '20px solid #B08D57',
-            display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', color: '#ffffff',
+            width: 1200, height: 630, background: '#000000',
+            display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#00ff00',
           }}>
-            <h1 style={{ fontSize: 120, margin: 0 }}>TEST OG</h1>
-            <p style={{ fontSize: 40, color: '#B08D57' }}>RENDER TREE IS ALIVE</p>
+            <h1 style={{ fontSize: 100 }}>FETCH SUCCESS</h1>
+            <p style={{ fontSize: 30 }}>Status: {post.status} | Slug: {slug}</p>
           </div>
         ),
         { width: 1200, height: 630 }
       );
     }
 
-    // fallback style logic
-    let styleKey = styleKeyParam || 'clean';
-    if (pkg === 'Основен') styleKey = 'clean';
-    if (styleKey === 'klasicen') styleKey = 'elegant';
-    const style = STYLES[styleKey] ?? STYLES.clean;
-
-    // ── Load Fonts ──────────────────────────────────────────────────────────
+    // ── 3. Data Extraction (Watch for silent errors) ───────────────────────
+    const name      = post?.fullName || 'Вечен Спомен';
+    const birthYear = post?.birthYear || '';
+    const deathYear = post?.deathYear || '';
+    const city      = post?.city || '';
+    const lovedBy   = post?.familyNote || post?.senderName || '';
+    const pkg       = post?.package || 'Основен';
+    const message   = post?.aiRefinedText || post?.mainText || '';
+    const status    = post?.status || '';
+    const styleKey  = (pkg === 'Основен' ? 'clean' : post?.selectedFrameStyle) || 'clean';
+    
+    // ── 4. Font Loading Phase ──────────────────────────────────────────────
+    console.log('[og] FONT FETCH START');
     const [fontNormal, fontBold] = await Promise.all([
       fetchWithTimeout('https://cdn.jsdelivr.net/npm/@fontsource/noto-serif/files/noto-serif-cyrillic-400-normal.woff2'),
       fetchWithTimeout('https://cdn.jsdelivr.net/npm/@fontsource/noto-serif/files/noto-serif-cyrillic-700-normal.woff2'),
     ]);
+    console.log('[og] FONT FETCH DONE: normal=%s bold=%s', !!fontNormal, !!fontBold);
 
-    const fonts: ConstructorParameters<typeof ImageResponse>[1]['fonts'] = [];
+    const fonts: any[] = [];
     if (fontNormal) fonts.push({ name: 'NotoSerif', data: fontNormal, weight: 400, style: 'normal' });
     if (fontBold)   fonts.push({ name: 'NotoSerif', data: fontBold,   weight: 700, style: 'normal' });
-
     const serif = fonts.length ? 'NotoSerif' : 'serif';
-    const years = [birthYear, deathYear].filter(Boolean).join(' – ');
 
-    // ── Components ──────────────────────────────────────────────────────────
-    const Frame = () => {
-      const bc = style.borderColor;
-      const GAP = 24;
-      const INN = GAP + 6;
-
-      return (
-        <div style={{ position: 'absolute', inset: 0, display: 'flex', pointerEvents: 'none' }}>
-          {/* Main Content Background */}
-          <div style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, background: style.bg, display: 'flex' }} />
-          
-          {/* Primary border */}
-          <div style={{
-            position: 'absolute', top: GAP, left: GAP, right: GAP, bottom: GAP,
-            border: `${style.double ? '2.5px' : '1.5px'} solid ${bc}${style.symbol ? '' : '80'}`,
-            display: 'flex',
-          }} />
-
-          {/* Arcs (Orthodox) */}
-          {style.arcs && (
-            <div style={{ position: 'absolute', inset: GAP, display: 'flex' }}>
-              <div style={{ position: 'absolute', top: 8, left: 8, width: 44, height: 44, borderTop: `2px solid ${bc}`, borderLeft: `2px solid ${bc}`, borderTopLeftRadius: 44, display: 'flex' }} />
-              <div style={{ position: 'absolute', top: 8, right: 8, width: 44, height: 44, borderTop: `2px solid ${bc}`, borderRight: `2px solid ${bc}`, borderTopRightRadius: 44, display: 'flex' }} />
-              <div style={{ position: 'absolute', bottom: 8, left: 8, width: 44, height: 44, borderBottom: `2px solid ${bc}`, borderLeft: `2px solid ${bc}`, borderBottomLeftRadius: 44, display: 'flex' }} />
-              <div style={{ position: 'absolute', bottom: 8, right: 8, width: 44, height: 44, borderBottom: `2px solid ${bc}`, borderRight: `2px solid ${bc}`, borderBottomRightRadius: 44, display: 'flex' }} />
-            </div>
-          )}
-
-          {/* Top Center Symbol */}
-          {style.symbol && (
-            <div style={{
-              position: 'absolute', top: GAP - 24, left: '50%', transform: 'translateX(-50%)',
-              background: style.bg, paddingLeft: 20, paddingRight: 20,
-              display: 'flex', alignItems: 'center', justifyContent: 'center',
-            }}>
-              <span style={{ fontSize: 42, color: style.symbolColor, fontFamily: serif, lineHeight: 1 }}>
-                {style.symbol}
-              </span>
-            </div>
-          )}
-        </div>
-      );
-    };
-
+    // ── 5. Minimal Data Render (No complex CSS, No transforms) ─────────────
+    console.log('[og] FINAL RENDER START');
     return new ImageResponse(
       (
         <div style={{
           width: 1200, height: 630, display: 'flex', flexDirection: 'row',
           fontFamily: serif, position: 'relative', overflow: 'hidden',
-          background: '#1c1917', color: '#ffffff', // Dark debug background
+          background: '#1c1917', color: '#ffffff',
         }}>
-          {/* ── LEFT: PHOTO PLACEHOLDER ── */}
+          {/* Diagnostic Overlay */}
+          <div style={{
+            position: 'absolute', top: 20, right: 20, background: 'rgba(0,255,0,0.1)',
+            padding: '5px 10px', fontSize: 12, border: '1px solid #00ff00', color: '#00ff00',
+            display: 'flex'
+          }}>
+            SYSTEM: NODEJS | TRACE: ACTIVE
+          </div>
+
+          {/* LEFT: Placeholder */}
           <div style={{
             width: 400, height: 630, display: 'flex', alignItems: 'center', justifyContent: 'center',
             borderRight: '2px solid #B08D57', background: '#292524',
@@ -165,57 +202,48 @@ export default async function handler(req: Request) {
             </div>
           </div>
 
-          {/* ── RIGHT: DATA RENDER ── */}
-          <div style={{
-            flex: 1, display: 'flex', flexDirection: 'column',
-            justifyContent: 'center', padding: '0 60px',
-          }}>
-            <h1 style={{ fontSize: 80, margin: '0 0 20px 0', color: '#ffffff', display: 'flex' }}>
-              FOUND POST
+          {/* RIGHT: Content */}
+          <div style={{ flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'center', padding: '0 60px' }}>
+            <h1 style={{ fontSize: 80, margin: '0 0 10px 0', display: 'flex' }}>
+              {post ? 'FOUND POST' : 'POST NOT FOUND'}
             </h1>
             
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 10, fontSize: 32 }}>
-               <div style={{ display: 'flex' }}>
-                  <span style={{ color: '#B08D57', marginRight: 20 }}>NAME:</span> {name || 'N/A'}
-               </div>
-               <div style={{ display: 'flex' }}>
-                  <span style={{ color: '#B08D57', marginRight: 20 }}>SLUG:</span> {searchParams.get('slug') || 'asda'}
-               </div>
-               <div style={{ display: 'flex' }}>
-                  <span style={{ color: '#B08D57', marginRight: 20 }}>STATUS:</span> {status || 'N/A'}
-               </div>
-               <div style={{ display: 'flex' }}>
-                  <span style={{ color: '#B08D57', marginRight: 20 }}>STYLE:</span> {styleKey}
-               </div>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 8, fontSize: 32 }}>
+               <div style={{ display: 'flex' }}><span style={{ color: GOLD, width: 140 }}>NAME:</span> {name}</div>
+               <div style={{ display: 'flex' }}><span style={{ color: GOLD, width: 140 }}>SLUG:</span> {slug}</div>
+               <div style={{ display: 'flex' }}><span style={{ color: GOLD, width: 140 }}>STATUS:</span> {status || 'N/A'}</div>
+               <div style={{ display: 'flex' }}><span style={{ color: GOLD, width: 140 }}>STYLE:</span> {styleKey}</div>
             </div>
 
-            <div style={{ 
-              marginTop: 60, padding: 20, border: '1px solid #B08D57', 
-              fontSize: 20, color: '#B08D57', display: 'flex' 
-            }}>
-              MINIMAL RENDER MODE: ALL ADVANCED CSS DISABLED
-            </div>
+            {post && (
+               <div style={{ marginTop: 40, borderTop: `1px solid ${STONE_800}`, paddingTop: 20, display: 'flex', flexDirection: 'column' }}>
+                  <span style={{ fontSize: 16, color: STONE_500, textTransform: 'uppercase', letterSpacing: 2 }}>Trace Metadata</span>
+                  <span style={{ fontSize: 14, color: STONE_400 }}>Source: {traceData.source} | Package: {pkg}</span>
+               </div>
+            )}
           </div>
         </div>
       ),
       { width: 1200, height: 630, fonts }
     );
-  } catch (err) {
-     console.error('[og] handler critical failure:', err);
-     // Ultimate fallback: branded card, never blank
-     return new ImageResponse(
-       <div style={{ 
-         width: 1200, height: 630, background: CREAM, border: `12px solid ${GOLD}`,
-         display: 'flex', alignItems: 'center', justifyContent: 'center', flexDirection: 'column',
-         fontFamily: 'serif', padding: 80, boxSizing: 'border-box'
-       }}>
-         <div style={{ width: 100, height: 2, background: GOLD, marginBottom: 40, display: 'flex' }} />
-         <h1 style={{ fontSize: 80, color: STONE_800, margin: 0, textAlign: 'center' }}>Вечен Спомен</h1>
-         <p style={{ fontSize: 24, color: STONE_500, letterSpacing: 4, marginTop: 20 }}>МЕМОРИЈАЛЕН ПОРТАЛ</p>
-         <div style={{ flex: 1, display: 'flex' }} />
-         <span style={{ fontSize: 20, fontWeight: 'bold', color: STONE_800 }}>VECENSPOMEN.MK</span>
-       </div>,
-       { width: 1200, height: 630 }
-     );
+
+  } catch (err: any) {
+    console.error('[og] CRITICAL ERROR:', err.message);
+    return new ImageResponse(
+      (
+        <div style={{
+          width: 1200, height: 630, background: '#ff0000',
+          display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
+          color: '#ffffff', padding: 60, textAlign: 'center'
+        }}>
+          <h1 style={{ fontSize: 100, margin: 0 }}>OG ERROR</h1>
+          <p style={{ fontSize: 32, marginTop: 20, maxWidth: 1000 }}>{err.message}</p>
+          <div style={{ marginTop: 40, fontSize: 18, color: 'rgba(255,255,255,0.7)' }}>
+            Stack: {err.stack?.split('\n')[0]}
+          </div>
+        </div>
+      ),
+      { width: 1200, height: 630 }
+    );
   }
 }

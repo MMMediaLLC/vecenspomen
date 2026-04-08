@@ -153,18 +153,9 @@ function serveMeta(id, post, baseUrl, res) {
   const description = post.introText
     || `Меморијална објава за ${post.fullName}${cityPart}. ${post.mainText || ''}`.trim();
 
-  // Always generate the OG image via /api/og with the post's actual data.
+  // Generate the OG image via /api/og?slug=...
   const image = ogImageUrl(baseUrl, {
-    name:      post.fullName,
-    birthYear: post.birthYear,
-    deathYear: post.deathYear || (post.dateOfDeath ? new Date(post.dateOfDeath).getFullYear() : ''),
-    city:      post.city,
-    lovedBy:   post.familyNote || post.senderName,
-    photo:     post.photoUrl || '',
-    style:     post.selectedFrameStyle || 'elegant',
-    package:   post.package || 'Основен',
-    message:   post.aiRefinedText || post.mainText || '',
-    status:    post.status || '',
+    slug:      post.slug || id,
   });
 
   const url = `${baseUrl}/spomen/${post.slug || id}`;
