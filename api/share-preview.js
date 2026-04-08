@@ -13,13 +13,11 @@ function getDb() {
   }
 
   try {
-    // ✅ FIX: "Bad control character in JSON" happens because Vercel env vars
-    // store the private_key with literal \n instead of real newlines.
-    // We normalise ALL escape sequences before parsing.
+    // FIX: Normalize literal and escaped newlines in the private key
     const normalised = raw
-      .replace(/\\n/g, '\n')   // literal \n  → newline
-      .replace(/\\r/g, '\r')   // literal \r  → carriage return
-      .replace(/\\t/g, '\t');  // literal \t  → tab (rare but safe)
+      .replace(/\\n/g, '\n')
+      .replace(/\\r/g, '\r')
+      .replace(/\\t/g, '\t');
 
     const serviceAccount = JSON.parse(normalised);
 
@@ -73,19 +71,16 @@ export default async function handler(req, res) {
   }
 
   const slug = safeDecodeSlug(rawSlug);
-  console.log('[Preview API] slug raw=%s decoded=%s', rawSlug, slug);
 
   try {
     const postsRef = db.collection('posts');
 
     // 1. Exact slug field match
     let q = await postsRef.where('slug', '==', slug).limit(1).get();
-    console.log('[Preview API] Query slug==%s → %d docs', slug, q.size);
 
     // 2. Try raw value if decoding changed it
     if (q.empty && rawSlug !== slug) {
       q = await postsRef.where('slug', '==', rawSlug).limit(1).get();
-      console.log('[Preview API] Query slug==%s (raw) → %d docs', rawSlug, q.size);
     }
 
     // 3. Fall back to doc ID
@@ -95,12 +90,10 @@ export default async function handler(req, res) {
         console.warn('[Preview API] Post not found for slug/ID:', slug);
         return serveGenericMeta(slug, baseUrl, res);
       }
-      console.log('[Preview API] Found by doc ID:', docSnap.id);
       return serveMeta(docSnap.id, docSnap.data(), baseUrl, res);
     }
 
     const postDoc = q.docs[0];
-    console.log('[Preview API] Found by slug field: %s fullName=%s', postDoc.id, postDoc.data().fullName);
     return serveMeta(postDoc.id, postDoc.data(), baseUrl, res);
 
   } catch (err) {
@@ -108,8 +101,6 @@ export default async function handler(req, res) {
     return serveGenericMeta(slug, baseUrl, res);
   }
 }
-
-// ─── Helpers ─────────────────────────────────────────────────────────────────
 
 function getBaseUrl(req) {
   if (process.env.PUBLIC_SITE_URL) {
@@ -122,6 +113,7 @@ function getBaseUrl(req) {
 
 function ogImageUrl(baseUrl, params = {}) {
   const base = `${baseUrl}/api/og`;
+  // FIX: Truncate every param value to 200 chars for safety
   const qs = Object.entries(params)
     .filter(([, v]) => v != null && v !== '')
     .map(([k, v]) => `${k}=${encodeURIComponent(String(v).slice(0, 200))}`)
@@ -130,10 +122,10 @@ function ogImageUrl(baseUrl, params = {}) {
 }
 
 function serveGenericMeta(slug, baseUrl, res) {
-  const title = 'Вечен Спомен — Меморијален портал';
+  const title       = 'Вечен Спомен — Меморијален портал';
   const description = 'Достоинствени меморијални објави за починати. Последни поздрави, сочувства и пригодни пораки.';
-  const image = ogImageUrl(baseUrl, { name: 'Вечен Спомен' });
-  const url = slug ? `${baseUrl}/spomen/${slug}` : baseUrl;
+  const image       = ogImageUrl(baseUrl, { name: 'Вечен Спомен' });
+  const url         = slug ? `${baseUrl}/spomen/${slug}` : baseUrl;
 
   res.setHeader('Content-Type', 'text/html');
   res.setHeader('Cache-Control', 'public, max-age=60');
@@ -141,29 +133,29 @@ function serveGenericMeta(slug, baseUrl, res) {
 }
 
 function serveMeta(id, post, baseUrl, res) {
-  const years = [post.birthYear, post.deathYear].filter(Boolean).join(' – ');
+  const years     = [post.birthYear, post.deathYear].filter(Boolean).join(' – ');
   const yearsPart = years ? ` (${years})` : '';
-  const cityPart = post.city ? ` од ${post.city}` : '';
+  const cityPart  = post.city ? ` од ${post.city}` : '';
 
-  const title = `Во Вечен Спомен — ${post.fullName}${yearsPart}`;
+  const title       = `Во Вечен Спомен — ${post.fullName}${yearsPart}`;
   const description = (
     post.introText ||
     `Меморијална објава за ${post.fullName}${cityPart}. ${post.mainText || ''}`.trim()
   ).slice(0, 300);
 
   const image = ogImageUrl(baseUrl, {
-    slug: post.slug || id,
-    name: post.fullName,
+    slug:      post.slug || id,
+    name:      post.fullName,
     birthYear: post.birthYear,
     deathYear: post.deathYear || (post.dateOfDeath ? new Date(post.dateOfDeath).getFullYear() : ''),
-    city: post.city,
-    lovedBy: post.familyNote || post.senderName,
-    style: post.selectedFrameStyle || 'elegant',
-    package: post.package || 'Основен',
-    message: post.aiRefinedText || post.mainText || '',
-    photo: post.photoUrl || '',
-    type: post.type || 'ТАЖНА ВЕСТ',
-    intro: post.introText || '',
+    city:      post.city,
+    lovedBy:   post.familyNote || post.senderName,
+    style:     post.selectedFrameStyle || 'elegant',
+    package:   post.package || 'Основен',
+    message:   post.aiRefinedText || post.mainText || '',
+    photo:     post.photoUrl || '',
+    type:      post.type || 'ТАЖНА ВЕСТ',
+    intro:     post.introText || '',
   });
 
   const url = `${baseUrl}/spomen/${post.slug || id}`;
