@@ -15,7 +15,15 @@ export const getPosts = async (): Promise<MemorialPost[]> => {
   console.log('----------------------');
   try {
     const snapshot = await getDocs(postsCollection);
-    return snapshot.docs.map(doc => ({ ...(doc.data() as object), id: doc.id } as MemorialPost));
+    return snapshot.docs.map(doc => {
+      const data = doc.data() as any;
+      return {
+        ...data,
+        id: doc.id,
+        // Normalize Firestore Timestamp → ISO string so date sorting works everywhere
+        createdAt: data.createdAt?.toDate?.()?.toISOString() ?? data.createdAt ?? new Date().toISOString(),
+      } as MemorialPost;
+    });
   } catch (err) {
     console.error('Firestore Read Error in getPosts:', err);
     throw err;

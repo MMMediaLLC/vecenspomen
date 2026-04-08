@@ -112,8 +112,10 @@ export const Step2: React.FC<Step2Props> = ({ post, updatePost }) => {
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
     if (name === 'birthYear') {
-      const numValue = value ? parseInt(value, 10) : undefined;
-      updatePost({ [name]: numValue });
+      updatePost({ birthYear: value ? parseInt(value, 10) : undefined });
+    } else if (name === 'dateOfDeath') {
+      const year = value ? new Date(value).getFullYear() : undefined;
+      updatePost({ dateOfDeath: value, deathYear: year });
     } else {
       updatePost({ [name]: value });
     }

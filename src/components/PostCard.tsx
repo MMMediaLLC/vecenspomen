@@ -69,11 +69,15 @@ export const PostCard: React.FC<PostCardProps> = ({ post, onClick }) => {
           {post.fullName}
         </h3>
         
-        {(post.birthYear || post.deathYear) && (
-          <div className="text-stone-500 font-serif tracking-widest mb-2">
-            {post.birthYear ?? '...'} - {post.deathYear ?? '...'}
-          </div>
-        )}
+        {(() => {
+          const birth = post.birthYear;
+          const death = post.deathYear ?? (post.dateOfDeath ? new Date(post.dateOfDeath).getFullYear() : undefined);
+          return (birth || death) ? (
+            <div className="text-stone-500 font-serif tracking-widest mb-2">
+              {birth ?? '...'} - {death ?? '...'}
+            </div>
+          ) : null;
+        })()}
         
         <div className="text-[11px] md:text-xs tracking-[0.08em] text-stone-500 font-normal mb-3 font-sans">
           {post.city}
