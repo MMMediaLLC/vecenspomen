@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { BrowserRouter, Routes, Route, useNavigate } from 'react-router-dom';
-import { UnheadProvider, createHead } from '@unhead/react';
+import { UnheadProvider, createHead } from '@unhead/react/client';
 import { Layout } from './components/Layout';
 import { Home } from './pages/Home';
 import { Pochinati } from './pages/Pochinati';
