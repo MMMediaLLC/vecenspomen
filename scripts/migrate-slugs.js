@@ -48,20 +48,34 @@ function isLatinSlug(slug) {
 }
 
 // ─── Firebase Admin init ──────────────────────────────────────────────────────
-function initAdmin() {
-  const raw = process.env.FIREBASE_SERVICE_ACCOUNT;
-  if (!raw) {
-    console.error('ERROR: FIREBASE_SERVICE_ACCOUNT env var is not set.');
-    console.error('Run:  FIREBASE_SERVICE_ACCOUNT=\'<json>\' node scripts/migrate-slugs.js');
-    process.exit(1);
-  }
+import { readFileSync } from 'fs';
+import { resolve, dirname } from 'path';
+import { fileURLToPath } from 'url';
 
+const __dirname = dirname(fileURLToPath(import.meta.url));
+
+function initAdmin() {
   let serviceAccount;
-  try {
-    serviceAccount = JSON.parse(raw.replace(/\\n/g, '\n'));
-  } catch (e) {
-    console.error('ERROR: Could not parse FIREBASE_SERVICE_ACCOUNT JSON:', e.message);
-    process.exit(1);
+
+  // 1. Try FIREBASE_SERVICE_ACCOUNT env var
+  const raw = process.env.FIREBASE_SERVICE_ACCOUNT;
+  if (raw) {
+    try {
+      serviceAccount = JSON.parse(raw.replace(/\\n/g, '\n'));
+    } catch (e) {
+      console.error('ERROR: Could not parse FIREBASE_SERVICE_ACCOUNT JSON:', e.message);
+      process.exit(1);
+    }
+  } else {
+    // 2. Fall back to scripts/_sa.json if it exists
+    const saPath = resolve(__dirname, '_sa.json');
+    try {
+      serviceAccount = JSON.parse(readFileSync(saPath, 'utf8'));
+      console.log('Using credentials from', saPath);
+    } catch {
+      console.error('ERROR: FIREBASE_SERVICE_ACCOUNT env var is not set and _sa.json not found.');
+      process.exit(1);
+    }
   }
 
   if (!getApps().length) {
