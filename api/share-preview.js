@@ -49,13 +49,21 @@ export default async function handler(req, res) {
     return serveGenericMeta(slug, res);
   }
 
+  // Decode in case the middleware double-encoded the slug
+  const decodedSlug = decodeURIComponent(slug);
+
   try {
     const postsRef = db.collection('posts');
-    const q = await postsRef.where('slug', '==', slug).limit(1).get();
+
+    // Try slug match first (decoded), then raw, then by doc ID
+    let q = await postsRef.where('slug', '==', decodedSlug).limit(1).get();
+    if (q.empty && decodedSlug !== slug) {
+      q = await postsRef.where('slug', '==', slug).limit(1).get();
+    }
 
     if (q.empty) {
-      const doc = await postsRef.doc(slug).get();
-      if (!doc.exists) return serveGenericMeta(slug, res);
+      const doc = await postsRef.doc(decodedSlug).get();
+      if (!doc.exists) return serveGenericMeta(decodedSlug, res);
       return serveMeta(doc.id, doc.data(), res);
     }
 
@@ -67,10 +75,19 @@ export default async function handler(req, res) {
   }
 }
 
+function ogImageUrl(params = {}) {
+  const base = 'https://vecenspomen.mk/api/og-image';
+  const qs = Object.entries(params)
+    .filter(([, v]) => v)
+    .map(([k, v]) => `${k}=${encodeURIComponent(v)}`)
+    .join('&');
+  return qs ? `${base}?${qs}` : base;
+}
+
 function serveGenericMeta(slug, res) {
   const title = 'Вечен Спомен — Меморијален портал';
   const description = 'Достоинствени меморијални објави за починати. Последни поздрави, сочувства и пригодни пораки.';
-  const image = 'https://vecenspomen.mk/og-placeholder.jpg';
+  const image = ogImageUrl({ name: 'Вечен Спомен' });
   const url = slug
     ? `https://vecenspomen.mk/spomen/${slug}`
     : 'https://vecenspomen.mk';
@@ -88,7 +105,20 @@ function serveMeta(id, post, res) {
   const title = `Во Вечен Спомен — ${post.fullName}${yearsPart}`;
   const description = post.introText
     || `Меморијална објава за ${post.fullName}${cityPart}. ${post.mainText || ''}`.trim();
-  const image = post.shareImageUrl || post.photoUrl || 'https://vecenspomen.mk/og-placeholder.jpg';
+
+  // Use stored shareImageUrl if available, then photoUrl,
+  // then generate a styled fallback via the /api/og-image edge function
+  const image = post.shareImageUrl
+    || post.photoUrl
+    || ogImageUrl({
+        name:   post.fullName,
+        years,
+        city:   post.city,
+        family: post.familyNote || post.senderName,
+        msg:    (post.introText || post.mainText || '').substring(0, 120),
+        photo:  post.photoUrl,
+      });
+
   const url = `https://vecenspomen.mk/spomen/${post.slug || id}`;
 
   const html = buildHtml(title, description, image, url);
