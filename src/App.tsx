@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { BrowserRouter, Routes, Route, useNavigate } from 'react-router-dom';
-import { HelmetProvider } from 'react-helmet-async';
+import { UnheadProvider, createHead } from '@unhead/react';
 import { Layout } from './components/Layout';
 import { Home } from './pages/Home';
 import { Pochinati } from './pages/Pochinati';
@@ -181,12 +181,15 @@ const AppRoutes = () => {
   );
 };
 
+// Initialize Unhead
+const head = createHead();
+
 export default function App() {
   return (
-    <HelmetProvider>
+    <UnheadProvider head={head}>
       <BrowserRouter>
         <AppRoutes />
       </BrowserRouter>
-    </HelmetProvider>
+    </UnheadProvider>
   );
 }

@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useMemo } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
-import { Helmet } from 'react-helmet-async';
+import { useHead } from '@unhead/react';
 import { MemorialPost } from '../types';
 import { getPostById, getPostBySlug } from '../lib/posts';
 import { MemorialTemplate } from '../components/MemorialTemplate';
@@ -24,6 +24,22 @@ export const SinglePost: React.FC = () => {
   const [showShareMenu, setShowShareMenu] = useState(false);
   const [copySuccess, setCopySuccess] = useState(false);
   const [relatedPosts, setRelatedPosts] = useState<MemorialPost[]>([]);
+
+  // Metadata management with Unhead
+  useHead({
+    title: post ? `Вечен Спомен — ${post.fullName}` : 'Вечен Спомен',
+    meta: post ? [
+      { name: 'description', content: `Последен поздрав и вечен спомен за ${post.fullName}${post.city ? ` од ${post.city}` : ''}. ${post.introText?.substring(0, 150)}...` },
+      { property: 'og:type', content: 'website' },
+      { property: 'og:title', content: `Вечен Спомен | ${post.fullName}` },
+      { property: 'og:description', content: `Достоинствено меморијално известување за ${post.fullName}. Прочитајте повеќе и оставете порака во книгата на сочувство.` },
+      ...(post.shareImageUrl ? [{ property: 'og:image', content: post.shareImageUrl }] : []),
+      { name: 'twitter:card', content: 'summary_large_image' },
+      { name: 'twitter:title', content: `Вечен Спомен | ${post.fullName}` },
+      { name: 'twitter:description', content: `Последен поздрав за ${post.fullName}.` },
+      ...(post.shareImageUrl ? [{ name: 'twitter:image', content: post.shareImageUrl }] : [])
+    ] : []
+  });
 
   useEffect(() => {
     if (post?.id || post?.slug) {
@@ -65,7 +81,6 @@ export const SinglePost: React.FC = () => {
   }, [id, slug]);
 
   const shareUrl = window.location.href;
-  const shareTitle = post ? `Вечен Спомен | ${post.fullName}` : 'Вечен Спомен';
 
   const handleCopyLink = () => {
     navigator.clipboard.writeText(shareUrl);
@@ -106,23 +121,6 @@ export const SinglePost: React.FC = () => {
 
   return (
     <>
-      <Helmet>
-        <title>Вечен Спомен — {post.fullName}</title>
-        <meta name="description" content={`Последен поздрав и вечен спомен за ${post.fullName}${post.city ? ` од ${post.city}` : ''}. ${post.introText?.substring(0, 150)}...`} />
-        
-        {/* Open Graph / Facebook */}
-        <meta property="og:type" content="website" />
-        <meta property="og:title" content={`Вечен Спомен | ${post.fullName}`} />
-        <meta property="og:description" content={`Достоинствено меморијално известување за ${post.fullName}. Прочитајте повеќе и оставете порака во книгата на сочувство.`} />
-        {post.shareImageUrl && <meta property="og:image" content={post.shareImageUrl} />}
-        
-        {/* Twitter */}
-        <meta name="twitter:card" content="summary_large_image" />
-        <meta name="twitter:title" content={`Вечен Спомен | ${post.fullName}`} />
-        <meta name="twitter:description" content={`Последен поздрав за ${post.fullName}.`} />
-        {post.shareImageUrl && <meta name="twitter:image" content={post.shareImageUrl} />}
-      </Helmet>
-
       <div className="border-t border-stone-100/80 min-h-screen pb-32 relative" style={{ 
         backgroundColor: '#f0ede8',
         backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='60' height='60' viewBox='0 0 60 60'%3E%3Crect x='27' y='10' width='6' height='40' fill='%231c1917' opacity='0.06'/%3E%3Crect x='10' y='22' width='40' height='6' fill='%231c1917' opacity='0.06'/%3E%3Crect x='27' y='16' width='6' height='8' fill='%231c1917' opacity='0.06'/%3E%3C/svg%3E")`,
