@@ -1,32 +1,46 @@
 import { ImageResponse } from '@vercel/og';
 
+// ── 1. RUNTIME CONFIGURATION ────────────────────────────────────────────────
 export const config = { runtime: 'edge' };
 
-export default function handler(req: Request) {
+// Helpers for fetching fonts
+const fetchFont = (url: string) => fetch(new URL(url)).then((res) => res.arrayBuffer());
+
+export default async function handler(req: Request) {
   const { searchParams } = new URL(req.url);
-  const slug    = searchParams.get('slug')    || 'NO SLUG';
-  const name    = searchParams.get('name')    || 'Вечен Спомен';
+  
+  // Data Extraction
+  const type    = searchParams.get('type')    || 'ТАЖНА ВЕСТ';
+  const name    = searchParams.get('name')    || 'Име и Презиме';
   const bYear   = searchParams.get('birthYear') || '';
   const dYear   = searchParams.get('deathYear') || '';
   const city    = searchParams.get('city')    || '';
   const message = searchParams.get('message') || '';
   const photo   = searchParams.get('photo')   || '';
-  const style   = searchParams.get('style')   || 'elegant';
+  const style   = (searchParams.get('style')   || 'elegant') as any;
   const pkg     = searchParams.get('package') || 'Основен';
+  const intro   = searchParams.get('intro')   || '';
 
   const years = [bYear, dYear].filter(Boolean).join(' – ');
   const isPremium = pkg !== 'Основен';
 
+  // 1. Fetch Fonts (Lora Serif is the signature app font)
+  const loraFontData = await fetchFont('https://cdn.jsdelivr.net/npm/@fontsource/lora@5.0.0/files/lora-cyrillic-700-normal.ttf');
+  const loraRegularData = await fetchFont('https://cdn.jsdelivr.net/npm/@fontsource/lora@5.0.0/files/lora-cyrillic-400-normal.ttf');
+
   // Symbol Mapping
   const symbols: Record<string, string> = {
-    orthodox: '☦',
-    catholic: '✝',
-    muslim: '☾',
-    star: '★',
-    elegant: '',
-    clean: ''
+    pravoslaven: '☦',
+    katolicki: '✝',
+    muslimanski: '☾',
+    socijalisticki: '★',
+    klasicen: '',
+    emotiven: ''
   };
   const symbol = symbols[style] || '';
+  const goldColor = '#B08D57';
+  const stone900 = '#1c1917';
+  const stone500 = '#78716c';
 
   return new ImageResponse(
     (
@@ -36,143 +50,150 @@ export default function handler(req: Request) {
           height: '630px',
           display: 'flex',
           flexDirection: 'column',
-          background: '#1c1917', // Dark stone
-          color: '#ffffff',
-          padding: '80px',
+          alignItems: 'center',
+          justifyContent: 'center',
+          background: '#fafaf9', // Light warm stone from app body
+          padding: '0',
+          fontFamily: '"Lora"',
           position: 'relative',
-          overflow: 'hidden',
-          fontFamily: 'serif',
         }}
       >
-        {/* 1. Subtle Floral Watermark Background */}
-        <div style={{ position: 'absolute', right: '-50px', top: '100px', opacity: 0.1, display: 'flex' }}>
-           <svg width="400" height="600" viewBox="0 0 100 300" fill="#B08D57">
-              <path d="M90 50 C80 100, 60 150, 40 250 C50 200, 70 150, 95 100 Z" />
-              <path d="M80 80 Q60 50 65 30 Q75 60 85 85 Z" />
-              <path d="M70 130 Q40 100 30 80 Q50 115 75 135 Z" />
+        {/* Subtle Paper Noise Texture Simulation */}
+        <div style={{ position: 'absolute', inset: 0, opacity: 0.03, display: 'flex' }}>
+           <svg width="100%" height="100%" viewBox="0 0 100 100">
+              <filter id="noise">
+                 <feTurbulence type="fractalNoise" baseFrequency="0.65" numOctaves="3" />
+              </filter>
+              <rect width="100%" height="100%" filter="url(#noise)" />
            </svg>
         </div>
 
-        {/* 2. Premium Frame Decorations */}
-        <div style={{ position: 'absolute', inset: '40px', border: '1px solid rgba(176, 141, 87, 0.3)', pointerEvents: 'none', display: 'flex' }} />
-        
-        {/* Corner Accents for Elegant/Orthodox Styles */}
-        {['elegant', 'orthodox', 'catholic'].includes(style) && (
-          <>
-            <div style={{ position: 'absolute', top: '30px', left: '30px', width: '30px', height: '30px', borderTop: '2px solid #B08D57', borderLeft: '2px solid #B08D57', display: 'flex' }} />
-            <div style={{ position: 'absolute', top: '30px', right: '30px', width: '30px', height: '30px', borderTop: '2px solid #B08D57', borderRight: '2px solid #B08D57', display: 'flex' }} />
-            <div style={{ position: 'absolute', bottom: '30px', left: '30px', width: '30px', height: '30px', borderBottom: '2px solid #B08D57', borderLeft: '2px solid #B08D57', display: 'flex' }} />
-            <div style={{ position: 'absolute', bottom: '30px', right: '30px', width: '30px', height: '30px', borderBottom: '2px solid #B08D57', borderRight: '2px solid #B08D57', display: 'flex' }} />
-          </>
-        )}
+        {/* The Card Container (Vertical Card Centered) */}
+        <div style={{
+          width: '560px',
+          height: '590px',
+          background: '#ffffff',
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+          padding: '40px',
+          border: '1px solid rgba(0,0,0,0.05)',
+          boxShadow: '0 20px 40px rgba(0,0,0,0.1)',
+          position: 'relative'
+        }}>
+          
+          {/* Frame Decoration (If Premium) */}
+          {isPremium && (
+            <div style={{ position: 'absolute', inset: '10px', border: `1px solid ${goldColor}33`, display: 'flex' }}>
+               <div style={{ position: 'absolute', top: '-5px', left: '-5px', width: '15px', height: '15px', borderTop: `2px solid ${goldColor}`, borderLeft: `2px solid ${goldColor}`, display: 'flex' }} />
+               <div style={{ position: 'absolute', top: '-5px', right: '-5px', width: '15px', height: '15px', borderTop: `2px solid ${goldColor}`, borderRight: `2px solid ${goldColor}`, display: 'flex' }} />
+               <div style={{ position: 'absolute', bottom: '-5px', left: '-5px', width: '15px', height: '15px', borderBottom: `2px solid ${goldColor}`, borderLeft: `2px solid ${goldColor}`, display: 'flex' }} />
+               <div style={{ position: 'absolute', bottom: '-5px', right: '-5px', width: '15px', height: '15px', borderBottom: `2px solid ${goldColor}`, borderRight: `2px solid ${goldColor}`, display: 'flex' }} />
+            </div>
+          )}
 
-        {/* 3. Top Symbol (Centered at top border) */}
-        {symbol && (
-          <div style={{ 
-            position: 'absolute', top: '15px', left: '50%', transform: 'translateX(-50%)', 
-            background: '#1c1917', padding: '0 20px', display: 'flex' 
-          }}>
-            <span style={{ fontSize: '40px', color: '#B08D57', lineHeight: 1 }}>{symbol}</span>
-          </div>
-        )}
+          {/* Top Style Symbol */}
+          {symbol && (
+            <div style={{ 
+              position: 'absolute', top: '10px', left: '50%', transform: 'translateX(-50%)', 
+              background: '#ffffff', padding: '0 15px', display: 'flex', zIndex: 20
+            }}>
+              <span style={{ fontSize: '28px', color: goldColor, lineHeight: 1 }}>{symbol}</span>
+            </div>
+          )}
 
-        {/* 4. Main Content Layout */}
-        <div style={{ display: 'flex', flexDirection: 'column', marginTop: '20px', zIndex: 10 }}>
-          {/* Header Line */}
-          <div style={{ display: 'flex', alignItems: 'center', marginBottom: '50px' }}>
-            <div style={{ width: '50px', height: '1px', background: '#B08D57', marginRight: '20px', display: 'flex' }} />
-            <span style={{ fontSize: '18px', letterSpacing: '8px', color: 'rgba(255,255,255,0.4)', textTransform: 'uppercase' }}>
-              Во Вечен Спомен
+          {/* Hierarchy 1: Type Label */}
+          <div style={{ marginBottom: '20px', display: 'flex' }}>
+            <span style={{ fontSize: '18px', fontWeight: 700, letterSpacing: '2px', color: stone900, textTransform: 'uppercase' }}>
+              {type}
             </span>
           </div>
 
-          {/* Deceased Details */}
-          <div style={{ display: 'flex', flexDirection: 'column', width: '650px' }}>
-            <h1 style={{ fontSize: '80px', fontWeight: 'bold', color: '#B08D57', margin: '0 0 10px 0', lineHeight: 1.1, display: 'flex' }}>
-              {name}
-            </h1>
-            <div style={{ fontSize: '36px', color: 'rgba(255,255,255,0.7)', letterSpacing: '4px', margin: '10px 0', display: 'flex' }}>
-              {years}
+          {/* Hierarchy 2: Intro (Optional) */}
+          {intro && (
+            <div style={{ marginBottom: '15px', maxWidth: '80%', textAlign: 'center', display: 'flex' }}>
+              <span style={{ fontSize: '14px', fontStyle: 'italic', color: stone500, lineHeight: 1.2 }}>
+                {intro}
+              </span>
             </div>
-            {city && (
-              <div style={{ fontSize: '20px', color: 'rgba(255,255,255,0.4)', textTransform: 'uppercase', letterSpacing: '3px', marginTop: '5px', display: 'flex' }}>
-                од {city}
+          )}
+
+          {/* Hierarchy 3: Photo with App-style frame */}
+          <div style={{
+            width: '160px',
+            height: '210px',
+            background: '#ffffff',
+            padding: '6px',
+            border: '1px solid rgba(0,0,0,0.05)',
+            boxShadow: '0 10px 20px rgba(0,0,0,0.1)',
+            marginBottom: '20px',
+            display: 'flex',
+            position: 'relative'
+          }}>
+            <div style={{ position: 'absolute', inset: '0', background: 'rgba(0,0,0,0.05)', transform: 'rotate(2deg) scale(1.05)', zIndex: -1, display: 'flex' }} />
+            {photo ? (
+              <img src={photo} style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'flex' }} />
+            ) : (
+              <div style={{ width: '100%', height: '100%', background: '#f5f5f4', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                <span style={{ fontSize: '10px', color: '#d6d3d1', letterSpacing: '4px' }}>ТИШИНА</span>
               </div>
             )}
           </div>
 
-          {/* Divider */}
-          <div style={{ width: '400px', height: '1px', background: 'rgba(176, 141, 87, 0.2)', margin: '50px 0', display: 'flex' }} />
+          {/* Hierarchy 4: Name */}
+          <div style={{ textAlign: 'center', marginBottom: '10px', display: 'flex' }}>
+            <h1 style={{ fontSize: '38px', fontWeight: 400, color: stone900, margin: 0, lineHeight: 1.1 }}>
+              {name}
+            </h1>
+          </div>
 
-          {/* Message Block */}
+          {/* Hierarchy 5: Years with lines */}
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '20px' }}>
+            <div style={{ width: '30px', height: '1px', background: 'rgba(0,0,0,0.05)', marginRight: '15px', display: 'flex' }} />
+            <span style={{ fontSize: '16px', letterSpacing: '4px', color: stone500 }}>
+              {years}
+            </span>
+            <div style={{ width: '30px', height: '1px', background: 'rgba(0,0,0,0.05)', marginLeft: '15px', display: 'flex' }} />
+          </div>
+
+          {/* Hierarchy 6: Message */}
           <div style={{ 
-            fontSize: '26px', 
+            fontSize: '18px', 
             fontStyle: 'italic', 
-            color: 'rgba(255,255,255,0.9)', 
-            lineHeight: '1.6',
-            maxWidth: '650px',
+            color: '#44403c', 
+            lineHeight: '1.4',
+            textAlign: 'center',
+            maxWidth: '100%',
             display: 'flex',
+            maxHeight: '80px',
+            overflow: 'hidden'
           }}>
             "{message || 'Почивај во мир.'}"
           </div>
-        </div>
 
-        {/* 5. Photo Section (Restored with premium border) */}
-        <div style={{
-          position: 'absolute',
-          right: '80px',
-          top: '90px',
-          width: '320px',
-          height: '420px',
-          display: 'flex',
-          background: '#292524',
-          boxShadow: '0 30px 60px rgba(0,0,0,0.5)',
-          padding: '10px',
-          zIndex: 20,
-        }}>
-          {photo ? (
-            <img 
-              src={photo} 
-              style={{ 
-                width: '100%', 
-                height: '100%', 
-                objectFit: 'cover',
-                border: '1px solid rgba(255,255,255,0.2)',
-                display: 'flex',
-              }} 
-            />
-          ) : (
-            <div style={{ 
-              width: '100%', 
-              height: '100%', 
-              background: '#44403c', 
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-            }}>
-              <div style={{ width: '100px', height: '100px', borderRadius: '50%', background: 'rgba(255,255,255,0.1)', display: 'flex' }} />
-            </div>
-          )}
-        </div>
-
-        {/* 6. Branded Footer */}
-        <div style={{ 
-          position: 'absolute', 
-          bottom: '50px', 
-          left: '80px', 
-          display: 'flex', 
-          alignItems: 'center'
-        }}>
-           <div style={{ width: '30px', height: '1px', background: 'rgba(176, 141, 87, 0.5)', marginRight: '15px' }} />
-           <span style={{ fontSize: '14px', letterSpacing: '4px', color: 'rgba(176, 141, 87, 0.6)', textTransform: 'uppercase' }}>
-             vecenspomen.mk
-           </span>
+          {/* Branding at the very bottom */}
+          <div style={{ 
+            position: 'absolute', 
+            bottom: '20px', 
+            left: '50%', 
+            transform: 'translateX(-50%)', 
+            display: 'flex',
+            alignItems: 'center'
+          }}>
+             <span style={{ fontSize: '10px', letterSpacing: '4px', color: 'rgba(0,0,0,0.2)', textTransform: 'uppercase' }}>
+               vecenspomen.mk
+             </span>
+          </div>
         </div>
       </div>
     ),
     {
       width: 1200,
       height: 630,
+      fonts: [
+        { name: 'Lora', data: loraRegularData, style: 'normal', weight: 400 },
+        { name: 'Lora', data: loraFontData, style: 'normal', weight: 700 },
+      ],
     }
   );
 }
