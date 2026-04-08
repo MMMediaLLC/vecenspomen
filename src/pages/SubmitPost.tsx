@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { createLemonCheckout } from '../lib/payments';
 import { MemorialPost, PostType, PackageType } from '../types';
@@ -47,11 +47,11 @@ export const SubmitPost: React.FC<SubmitPostProps> = ({ onComplete, initialPost,
   });
 
   // Pre-advance to step 2 if type is pre-filled
-  useState(() => {
+  useEffect(() => {
     if (searchParams.get('type') && !isEditMode) {
       setStep(2);
     }
-  });
+  }, []);
 
   const updatePost = (data: Partial<MemorialPost>) => {
     setPost(prev => ({ ...prev, ...data }));
@@ -276,7 +276,7 @@ export const SubmitPost: React.FC<SubmitPostProps> = ({ onComplete, initialPost,
           </div>
         )}
 
-        <div className={`bg-white p-6 md:p-16 rounded-sm border border-stone-200 shadow-sm relative overflow-hidden transition-all duration-500 ${step === 5 ? 'min-h-fit' : 'min-h-[600px]'}`}>
+        <div className={`bg-white p-6 md:p-16 rounded-sm border border-stone-200 shadow-sm relative overflow-hidden transition-all duration-500 ${step >= 2 && step <= 4 ? 'min-h-[600px]' : ''}`}>
           {step > 1 && step < 5 && (
             <div className="mb-12 pb-6 border-b border-stone-100 flex justify-between items-center">
               <h2 className="text-xl md:text-2xl font-serif text-stone-900">

@@ -1,6 +1,6 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Check, ArrowRight, HelpCircle, Star, ShieldCheck, Infinity } from 'lucide-react';
+import { Check, ArrowRight, HelpCircle, Star, ShieldCheck } from 'lucide-react';
 import { PACKAGES } from '../constants';
 
 export const Prices: React.FC = () => {

@@ -1,19 +1,18 @@
-import React, { useEffect, useState, useMemo } from 'react';
+import React, { useRef, useState, useEffect } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import { useHead } from '@unhead/react';
 import { MemorialPost } from '../types';
-import { getPostById, getPostBySlug } from '../lib/posts';
 import { MemorialTemplate } from '../components/MemorialTemplate';
+import { OGImageTemplate } from '../components/OGImageTemplate';
 import { Guestbook } from '../components/Guestbook';
-import { getRelatedPosts } from '../lib/posts';
+import { getRelatedPosts, getPostById, getPostBySlug, addGuestbookEntry } from '../lib/posts';
 import { format } from 'date-fns';
 import { mk } from 'date-fns/locale';
-import { 
-  ArrowLeft, Share2, Printer, Heart, 
-  MessageSquare, Calendar, ChevronRight, 
-  Facebook, Twitter, Link as LinkIcon,
-  Loader2, AlertCircle, Home
+import {
+  Facebook, Link as LinkIcon, Download, MessageCircle,
+  ArrowLeft, Check, Loader2, AlertCircle, Home
 } from 'lucide-react';
+import * as htmlToImage from 'html-to-image';
 
 export const SinglePost: React.FC = () => {
   const { id, slug } = useParams<{ id?: string; slug?: string }>();
@@ -21,11 +20,12 @@ export const SinglePost: React.FC = () => {
   const [post, setPost] = useState<MemorialPost | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [showShareMenu, setShowShareMenu] = useState(false);
-  const [copySuccess, setCopySuccess] = useState(false);
   const [relatedPosts, setRelatedPosts] = useState<MemorialPost[]>([]);
 
-  // Metadata management with Unhead
+  const ogImageRef = useRef<HTMLDivElement>(null);
+  const [copied, setCopied] = useState(false);
+  const [isDownloading, setIsDownloading] = useState(false);
+
   useHead({
     title: post ? `Вечен Спомен — ${post.fullName}` : 'Вечен Спомен',
     meta: post ? [
@@ -42,10 +42,9 @@ export const SinglePost: React.FC = () => {
   });
 
   useEffect(() => {
-    if (post?.id || post?.slug) {
+    if (post?.id) {
       const fetchRelated = async () => {
-        const idToUse = post.id || post.slug;
-        const related = await getRelatedPosts(idToUse);
+        const related = await getRelatedPosts(post.id);
         setRelatedPosts(related);
       };
       fetchRelated();
@@ -56,47 +55,97 @@ export const SinglePost: React.FC = () => {
     const fetchPost = async () => {
       setIsLoading(true);
       try {
-        let foundPost: MemorialPost | null = null;
+        let data: MemorialPost | null = null;
         if (slug) {
-          foundPost = await getPostBySlug(slug);
+          data = await getPostBySlug(slug);
+          if (!data) {
+            data = await getPostById(slug);
+          }
         } else if (id) {
-          foundPost = await getPostById(id);
+          data = await getPostById(id);
+          if (!data) {
+            data = await getPostBySlug(id);
+          }
         }
 
-        if (foundPost) {
-          setPost(foundPost);
+        if (data) {
+          setPost(data);
         } else {
           setError('Објавата не е пронајдена.');
         }
       } catch (err) {
-        console.error(err);
+        console.error('Error fetching post:', err);
         setError('Настана грешка при вчитување на објавата.');
       } finally {
         setIsLoading(false);
       }
     };
-
     fetchPost();
     window.scrollTo(0, 0);
   }, [id, slug]);
 
-  const shareUrl = window.location.href;
-
-  const handleCopyLink = () => {
-    navigator.clipboard.writeText(shareUrl);
-    setCopySuccess(true);
-    setTimeout(() => setCopySuccess(false), 2000);
+  const handleCopyLink = async () => {
+    try {
+      await navigator.clipboard.writeText(window.location.href);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2500);
+    } catch {
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2500);
+    }
   };
 
-  const handlePrint = () => {
-    window.print();
+  const handleDownloadImage = async () => {
+    if (!ogImageRef.current || isDownloading || !post) return;
+    setIsDownloading(true);
+    try {
+      const dataUrl = await htmlToImage.toJpeg(ogImageRef.current, {
+        quality: 0.95,
+        backgroundColor: '#fafaf9',
+      });
+      const link = document.createElement('a');
+      link.download = `vechen-spomen-${post.fullName.replace(/\s+/g, '-').toLowerCase()}.jpg`;
+      link.href = dataUrl;
+      link.click();
+    } catch (err) {
+      console.error('Error generating image', err);
+    } finally {
+      setIsDownloading(false);
+    }
+  };
+
+  const handleFacebookShare = () => {
+    const url = encodeURIComponent(window.location.href);
+    window.open(`https://www.facebook.com/sharer/sharer.php?u=${url}`, '_blank', 'noopener');
+  };
+
+  const handleViberShare = () => {
+    if (!post) return;
+    const text = encodeURIComponent(`${post.fullName} — Вечен Спомен\n${window.location.href}`);
+    window.open(`viber://forward?text=${text}`, '_blank');
+  };
+
+  const handleAddGuestbookEntry = async (entry: { senderName: string; text: string }) => {
+    if (!post) return;
+    const newEntry = {
+      id: `g-${Date.now()}`,
+      senderName: entry.senderName,
+      text: entry.text,
+      status: 'pending' as const,
+      createdAt: new Date().toISOString()
+    };
+    try {
+      await addGuestbookEntry(post.id, newEntry);
+    } catch (err) {
+      console.error('Error adding guestbook entry:', err);
+    }
   };
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-stone-50 flex flex-col items-center justify-center p-4">
-        <Loader2 className="animate-spin text-stone-400 mb-4" size={40} />
-        <p className="font-serif text-stone-500 uppercase tracking-widest text-[10px] font-black">Вчитување на вечниот спомен...</p>
+      <div className="flex flex-col items-center justify-center min-h-[60vh] text-stone-400 bg-stone-50 animate-pulse">
+        <Loader2 className="animate-spin w-10 h-10 mb-4" />
+        <p className="font-serif text-lg">Се вчитува споменот...</p>
       </div>
     );
   }
@@ -108,8 +157,8 @@ export const SinglePost: React.FC = () => {
           <AlertCircle className="mx-auto text-stone-300 mb-6" size={48} />
           <h2 className="text-2xl font-serif text-stone-900 mb-4">Објавата не е пронајдена</h2>
           <p className="text-stone-500 mb-8 font-light">Ве молиме проверете ја адресата или вратете се на почетната страница.</p>
-          <Link 
-            to="/" 
+          <Link
+            to="/"
             className="inline-flex items-center gap-2 px-8 py-4 bg-stone-900 text-white font-black uppercase tracking-widest text-[11px] hover:bg-stone-800 transition-all"
           >
             <Home size={14} /> Назад на почетна
@@ -120,200 +169,159 @@ export const SinglePost: React.FC = () => {
   }
 
   return (
-    <>
-      <div className="border-t border-stone-100/80 min-h-screen pb-32 relative" style={{ 
-        backgroundColor: '#f0ede8',
-        backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='60' height='60' viewBox='0 0 60 60'%3E%3Crect x='27' y='10' width='6' height='40' fill='%231c1917' opacity='0.06'/%3E%3Crect x='10' y='22' width='40' height='6' fill='%231c1917' opacity='0.06'/%3E%3Crect x='27' y='16' width='6' height='8' fill='%231c1917' opacity='0.06'/%3E%3C/svg%3E")`,
-        backgroundRepeat: 'repeat',
-        backgroundSize: '60px 60px'
-      }}>
-        {/* Background Image Setup */}
-        <div 
-          className="fixed inset-0 z-0 bg-cover bg-center bg-no-repeat bg-fixed transform-gpu"
-          style={{ backgroundImage: `url('/background.webp')` }}
-        />
-        
-        {/* Soft overlay over the background image to ensure the card pops */}
-        <div className="fixed inset-0 z-0 backdrop-blur-[1px]" style={{ backgroundColor: 'rgba(240, 237, 232, 0.7)' }} />
+    <div className="bg-stone-50 border-t border-stone-100/80 min-h-screen pb-32 relative">
+      {/* Background */}
+      <div
+        className="fixed inset-0 z-0 bg-cover bg-center bg-no-repeat bg-fixed"
+        style={{ backgroundImage: `url('/background.webp')` }}
+      />
+      <div className="fixed inset-0 z-0 bg-white/60 backdrop-blur-[1px]" />
 
-        <div className="max-w-5xl mx-auto px-4 pt-4 md:pt-12 relative z-10">
-          {/* Breadcrumbs / Navigation */}
-          <div className="hidden md:flex items-center gap-2 mb-8 text-[10px] font-black uppercase tracking-widest text-stone-400">
-            <Link to="/" className="hover:text-stone-900 transition-colors">Почетна</Link>
-            <ChevronRight size={10} className="text-stone-300" />
-            <Link to="/pochinati" className="hover:text-stone-900 transition-colors">Починати</Link>
-            <ChevronRight size={10} className="text-stone-300" />
-            <span className="text-stone-900">{post.fullName}</span>
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 md:py-16 relative z-10">
+
+        {/* Top bar */}
+        <div className="flex flex-col md:flex-row justify-between items-center gap-4 mb-4 md:mb-10 no-print animate-in fade-in slide-in-from-top-4 duration-1000">
+
+          {/* Navigation */}
+          <div className="flex items-center gap-4 order-2 md:order-1">
+            <button
+              onClick={() => navigate(-1)}
+              className="group flex items-center gap-2 text-stone-400 hover:text-stone-900 transition-all text-[10px] font-bold uppercase tracking-widest"
+              aria-label="Назад"
+            >
+              <ArrowLeft size={14} className="group-hover:-translate-x-1 transition-transform" /> Назад
+            </button>
+            <span className="w-1 h-1 bg-stone-300 rounded-full" />
+            <span className="text-stone-400 text-[10px] uppercase tracking-[0.2em] font-bold">{post.city}</span>
           </div>
 
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start mb-24">
-            
-            {/* Left Sidebar - Actions (Desktop Only) */}
-            <aside className="hidden lg:flex lg:col-span-1 flex-col gap-4 sticky top-12">
-              <Link
-                to="/pochinati"
-                className="w-12 h-12 flex items-center justify-center bg-white border border-stone-200 text-stone-400 hover:text-stone-900 hover:border-stone-900 transition-all rounded-sm shadow-sm group"
-                title="Назад"
-              >
-                <ArrowLeft size={20} className="group-hover:-translate-x-1 transition-transform" />
-              </Link>
-              <button
-                onClick={() => setShowShareMenu(!showShareMenu)}
-                className={`w-12 h-12 flex items-center justify-center border transition-all rounded-sm shadow-sm ${
-                  showShareMenu ? 'bg-stone-900 border-stone-900 text-white' : 'bg-white border-stone-200 text-stone-400 hover:text-stone-900'
-                }`}
-                title="Сподели"
-              >
-                <Share2 size={20} />
-              </button>
-              <button
-                onClick={handlePrint}
-                className="w-12 h-12 flex items-center justify-center bg-white border border-stone-200 text-stone-400 hover:text-stone-900 hover:border-stone-900 transition-all rounded-sm shadow-sm"
-                title="Печати"
-              >
-                <Printer size={20} />
-              </button>
-            </aside>
-
-            {/* Mobile Top Navigation */}
-            <div className="lg:hidden flex items-center justify-between mb-0 px-2">
-               <Link to="/pochinati" className="flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-stone-400">
-                <ArrowLeft size={14} /> Назад
-              </Link>
-              <div className="flex gap-2">
-                 <button 
-                  onClick={() => setShowShareMenu(!showShareMenu)}
-                  className="w-10 h-10 flex items-center justify-center bg-white border border-stone-100 text-stone-400 rounded-full"
-                >
-                  <Share2 size={16} />
-                </button>
-                <button 
-                  onClick={handlePrint}
-                  className="w-10 h-10 flex items-center justify-center bg-white border border-stone-100 text-stone-400 rounded-full"
-                >
-                  <Printer size={16} />
-                </button>
-              </div>
-            </div>
-
-            {/* Main Content - Memorial Card */}
-            <div className="lg:col-span-11 space-y-12 animate-in fade-in slide-in-from-bottom-4 duration-1000">
-              
-              {/* Share Menu Dropdown (Simplified) */}
-              {showShareMenu && (
-                <div className="bg-white border border-stone-200 p-3 md:p-6 shadow-2xl relative z-50 animate-in zoom-in-95 duration-300">
-                   <div className="flex flex-row flex-wrap items-center gap-2 md:gap-4">
-                    <a 
-                      href={`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(shareUrl)}`}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="flex-1 min-w-[120px] flex items-center justify-center gap-2 py-2 px-3 md:py-3 md:px-4 bg-[#1877F2] text-white text-[10px] md:text-xs font-black uppercase tracking-widest hover:brightness-110 transition-all overflow-hidden"
-                    >
-                      <Facebook size={14} className="shrink-0" /> <span className="truncate">Facebook</span>
-                    </a>
-                    <button 
-                      onClick={handleCopyLink}
-                      className="flex-1 min-w-[120px] flex items-center justify-center gap-2 py-2 px-3 md:py-3 md:px-4 bg-stone-100 text-stone-600 text-[10px] md:text-xs font-black uppercase tracking-widest hover:bg-stone-200 transition-all overflow-hidden"
-                    >
-                      <LinkIcon size={14} className="shrink-0" /> <span className="truncate">{copySuccess ? 'Копирано' : 'Копирај линк'}</span>
-                    </button>
-                  </div>
-                </div>
-              )}
-
-              {/* The Actual Memorial Template Card */}
-              <div className="shadow-[0_20px_50px_rgba(0,0,0,0.1)]">
-                <MemorialTemplate post={post} />
-              </div>
-
-              {/* Action Buttons - Only for ТАЖНА ВЕСТ */}
-              {post.type === 'ТАЖНА ВЕСТ' && (
-                <div className="mt-12 flex flex-col sm:flex-row justify-center gap-4">
-                  <Link
-                    to={`/objavi?type=СОЧУВСТВО&fullName=${encodeURIComponent(post.fullName)}&relId=${post.id}&relSlug=${post.slug}`}
-                    className="flex-1 max-w-xs mx-auto sm:mx-0 flex items-center justify-center gap-2 py-4 px-6 border border-stone-800 text-stone-800 text-[11px] font-black uppercase tracking-widest hover:bg-stone-800 hover:text-white transition-all duration-300"
-                  >
-                    <Heart size={14} /> Изрази сочувство
-                  </Link>
-                  <Link
-                    to={`/objavi?type=ПОСЛЕДЕН ПОЗДРАВ&fullName=${encodeURIComponent(post.fullName)}&relId=${post.id}&relSlug=${post.slug}`}
-                    className="flex-1 max-w-xs mx-auto sm:mx-0 flex items-center justify-center gap-2 py-4 px-6 border border-stone-800 text-stone-800 text-[11px] font-black uppercase tracking-widest hover:bg-stone-800 hover:text-white transition-all duration-300"
-                  >
-                    <MessageSquare size={14} /> Испрати Последен поздрав
-                  </Link>
-                </div>
-              )}
-
-              {/* Related Posts Section (Condolences & Farewells) */}
-              {relatedPosts.length > 0 && (
-                <div className="mt-20 space-y-16">
-                  {/* Last Farewells Group */}
-                  {relatedPosts.filter(p => p.type === 'ПОСЛЕДЕН ПОЗДРАВ').length > 0 && (
-                    <div className="animate-in fade-in duration-1000">
-                      <h3 className="text-xl font-serif text-stone-900 mb-8 border-b border-stone-100 pb-4">Последни поздрави</h3>
-                      <div className="space-y-12">
-                        {relatedPosts
-                          .filter(p => p.type === 'ПОСЛЕДЕН ПОЗДРАВ')
-                          .map((relPost, idx) => (
-                            <div key={relPost.id} className="relative pl-0 md:pl-8 group">
-                              <div className="absolute left-0 top-0 bottom-0 w-px bg-stone-100 group-hover:bg-stone-300 transition-colors hidden md:block" />
-                              <div className="space-y-4">
-                                <p className="text-stone-700 font-light leading-relaxed italic text-lg">"{relPost.mainText}"</p>
-                                <div className="flex flex-col gap-1">
-                                  <span className="text-[10px] font-black uppercase tracking-[0.2em] text-stone-900">{relPost.senderName}</span>
-                                  <span className="text-[9px] uppercase tracking-widest text-stone-400 font-bold">
-                                    {format(new Date(relPost.createdAt), 'dd MMMM yyyy', { locale: mk })}
-                                  </span>
-                                </div>
-                              </div>
-                              {idx < relatedPosts.filter(p => p.type === 'ПОСЛЕДЕН ПОЗДРАВ').length - 1 && (
-                                <div className="h-px bg-stone-50 mt-12 w-1/3" />
-                              )}
-                            </div>
-                          ))}
-                      </div>
-                    </div>
-                  )}
-
-                  {/* Condolences Group */}
-                  {relatedPosts.filter(p => p.type === 'СОЧУВСТВО').length > 0 && (
-                    <div className="animate-in fade-in duration-1000">
-                      <h3 className="text-xl font-serif text-stone-900 mb-8 border-b border-stone-100 pb-4">Сочувства</h3>
-                      <div className="space-y-12">
-                        {relatedPosts
-                          .filter(p => p.type === 'СОЧУВСТВО')
-                          .map((relPost, idx) => (
-                            <div key={relPost.id} className="relative pl-0 md:pl-8 group">
-                              <div className="absolute left-0 top-0 bottom-0 w-px bg-stone-100 group-hover:bg-stone-300 transition-colors hidden md:block" />
-                              <div className="space-y-4">
-                                <p className="text-stone-700 font-light leading-relaxed text-lg">"{relPost.mainText}"</p>
-                                <div className="flex flex-col gap-1">
-                                  <span className="text-[10px] font-black uppercase tracking-[0.2em] text-stone-900">{relPost.senderName}</span>
-                                  <span className="text-[9px] uppercase tracking-widest text-stone-400 font-bold">
-                                    {format(new Date(relPost.createdAt), 'dd MMMM yyyy', { locale: mk })}
-                                  </span>
-                                </div>
-                              </div>
-                              {idx < relatedPosts.filter(p => p.type === 'СОЧУВСТВО').length - 1 && (
-                                <div className="h-px bg-stone-50 mt-12 w-1/3" />
-                              )}
-                            </div>
-                          ))}
-                      </div>
-                    </div>
-                  )}
-                </div>
-              )}
-
-               {/* Guestbook / Condolences Section */}
-              <div className="mt-20">
-                <Guestbook postId={post.id} entries={post.guestbookEntries} ownerName={post.fullName} />
-              </div>
-            </div>
-
+          {/* Share Action Bar */}
+          <div className="flex flex-row flex-nowrap items-center justify-center md:justify-end gap-[4px] md:gap-[8px] text-stone-500 font-sans order-1 md:order-2 w-full md:w-auto mb-2 md:mb-0 overflow-x-auto hide-scrollbar py-1">
+            <button
+              onClick={handleFacebookShare}
+              className="flex items-center justify-center gap-1 h-7 px-1.5 bg-white border border-stone-200 rounded-[6px] text-[9px] md:text-xs font-medium text-stone-500 hover:border-stone-300 hover:text-stone-700 transition-all shadow-sm flex-shrink-0"
+              aria-label="Сподели на Facebook"
+            >
+              <Facebook size={11} /> <span>Facebook</span>
+            </button>
+            <button
+              onClick={handleViberShare}
+              className="flex items-center justify-center gap-1 h-7 px-1.5 bg-white border border-stone-200 rounded-[6px] text-[9px] md:text-xs font-medium text-stone-500 hover:border-stone-300 hover:text-stone-700 transition-all shadow-sm flex-shrink-0"
+              aria-label="Сподели на Viber"
+            >
+              <MessageCircle size={11} /> <span>Viber</span>
+            </button>
+            <button
+              onClick={handleCopyLink}
+              className="flex items-center justify-center gap-1 h-7 px-1.5 bg-white border border-stone-200 rounded-[6px] text-[9px] md:text-xs font-medium text-stone-500 hover:border-stone-300 hover:text-stone-700 transition-all shadow-sm flex-shrink-0"
+              aria-label="Копирај линк"
+            >
+              {copied ? <Check size={11} className="text-green-600" /> : <LinkIcon size={11} />}
+              <span>{copied ? 'Ископирано' : 'Линк'}</span>
+            </button>
+            <button
+              onClick={handleDownloadImage}
+              disabled={isDownloading}
+              className="flex items-center justify-center gap-1 h-7 px-1.5 bg-white border border-stone-200 rounded-[6px] text-[9px] md:text-xs font-medium text-stone-500 hover:border-stone-300 hover:text-stone-700 transition-all shadow-sm disabled:opacity-50 flex-shrink-0"
+              aria-label="Преземи слика"
+            >
+              <Download size={11} />
+              <span>{isDownloading ? '...' : 'Слика'}</span>
+            </button>
           </div>
         </div>
+
+        {/* Memorial card + action buttons as one flush unit */}
+        <div className="animate-in fade-in zoom-in-95 duration-1000">
+          <MemorialTemplate post={post} />
+
+          {post.type === 'ТАЖНА ВЕСТ' && (
+            <div className="max-w-2xl mx-auto mt-5 flex gap-3">
+              <Link
+                to={`/objavi?type=СОЧУВСТВО&fullName=${encodeURIComponent(post.fullName)}&relId=${post.id}&relSlug=${post.slug}`}
+                className="flex-1 flex items-center justify-center py-3.5 bg-white/80 border border-stone-200/60 font-serif text-[10px] font-semibold uppercase tracking-normal text-stone-400 hover:bg-white hover:border-stone-300 hover:text-stone-600 transition-all duration-[1200ms] ease-in-out"
+              >
+                Изрази сочувство
+              </Link>
+              <Link
+                to={`/objavi?type=ПОСЛЕДЕН ПОЗДРАВ&fullName=${encodeURIComponent(post.fullName)}&relId=${post.id}&relSlug=${post.slug}`}
+                className="flex-1 flex items-center justify-center py-3.5 bg-white/80 border border-stone-200/60 font-serif text-[10px] font-semibold uppercase tracking-normal text-stone-400 hover:bg-white hover:border-stone-300 hover:text-stone-600 transition-all duration-[1200ms] ease-in-out"
+              >
+                Последен поздрав
+              </Link>
+            </div>
+          )}
+        </div>
+
+        {/* Related Posts */}
+        {relatedPosts.length > 0 && (
+          <div className="mt-20 space-y-16">
+            {relatedPosts.filter(p => p.type === 'ПОСЛЕДЕН ПОЗДРАВ').length > 0 && (
+              <div className="animate-in fade-in duration-1000">
+                <h3 className="text-xl font-serif text-stone-900 mb-8 border-b border-stone-100 pb-4">Последни поздрави</h3>
+                <div className="space-y-12">
+                  {relatedPosts
+                    .filter(p => p.type === 'ПОСЛЕДЕН ПОЗДРАВ')
+                    .map((relPost, idx, arr) => (
+                      <div key={relPost.id} className="relative pl-0 md:pl-8 group">
+                        <div className="absolute left-0 top-0 bottom-0 w-px bg-stone-100 group-hover:bg-stone-300 transition-colors hidden md:block" />
+                        <div className="space-y-4">
+                          <p className="text-stone-700 font-light leading-relaxed italic text-lg">"{relPost.mainText}"</p>
+                          <div className="flex flex-col gap-1">
+                            <span className="text-[10px] font-black uppercase tracking-[0.2em] text-stone-900">{relPost.senderName}</span>
+                            <span className="text-[9px] uppercase tracking-widest text-stone-400 font-bold">
+                              {format(new Date(relPost.createdAt), 'dd MMMM yyyy', { locale: mk })}
+                            </span>
+                          </div>
+                        </div>
+                        {idx < arr.length - 1 && <div className="h-px bg-stone-50 mt-12 w-1/3" />}
+                      </div>
+                    ))}
+                </div>
+              </div>
+            )}
+
+            {relatedPosts.filter(p => p.type === 'СОЧУВСТВО').length > 0 && (
+              <div className="animate-in fade-in duration-1000">
+                <h3 className="text-xl font-serif text-stone-900 mb-8 border-b border-stone-100 pb-4">Сочувства</h3>
+                <div className="space-y-12">
+                  {relatedPosts
+                    .filter(p => p.type === 'СОЧУВСТВО')
+                    .map((relPost, idx, arr) => (
+                      <div key={relPost.id} className="relative pl-0 md:pl-8 group">
+                        <div className="absolute left-0 top-0 bottom-0 w-px bg-stone-100 group-hover:bg-stone-300 transition-colors hidden md:block" />
+                        <div className="space-y-4">
+                          <p className="text-stone-700 font-light leading-relaxed text-lg">"{relPost.mainText}"</p>
+                          <div className="flex flex-col gap-1">
+                            <span className="text-[10px] font-black uppercase tracking-[0.2em] text-stone-900">{relPost.senderName}</span>
+                            <span className="text-[9px] uppercase tracking-widest text-stone-400 font-bold">
+                              {format(new Date(relPost.createdAt), 'dd MMMM yyyy', { locale: mk })}
+                            </span>
+                          </div>
+                        </div>
+                        {idx < arr.length - 1 && <div className="h-px bg-stone-50 mt-12 w-1/3" />}
+                      </div>
+                    ))}
+                </div>
+              </div>
+            )}
+          </div>
+        )}
+
+        {/* Guestbook */}
+        <Guestbook
+          entries={post.guestbookEntries || []}
+          onAddComment={handleAddGuestbookEntry}
+          isEnabled={post.guestbookEnabled}
+        />
       </div>
-    </>
+
+      {/* Hidden OG image for download */}
+      <div className="overflow-hidden h-0 w-0 absolute pointer-events-none opacity-0">
+        <div ref={ogImageRef}>
+          <OGImageTemplate post={post} />
+        </div>
+      </div>
+    </div>
   );
 };

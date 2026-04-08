@@ -74,25 +74,3 @@ export const MEMORIAL_STYLES: Record<StyleVariant, StyleConfig> = {
   }
 };
 
-export const STYLE_VARIANTS_ARRAY = Object.values(MEMORIAL_STYLES);
-
-// Helper for mapping legacy selectedFrameStyle to the new variants
-export const mapLegacyStyleToVariant = (legacyStyle?: string): StyleVariant => {
-  switch (legacyStyle) {
-    case 'orthodox':
-      return 'pravoslaven';
-    case 'catholic':
-    case 'latin':
-      return 'katolicki';
-    case 'muslim':
-      return 'muslimanski';
-    case 'star':
-    case 'socialist':
-      return 'socijalisticki';
-    case 'elegant':
-      return 'klasicen';
-    case 'clean':
-    default:
-      return 'klasicen';
-  }
-};

@@ -1,5 +1,5 @@
 import React from 'react';
-import { Heart, Menu, X, Facebook, Instagram, Twitter } from 'lucide-react';
+import { Menu, X } from 'lucide-react';
 import { Link, useLocation } from 'react-router-dom';
 
 interface LayoutProps {
