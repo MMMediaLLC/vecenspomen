@@ -4,13 +4,14 @@ export const config = { runtime: 'edge' };
 
 export default function handler(req: Request) {
   const { searchParams } = new URL(req.url);
-  const slug = searchParams.get('slug') || 'NO SLUG';
+  const slug    = searchParams.get('slug')    || 'NO SLUG';
+  const name    = searchParams.get('name')    || 'Вечен Спомен';
+  const bYear   = searchParams.get('birthYear') || '';
+  const dYear   = searchParams.get('deathYear') || '';
+  const city    = searchParams.get('city')    || '';
+  const message = searchParams.get('message') || '';
 
-  // Hardcoded Data for Phase 3
-  const name = "Петар Петровски";
-  const years = "1940 – 2024";
-  const city = "Скопје";
-  const message = "Со длабока почит и вечна благодарност за твојата љубов и добрина. Твојот лик засекогаш ќе остане во нашите срца. Почивај во мир.";
+  const years = [bYear, dYear].filter(Boolean).join(' – ');
 
   return new ImageResponse(
     (
