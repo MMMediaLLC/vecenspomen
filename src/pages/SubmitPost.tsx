@@ -58,11 +58,25 @@ export const SubmitPost: React.FC<SubmitPostProps> = ({ onComplete, initialPost,
     setValidationError(null);
   };
 
+  const cyrillicToLatin = (str: string): string => {
+    const map: Record<string, string> = {
+      'а':'a','б':'b','в':'v','г':'g','д':'d','ѓ':'gj','е':'e','ж':'zh',
+      'з':'z','ѕ':'dz','и':'i','ј':'j','к':'k','л':'l','љ':'lj','м':'m',
+      'н':'n','њ':'nj','о':'o','п':'p','р':'r','с':'s','т':'t','ќ':'kj',
+      'у':'u','ф':'f','х':'h','ц':'c','ч':'ch','џ':'dj','ш':'sh',
+      'А':'a','Б':'b','В':'v','Г':'g','Д':'d','Ѓ':'gj','Е':'e','Ж':'zh',
+      'З':'z','Ѕ':'dz','И':'i','Ј':'j','К':'k','Л':'l','Љ':'lj','М':'m',
+      'Н':'n','Њ':'nj','О':'o','П':'p','Р':'r','С':'s','Т':'t','Ќ':'kj',
+      'У':'u','Ф':'f','Х':'h','Ц':'c','Ч':'ch','Џ':'dj','Ш':'sh',
+    };
+    return str.split('').map(ch => map[ch] ?? ch).join('');
+  };
+
   const generateSlug = (fullName: string, deathYear?: number) => {
-    const base = fullName
+    const base = cyrillicToLatin(fullName)
       .toLowerCase()
       .trim()
-      .replace(/[^\wа-шА-Ш0-9\s-]/g, '')
+      .replace(/[^a-z0-9\s-]/g, '')
       .replace(/[\s-]+/g, '-');
     return `${base}${deathYear ? `-${deathYear}` : ''}`;
   };
