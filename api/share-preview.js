@@ -76,9 +76,9 @@ export default async function handler(req, res) {
 }
 
 function ogImageUrl(params = {}) {
-  const base = 'https://vecenspomen.mk/api/og-image';
+  const base = 'https://vecenspomen.mk/api/og';
   const qs = Object.entries(params)
-    .filter(([, v]) => v)
+    .filter(([, v]) => v != null && v !== '')
     .map(([k, v]) => `${k}=${encodeURIComponent(v)}`)
     .join('&');
   return qs ? `${base}?${qs}` : base;
@@ -99,25 +99,24 @@ function serveGenericMeta(slug, res) {
 }
 
 function serveMeta(id, post, res) {
-  const years = [post.birthYear, post.deathYear].filter(Boolean).join(' - ');
+  const years = [post.birthYear, post.deathYear].filter(Boolean).join(' – ');
   const yearsPart = years ? ` (${years})` : '';
   const cityPart = post.city ? ` од ${post.city}` : '';
   const title = `Во Вечен Спомен — ${post.fullName}${yearsPart}`;
   const description = post.introText
     || `Меморијална објава за ${post.fullName}${cityPart}. ${post.mainText || ''}`.trim();
 
-  // Use stored shareImageUrl if available, then photoUrl,
-  // then generate a styled fallback via the /api/og-image edge function
-  const image = post.shareImageUrl
-    || post.photoUrl
-    || ogImageUrl({
-        name:   post.fullName,
-        years,
-        city:   post.city,
-        family: post.familyNote || post.senderName,
-        msg:    (post.introText || post.mainText || '').substring(0, 120),
-        photo:  post.photoUrl,
-      });
+  // Always generate the OG image via /api/og with the post's actual data.
+  // Stored shareImageUrl / photoUrl are used as fallbacks only when og endpoint might fail.
+  const image = ogImageUrl({
+    name:      post.fullName,
+    birthYear: post.birthYear,
+    deathYear: post.deathYear || (post.dateOfDeath ? new Date(post.dateOfDeath).getFullYear() : ''),
+    city:      post.city,
+    lovedBy:   post.familyNote || post.senderName,
+    photo:     post.photoUrl || '',
+    style:     post.selectedFrameStyle || 'klasicen',
+  });
 
   const url = `https://vecenspomen.mk/spomen/${post.slug || id}`;
 

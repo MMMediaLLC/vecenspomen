@@ -1,19 +1,16 @@
-import React, { useRef, useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import { useHead } from '@unhead/react';
 import { MemorialPost } from '../types';
 import { MemorialTemplate } from '../components/MemorialTemplate';
-import { OGImageTemplate } from '../components/OGImageTemplate';
 import { Guestbook } from '../components/Guestbook';
-import { getRelatedPosts, getPostById, getPostBySlug, addGuestbookEntry, updatePost as savePost } from '../lib/posts';
-import { generateAndUploadOGImage } from '../lib/og';
+import { getRelatedPosts, getPostById, getPostBySlug, addGuestbookEntry } from '../lib/posts';
 import { format } from 'date-fns';
 import { mk } from 'date-fns/locale';
 import {
   Facebook, Link as LinkIcon, Download, MessageCircle,
   ArrowLeft, Check, Loader2, AlertCircle, Home
 } from 'lucide-react';
-import * as htmlToImage from 'html-to-image';
 
 export const SinglePost: React.FC = () => {
   const { id, slug } = useParams<{ id?: string; slug?: string }>();
@@ -23,20 +20,28 @@ export const SinglePost: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const [relatedPosts, setRelatedPosts] = useState<MemorialPost[]>([]);
 
-  const ogImageRef = useRef<HTMLDivElement>(null);
   const [copied, setCopied] = useState(false);
   const [isDownloading, setIsDownloading] = useState(false);
 
   useHead({
     title: post ? `Во Вечен Спомен — ${post.fullName}` : 'Вечен Спомен',
     meta: post ? (() => {
-      const years = [post.birthYear, post.deathYear].filter(Boolean).join(' - ');
+      const years = [post.birthYear, post.deathYear].filter(Boolean).join(' – ');
       const yearsPart = years ? ` (${years})` : '';
       const cityPart = post.city ? ` од ${post.city}` : '';
       const title = `Во Вечен Спомен — ${post.fullName}${yearsPart}`;
       const description = post.introText
         || `Меморијална објава за ${post.fullName}${cityPart}. ${post.mainText || ''}`.trim();
-      const image = post.shareImageUrl || post.photoUrl || 'https://vecenspomen.mk/og-placeholder.jpg';
+      const ogParams = new URLSearchParams({
+        name:      post.fullName,
+        ...(post.birthYear  ? { birthYear: String(post.birthYear) }  : {}),
+        ...(post.deathYear  ? { deathYear: String(post.deathYear) }  : {}),
+        ...(post.city       ? { city: post.city }                    : {}),
+        ...(post.photoUrl   ? { photo: post.photoUrl }               : {}),
+        ...((post.familyNote || post.senderName) ? { lovedBy: post.familyNote || post.senderName! } : {}),
+        style: post.selectedFrameStyle || 'klasicen',
+      });
+      const image = `https://vecenspomen.mk/api/og?${ogParams.toString()}`;
       const url = `https://vecenspomen.mk/spomen/${post.slug || post.id}`;
       return [
         { name: 'description', content: description },
@@ -101,27 +106,6 @@ export const SinglePost: React.FC = () => {
     window.scrollTo(0, 0);
   }, [id, slug]);
 
-  // Auto-generate shareImageUrl for posts that don't have one yet.
-  // The hidden OGImageTemplate is already in the DOM — just capture it.
-  useEffect(() => {
-    if (!post || post.shareImageUrl) return;
-
-    const timer = setTimeout(async () => {
-      try {
-        const url = await generateAndUploadOGImage(post, 'og-image-container');
-        if (url) {
-          await savePost(post.id, { shareImageUrl: url });
-          setPost(prev => prev ? { ...prev, shareImageUrl: url } : prev);
-          console.log('[SinglePost] shareImageUrl generated and saved:', url);
-        }
-      } catch (err) {
-        console.error('[SinglePost] Failed to auto-generate share image:', err);
-      }
-    }, 1500); // wait for fonts/images to render
-
-    return () => clearTimeout(timer);
-  }, [post?.id]);
-
   const handleCopyLink = async () => {
     try {
       await navigator.clipboard.writeText(window.location.href);
@@ -134,19 +118,28 @@ export const SinglePost: React.FC = () => {
   };
 
   const handleDownloadImage = async () => {
-    if (!ogImageRef.current || isDownloading || !post) return;
+    if (isDownloading || !post) return;
     setIsDownloading(true);
     try {
-      const dataUrl = await htmlToImage.toJpeg(ogImageRef.current, {
-        quality: 0.95,
-        backgroundColor: '#fafaf9',
+      const ogParams = new URLSearchParams({
+        name:      post.fullName,
+        ...(post.birthYear  ? { birthYear: String(post.birthYear) }  : {}),
+        ...(post.deathYear  ? { deathYear: String(post.deathYear) }  : {}),
+        ...(post.city       ? { city: post.city }                    : {}),
+        ...(post.photoUrl   ? { photo: post.photoUrl }               : {}),
+        ...((post.familyNote || post.senderName) ? { lovedBy: post.familyNote || post.senderName! } : {}),
+        style: post.selectedFrameStyle || 'klasicen',
       });
+      const res = await fetch(`/api/og?${ogParams.toString()}`);
+      const blob = await res.blob();
+      const url = URL.createObjectURL(blob);
       const link = document.createElement('a');
-      link.download = `vechen-spomen-${post.fullName.replace(/\s+/g, '-').toLowerCase()}.jpg`;
-      link.href = dataUrl;
+      link.download = `vechen-spomen-${post.fullName.replace(/\s+/g, '-').toLowerCase()}.png`;
+      link.href = url;
       link.click();
+      URL.revokeObjectURL(url);
     } catch (err) {
-      console.error('Error generating image', err);
+      console.error('Error downloading image', err);
     } finally {
       setIsDownloading(false);
     }
@@ -354,12 +347,6 @@ export const SinglePost: React.FC = () => {
         />
       </div>
 
-      {/* Hidden OG image for download */}
-      <div className="overflow-hidden h-0 w-0 absolute pointer-events-none opacity-0">
-        <div ref={ogImageRef}>
-          <OGImageTemplate post={post} />
-        </div>
-      </div>
     </div>
   );
 };
