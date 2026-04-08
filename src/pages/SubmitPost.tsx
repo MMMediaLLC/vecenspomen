@@ -109,7 +109,6 @@ export const SubmitPost: React.FC<SubmitPostProps> = ({ onComplete, initialPost,
           if (!post.pomenSubtype) return 'Изберете тип на помен.';
           if (!post.pomenDate) return 'Внесете датум на помен.';
           if (!post.pomenTime) return 'Внесете време на помен.';
-          if (!post.pomenPlace?.trim()) return 'Внесете локација на помен.';
           if (!post.familyNote?.trim()) return 'Внесете „Со љубов и почит од".';
         }
         break;

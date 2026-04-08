@@ -26,12 +26,14 @@ export const SinglePost: React.FC = () => {
   useHead({
     title: post ? `Во Вечен Спомен — ${post.fullName}` : 'Вечен Спомен',
     meta: post ? (() => {
+      const baseUrl = window.location.origin;
       const years = [post.birthYear, post.deathYear].filter(Boolean).join(' – ');
       const yearsPart = years ? ` (${years})` : '';
       const cityPart = post.city ? ` од ${post.city}` : '';
       const title = `Во Вечен Спомен — ${post.fullName}${yearsPart}`;
       const description = post.introText
         || `Меморијална објава за ${post.fullName}${cityPart}. ${post.mainText || ''}`.trim();
+        
       const ogParams = new URLSearchParams({
         name:      post.fullName,
         ...(post.birthYear  ? { birthYear: String(post.birthYear) }  : {}),
@@ -39,10 +41,14 @@ export const SinglePost: React.FC = () => {
         ...(post.city       ? { city: post.city }                    : {}),
         ...(post.photoUrl   ? { photo: post.photoUrl }               : {}),
         ...((post.familyNote || post.senderName) ? { lovedBy: post.familyNote || post.senderName! } : {}),
-        style: post.selectedFrameStyle || 'klasicen',
+        style: post.selectedFrameStyle || 'elegant',
+        package: post.package || 'Основен',
+        message: post.aiRefinedText || post.mainText || '',
       });
-      const image = `https://vecenspomen.mk/api/og?${ogParams.toString()}`;
-      const url = `https://vecenspomen.mk/spomen/${post.slug || post.id}`;
+      
+      const image = `${baseUrl}/api/og?${ogParams.toString()}`;
+      const url = `${baseUrl}/spomen/${post.slug || post.id}`;
+      
       return [
         { name: 'description', content: description },
         { property: 'og:type', content: 'article' },
@@ -51,6 +57,7 @@ export const SinglePost: React.FC = () => {
         { property: 'og:title', content: title },
         { property: 'og:description', content: description },
         { property: 'og:image', content: image },
+        { property: 'og:image:secure_url', content: image },
         { property: 'og:image:width', content: '1200' },
         { property: 'og:image:height', content: '630' },
         { property: 'og:locale', content: 'mk_MK' },

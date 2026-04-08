@@ -318,8 +318,8 @@ export const Step2: React.FC<Step2Props> = ({ post, updatePost }) => {
             </div>
           </div>
           <div className="space-y-1">
-            <label className={labelClass}>Наслов на пораката</label>
-            <input type="text" name="farewellTitle" value={post.farewellTitle || ''} onChange={handleChange} placeholder="пр. Последен поздрав од семејството" className={inputClass} />
+            <label className={labelClass}>Наслов на пораката (незадолжително)</label>
+            <input type="text" name="farewellTitle" value={post.farewellTitle || ''} onChange={handleChange} placeholder="На нашата мила сестра, колешка, пријателка" className={inputClass} />
           </div>
           <div className="space-y-4 pt-4">
             <div className="flex justify-between items-end">
@@ -438,7 +438,7 @@ export const Step2: React.FC<Step2Props> = ({ post, updatePost }) => {
               <p className="text-[9px] text-stone-400 font-light text-right">Внесете само бројки, системот автоматски ќе го форматира времето.</p>
             </div>
             <div className="space-y-1">
-              <label className={labelClass}>Локација {required}</label>
+              <label className={labelClass}>Локација</label>
               <input type="text" name="pomenPlace" value={post.pomenPlace || ''} onChange={handleChange} placeholder="пр. Црква Св. Богородица, Градски гробишта Бутел" className={inputClass} />
             </div>
           </div>

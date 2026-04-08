@@ -53,9 +53,13 @@ function safeDecodeSlug(raw) {
 
 export default async function handler(req, res) {
   const { slug: rawSlug } = req.query;
+  const baseUrl = getBaseUrl(req);
 
+  console.log('[Preview API] Collection: posts');
+  
   if (!rawSlug) {
-    return serveGenericMeta(null, res);
+    console.log('[Preview API] No slug provided, serving generic meta');
+    return serveGenericMeta(null, baseUrl, res);
   }
 
   const db = getDb();
@@ -64,7 +68,7 @@ export default async function handler(req, res) {
   // at least gets a 200 with valid OG tags instead of a 500.
   if (!db) {
     console.warn('[Preview API] Firebase unavailable — serving generic fallback');
-    return serveGenericMeta(rawSlug, res);
+    return serveGenericMeta(rawSlug, baseUrl, res);
   }
 
   const slug = safeDecodeSlug(rawSlug);
@@ -74,33 +78,52 @@ export default async function handler(req, res) {
     const postsRef = db.collection('posts');
 
     // 1. Exact slug field match (handles both Latin and legacy Cyrillic slugs)
+    console.log('[Preview API] Querying: slug == %s', slug);
     let q = await postsRef.where('slug', '==', slug).limit(1).get();
 
     // 2. Try the raw value too in case decoding changed something unexpectedly
     if (q.empty && rawSlug !== slug) {
+      console.log('[Preview API] Querying: slug == %s (raw)', rawSlug);
       q = await postsRef.where('slug', '==', rawSlug).limit(1).get();
     }
 
     // 3. Fall back to Firestore doc ID
     if (q.empty) {
+      console.log('[Preview API] Not found by field, checking doc ID: %s', slug);
       const docSnap = await postsRef.doc(slug).get();
       if (!docSnap.exists) {
-        console.warn('[Preview API] Post not found for slug:', slug);
-        return serveGenericMeta(slug, res);
+        console.warn('[Preview API] Post not found for slug/ID:', slug);
+        return serveGenericMeta(slug, baseUrl, res);
       }
-      return serveMeta(docSnap.id, docSnap.data(), res);
+      
+      const postData = docSnap.data();
+      console.log('[Preview API] Found by doc ID: %s, data status: %s', docSnap.id, postData.status);
+      return serveMeta(docSnap.id, postData, baseUrl, res);
     }
 
-    return serveMeta(q.docs[0].id, q.docs[0].data(), res);
+    const postDoc = q.docs[0];
+    const postData = postDoc.data();
+    console.log('[Preview API] Found by slug field: %s, data status: %s, fullName: %s', postDoc.id, postData.status, postData.fullName);
+    
+    return serveMeta(postDoc.id, postData, baseUrl, res);
 
   } catch (err) {
     console.error('[Preview API] Error fetching post:', err);
-    return serveGenericMeta(slug, res);
+    return serveGenericMeta(slug, baseUrl, res);
   }
 }
 
-function ogImageUrl(params = {}) {
-  const base = 'https://vecenspomen.mk/api/og';
+function getBaseUrl(req) {
+  if (process.env.PUBLIC_SITE_URL) {
+    return process.env.PUBLIC_SITE_URL.replace(/\/$/, '');
+  }
+  const protocol = req.headers['x-forwarded-proto'] || 'https';
+  const host = req.headers.host;
+  return `${protocol}://${host}`;
+}
+
+function ogImageUrl(baseUrl, params = {}) {
+  const base = `${baseUrl}/api/og`;
   const qs = Object.entries(params)
     .filter(([, v]) => v != null && v !== '')
     .map(([k, v]) => `${k}=${encodeURIComponent(v)}`)
@@ -108,13 +131,13 @@ function ogImageUrl(params = {}) {
   return qs ? `${base}?${qs}` : base;
 }
 
-function serveGenericMeta(slug, res) {
+function serveGenericMeta(slug, baseUrl, res) {
   const title = 'Вечен Спомен — Меморијален портал';
   const description = 'Достоинствени меморијални објави за починати. Последни поздрави, сочувства и пригодни пораки.';
-  const image = ogImageUrl({ name: 'Вечен Спомен' });
+  const image = ogImageUrl(baseUrl, { name: 'Вечен Спомен' });
   const url = slug
-    ? `https://vecenspomen.mk/spomen/${slug}`
-    : 'https://vecenspomen.mk';
+    ? `${baseUrl}/spomen/${slug}`
+    : `${baseUrl}`;
 
   const html = buildHtml(title, description, image, url);
   res.setHeader('Content-Type', 'text/html');
@@ -122,7 +145,7 @@ function serveGenericMeta(slug, res) {
   return res.status(200).send(html);
 }
 
-function serveMeta(id, post, res) {
+function serveMeta(id, post, baseUrl, res) {
   const years = [post.birthYear, post.deathYear].filter(Boolean).join(' – ');
   const yearsPart = years ? ` (${years})` : '';
   const cityPart = post.city ? ` од ${post.city}` : '';
@@ -131,18 +154,20 @@ function serveMeta(id, post, res) {
     || `Меморијална објава за ${post.fullName}${cityPart}. ${post.mainText || ''}`.trim();
 
   // Always generate the OG image via /api/og with the post's actual data.
-  // Stored shareImageUrl / photoUrl are used as fallbacks only when og endpoint might fail.
-  const image = ogImageUrl({
+  const image = ogImageUrl(baseUrl, {
     name:      post.fullName,
     birthYear: post.birthYear,
     deathYear: post.deathYear || (post.dateOfDeath ? new Date(post.dateOfDeath).getFullYear() : ''),
     city:      post.city,
     lovedBy:   post.familyNote || post.senderName,
     photo:     post.photoUrl || '',
-    style:     post.selectedFrameStyle || 'klasicen',
+    style:     post.selectedFrameStyle || 'elegant',
+    package:   post.package || 'Основен',
+    message:   post.aiRefinedText || post.mainText || '',
+    status:    post.status || '',
   });
 
-  const url = `https://vecenspomen.mk/spomen/${post.slug || id}`;
+  const url = `${baseUrl}/spomen/${post.slug || id}`;
 
   const html = buildHtml(title, description, image, url);
   res.setHeader('Content-Type', 'text/html');
@@ -156,20 +181,26 @@ function buildHtml(title, description, image, url) {
 <head>
   <meta charset="UTF-8">
   <title>${title}</title>
+  <meta name="description" content="${description}">
+  <link rel="canonical" href="${url}">
+  
   <meta property="og:type" content="article">
   <meta property="og:site_name" content="Вечен Спомен">
   <meta property="og:url" content="${url}">
   <meta property="og:title" content="${title}">
   <meta property="og:description" content="${description}">
   <meta property="og:image" content="${image}">
+  <meta property="og:image:secure_url" content="${image}">
   <meta property="og:image:width" content="1200">
   <meta property="og:image:height" content="630">
   <meta property="og:locale" content="mk_MK">
+  
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:url" content="${url}">
   <meta name="twitter:title" content="${title}">
   <meta name="twitter:description" content="${description}">
   <meta name="twitter:image" content="${image}">
+  
   <meta http-equiv="refresh" content="0; url=${url}">
 </head>
 <body>
