@@ -37,75 +37,91 @@ export default async function handler(req, res) {
   const { slug } = req.query;
 
   if (!slug) {
-    return res.status(400).send('Missing slug');
+    return serveGenericMeta(null, res);
   }
 
   const db = getDb();
-  if (!db) return res.status(500).send('Firebase Init Failed');
+
+  // If Firebase is unavailable, serve a generic fallback so Facebook
+  // at least gets a 200 with valid OG tags instead of a 500.
+  if (!db) {
+    console.warn('[Preview API] Firebase unavailable — serving generic fallback');
+    return serveGenericMeta(slug, res);
+  }
 
   try {
-    // 1. Fetch post by slug
     const postsRef = db.collection('posts');
     const q = await postsRef.where('slug', '==', slug).limit(1).get();
 
     if (q.empty) {
-      // Fallback: search by ID if it looks like an ID
       const doc = await postsRef.doc(slug).get();
-      if (!doc.exists) return res.status(404).send('Post not found');
+      if (!doc.exists) return serveGenericMeta(slug, res);
       return serveMeta(doc.id, doc.data(), res);
     }
 
-    const doc = q.docs[0];
-    return serveMeta(doc.id, doc.data(), res);
+    return serveMeta(q.docs[0].id, q.docs[0].data(), res);
 
   } catch (err) {
     console.error('[Preview API] Error fetching post:', err);
-    return res.status(500).send('Internal Server Error');
+    return serveGenericMeta(slug, res);
   }
 }
 
-function serveMeta(id, post, res) {
-  const title = `Во Вечен Спомен — ${post.fullName}`;
-  const description = post.introText || post.mainText || 'Меморијална објава на порталот Вечен Спомен.';
-  const shareImageUrl = post.shareImageUrl || 'https://vecenspomen.mk/og-placeholder.jpg';
-  const publicUrl = `https://vecenspomen.mk/spomen/${post.slug || id}`;
+function serveGenericMeta(slug, res) {
+  const title = 'Вечен Спомен — Меморијален портал';
+  const description = 'Достоинствени меморијални објави за починати. Последни поздрави, сочувства и пригодни пораки.';
+  const image = 'https://vecenspomen.mk/og-placeholder.jpg';
+  const url = slug
+    ? `https://vecenspomen.mk/spomen/${slug}`
+    : 'https://vecenspomen.mk';
 
-  // We return a simple HTML page with ONLY the meta tags and a redirect.
-  // This is what the Facebook Scraper will see.
-  const html = `
-<!DOCTYPE html>
+  const html = buildHtml(title, description, image, url);
+  res.setHeader('Content-Type', 'text/html');
+  res.setHeader('Cache-Control', 'public, max-age=60');
+  return res.status(200).send(html);
+}
+
+function serveMeta(id, post, res) {
+  const years = [post.birthYear, post.deathYear].filter(Boolean).join(' - ');
+  const yearsPart = years ? ` (${years})` : '';
+  const cityPart = post.city ? ` од ${post.city}` : '';
+  const title = `Во Вечен Спомен — ${post.fullName}${yearsPart}`;
+  const description = post.introText
+    || `Меморијална објава за ${post.fullName}${cityPart}. ${post.mainText || ''}`.trim();
+  const image = post.shareImageUrl || post.photoUrl || 'https://vecenspomen.mk/og-placeholder.jpg';
+  const url = `https://vecenspomen.mk/spomen/${post.slug || id}`;
+
+  const html = buildHtml(title, description, image, url);
+  res.setHeader('Content-Type', 'text/html');
+  res.setHeader('Cache-Control', 'public, max-age=300');
+  return res.status(200).send(html);
+}
+
+function buildHtml(title, description, image, url) {
+  return `<!DOCTYPE html>
 <html lang="mk">
 <head>
   <meta charset="UTF-8">
   <title>${title}</title>
-  
-  <!-- Open Graph / Facebook -->
   <meta property="og:type" content="article">
-  <meta property="og:url" content="${publicUrl}">
+  <meta property="og:site_name" content="Вечен Спомен">
+  <meta property="og:url" content="${url}">
   <meta property="og:title" content="${title}">
   <meta property="og:description" content="${description}">
-  <meta property="og:image" content="${shareImageUrl}">
+  <meta property="og:image" content="${image}">
   <meta property="og:image:width" content="1200">
   <meta property="og:image:height" content="630">
   <meta property="og:locale" content="mk_MK">
-
-  <!-- Twitter -->
-  <meta property="twitter:card" content="summary_large_image">
-  <meta property="twitter:url" content="${publicUrl}">
-  <meta property="twitter:title" content="${title}">
-  <meta property="twitter:description" content="${description}">
-  <meta property="twitter:image" content="${shareImageUrl}">
-
-  <!-- Redirect for real users -->
-  <meta http-equiv="refresh" content="0; url=${publicUrl}">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:url" content="${url}">
+  <meta name="twitter:title" content="${title}">
+  <meta name="twitter:description" content="${description}">
+  <meta name="twitter:image" content="${image}">
+  <meta http-equiv="refresh" content="0; url=${url}">
 </head>
 <body>
-  <p>Ве пренасочуваме кон објавата... <a href="${publicUrl}">Кликнете овде ако не се случи автоматски.</a></p>
-  <script>window.location.href = "${publicUrl}";</script>
+  <p>Ве пренасочуваме... <a href="${url}">Кликнете овде</a></p>
+  <script>window.location.href="${url}";</script>
 </body>
-</html>
-  `;
-
-  res.setHeader('Content-Type', 'text/html');
-  return res.status(200).send(html);
+</html>`;
 }

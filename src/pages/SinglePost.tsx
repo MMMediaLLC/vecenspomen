@@ -27,18 +27,34 @@ export const SinglePost: React.FC = () => {
   const [isDownloading, setIsDownloading] = useState(false);
 
   useHead({
-    title: post ? `Вечен Спомен — ${post.fullName}` : 'Вечен Спомен',
-    meta: post ? [
-      { name: 'description', content: `Последен поздрав и вечен спомен за ${post.fullName}${post.city ? ` од ${post.city}` : ''}. ${post.introText?.substring(0, 150)}...` },
-      { property: 'og:type', content: 'website' },
-      { property: 'og:title', content: `Вечен Спомен | ${post.fullName}` },
-      { property: 'og:description', content: `Достоинствено меморијално известување за ${post.fullName}. Прочитајте повеќе и оставете порака во книгата на сочувство.` },
-      ...(post.shareImageUrl ? [{ property: 'og:image', content: post.shareImageUrl }] : []),
-      { name: 'twitter:card', content: 'summary_large_image' },
-      { name: 'twitter:title', content: `Вечен Спомен | ${post.fullName}` },
-      { name: 'twitter:description', content: `Последен поздрав за ${post.fullName}.` },
-      ...(post.shareImageUrl ? [{ name: 'twitter:image', content: post.shareImageUrl }] : [])
-    ] : []
+    title: post ? `Во Вечен Спомен — ${post.fullName}` : 'Вечен Спомен',
+    meta: post ? (() => {
+      const years = [post.birthYear, post.deathYear].filter(Boolean).join(' - ');
+      const yearsPart = years ? ` (${years})` : '';
+      const cityPart = post.city ? ` од ${post.city}` : '';
+      const title = `Во Вечен Спомен — ${post.fullName}${yearsPart}`;
+      const description = post.introText
+        || `Меморијална објава за ${post.fullName}${cityPart}. ${post.mainText || ''}`.trim();
+      const image = post.shareImageUrl || post.photoUrl || 'https://vecenspomen.mk/og-placeholder.jpg';
+      const url = `https://vecenspomen.mk/spomen/${post.slug || post.id}`;
+      return [
+        { name: 'description', content: description },
+        { property: 'og:type', content: 'article' },
+        { property: 'og:site_name', content: 'Вечен Спомен' },
+        { property: 'og:url', content: url },
+        { property: 'og:title', content: title },
+        { property: 'og:description', content: description },
+        { property: 'og:image', content: image },
+        { property: 'og:image:width', content: '1200' },
+        { property: 'og:image:height', content: '630' },
+        { property: 'og:locale', content: 'mk_MK' },
+        { name: 'twitter:card', content: 'summary_large_image' },
+        { name: 'twitter:url', content: url },
+        { name: 'twitter:title', content: title },
+        { name: 'twitter:description', content: description },
+        { name: 'twitter:image', content: image },
+      ];
+    })() : []
   });
 
   useEffect(() => {

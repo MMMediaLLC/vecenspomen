@@ -1,17 +1,6 @@
 {
   "rewrites": [
     {
-      "source": "/spomen/:slug",
-      "has": [
-        {
-          "type": "header",
-          "key": "user-agent",
-          "value": "(.*facebookexternalhit.*|.*Twitterbot.*|.*Viber.*|.*LinkedInBot.*|.*Pinterest.*|.*WhatsApp.*)"
-        }
-      ],
-      "destination": "/api/share-preview?slug=:slug"
-    },
-    {
       "source": "/((?!api/).*)",
       "destination": "/index.html"
     }
