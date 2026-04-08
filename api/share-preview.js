@@ -13,7 +13,15 @@ function getDb() {
   }
 
   try {
-    const serviceAccount = JSON.parse(raw.replace(/\\n/g, '\n'));
+    // ✅ FIX: "Bad control character in JSON" happens because Vercel env vars
+    // store the private_key with literal \n instead of real newlines.
+    // We normalise ALL escape sequences before parsing.
+    const normalised = raw
+      .replace(/\\n/g, '\n')   // literal \n  → newline
+      .replace(/\\r/g, '\r')   // literal \r  → carriage return
+      .replace(/\\t/g, '\t');  // literal \t  → tab (rare but safe)
+
+    const serviceAccount = JSON.parse(normalised);
 
     if (!serviceAccount.project_id) {
       console.error('[Preview API/FB] Service account missing project_id');
@@ -53,10 +61,7 @@ export default async function handler(req, res) {
   const { slug: rawSlug } = req.query;
   const baseUrl = getBaseUrl(req);
 
-  console.log('[Preview API] Collection: posts');
-
   if (!rawSlug) {
-    console.log('[Preview API] No slug provided, serving generic meta');
     return serveGenericMeta(null, baseUrl, res);
   }
 
@@ -73,25 +78,29 @@ export default async function handler(req, res) {
   try {
     const postsRef = db.collection('posts');
 
+    // 1. Exact slug field match
     let q = await postsRef.where('slug', '==', slug).limit(1).get();
+    console.log('[Preview API] Query slug==%s → %d docs', slug, q.size);
 
+    // 2. Try raw value if decoding changed it
     if (q.empty && rawSlug !== slug) {
-      console.log('[Preview API] Querying: slug == %s (raw)', rawSlug);
       q = await postsRef.where('slug', '==', rawSlug).limit(1).get();
+      console.log('[Preview API] Query slug==%s (raw) → %d docs', rawSlug, q.size);
     }
 
+    // 3. Fall back to doc ID
     if (q.empty) {
-      console.log('[Preview API] Not found by field, checking doc ID: %s', slug);
       const docSnap = await postsRef.doc(slug).get();
       if (!docSnap.exists) {
         console.warn('[Preview API] Post not found for slug/ID:', slug);
         return serveGenericMeta(slug, baseUrl, res);
       }
+      console.log('[Preview API] Found by doc ID:', docSnap.id);
       return serveMeta(docSnap.id, docSnap.data(), baseUrl, res);
     }
 
     const postDoc = q.docs[0];
-    console.log('[Preview API] Found: %s status=%s fullName=%s', postDoc.id, postDoc.data().status, postDoc.data().fullName);
+    console.log('[Preview API] Found by slug field: %s fullName=%s', postDoc.id, postDoc.data().fullName);
     return serveMeta(postDoc.id, postDoc.data(), baseUrl, res);
 
   } catch (err) {
@@ -99,6 +108,8 @@ export default async function handler(req, res) {
     return serveGenericMeta(slug, baseUrl, res);
   }
 }
+
+// ─── Helpers ─────────────────────────────────────────────────────────────────
 
 function getBaseUrl(req) {
   if (process.env.PUBLIC_SITE_URL) {
@@ -113,7 +124,7 @@ function ogImageUrl(baseUrl, params = {}) {
   const base = `${baseUrl}/api/og`;
   const qs = Object.entries(params)
     .filter(([, v]) => v != null && v !== '')
-    .map(([k, v]) => `${k}=${encodeURIComponent(v)}`)
+    .map(([k, v]) => `${k}=${encodeURIComponent(String(v).slice(0, 200))}`)
     .join('&');
   return qs ? `${base}?${qs}` : base;
 }
@@ -124,23 +135,21 @@ function serveGenericMeta(slug, baseUrl, res) {
   const image = ogImageUrl(baseUrl, { name: 'Вечен Спомен' });
   const url = slug ? `${baseUrl}/spomen/${slug}` : baseUrl;
 
-  const html = buildHtml(title, description, image, url);
   res.setHeader('Content-Type', 'text/html');
   res.setHeader('Cache-Control', 'public, max-age=60');
-  return res.status(200).send(html);
+  return res.status(200).send(buildHtml(title, description, image, url));
 }
 
 function serveMeta(id, post, baseUrl, res) {
   const years = [post.birthYear, post.deathYear].filter(Boolean).join(' – ');
   const yearsPart = years ? ` (${years})` : '';
   const cityPart = post.city ? ` од ${post.city}` : '';
-  const title = `Во Вечен Спомен — ${post.fullName}${yearsPart}`;
-  const description = post.introText
-    || `Меморијална објава за ${post.fullName}${cityPart}. ${post.mainText || ''}`.trim();
 
-  // FIX: Truncate message and intro to 200 chars to prevent oversized URLs
-  const rawMessage = post.aiRefinedText || post.mainText || '';
-  const rawIntro = post.introText || '';
+  const title = `Во Вечен Спомен — ${post.fullName}${yearsPart}`;
+  const description = (
+    post.introText ||
+    `Меморијална објава за ${post.fullName}${cityPart}. ${post.mainText || ''}`.trim()
+  ).slice(0, 300);
 
   const image = ogImageUrl(baseUrl, {
     slug: post.slug || id,
@@ -151,18 +160,17 @@ function serveMeta(id, post, baseUrl, res) {
     lovedBy: post.familyNote || post.senderName,
     style: post.selectedFrameStyle || 'elegant',
     package: post.package || 'Основен',
-    message: rawMessage.slice(0, 200),
+    message: post.aiRefinedText || post.mainText || '',
     photo: post.photoUrl || '',
     type: post.type || 'ТАЖНА ВЕСТ',
-    intro: rawIntro.slice(0, 200),
+    intro: post.introText || '',
   });
 
   const url = `${baseUrl}/spomen/${post.slug || id}`;
 
-  const html = buildHtml(title, description, image, url);
   res.setHeader('Content-Type', 'text/html');
   res.setHeader('Cache-Control', 'public, max-age=300');
-  return res.status(200).send(html);
+  return res.status(200).send(buildHtml(title, description, image, url));
 }
 
 function buildHtml(title, description, image, url) {
