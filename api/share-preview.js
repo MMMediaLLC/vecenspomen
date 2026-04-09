@@ -143,20 +143,23 @@ function serveMeta(id, post, baseUrl, res) {
     `Меморијална објава за ${post.fullName}${cityPart}. ${post.mainText || ''}`.trim()
   ).slice(0, 300);
 
-  const image = ogImageUrl(baseUrl, {
-    slug:      post.slug || id,
-    name:      post.fullName,
-    birthYear: post.birthYear,
-    deathYear: post.deathYear || (post.dateOfDeath ? new Date(post.dateOfDeath).getFullYear() : ''),
-    city:      post.city,
-    lovedBy:   post.familyNote || post.senderName,
-    style:     post.selectedFrameStyle || 'elegant',
-    package:   post.package || 'Основен',
-    message:   post.aiRefinedText || post.mainText || '',
-    photo:     post.photoUrl || '',
-    type:      post.type || 'ТАЖНА ВЕСТ',
-    intro:     post.introText || '',
-  });
+  // Use the pre-generated card image if available, else fall back to dynamic /api/og
+  const image = (post.shareImageUrl && /^https:\/\/.+/.test(post.shareImageUrl))
+    ? post.shareImageUrl
+    : ogImageUrl(baseUrl, {
+        slug:      post.slug || id,
+        name:      post.fullName,
+        birthYear: post.birthYear,
+        deathYear: post.deathYear || (post.dateOfDeath ? new Date(post.dateOfDeath).getFullYear() : ''),
+        city:      post.city,
+        lovedBy:   post.familyNote || post.senderName,
+        style:     post.selectedFrameStyle || 'elegant',
+        package:   post.package || 'Основен',
+        message:   post.aiRefinedText || post.mainText || '',
+        photo:     post.photoUrl || '',
+        type:      post.type || 'ТАЖНА ВЕСТ',
+        intro:     post.introText || '',
+      });
 
   const url = `${baseUrl}/spomen/${post.slug || id}`;
 

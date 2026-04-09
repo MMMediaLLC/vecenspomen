@@ -346,11 +346,9 @@ export const SubmitPost: React.FC<SubmitPostProps> = ({ onComplete, initialPost,
           </div>
         )}
       </div>
-      {/* Hidden OG image template for capture */}
-      <div className="overflow-hidden h-0 w-0 absolute pointer-events-none opacity-0" aria-hidden="true">
-        <div id="og-image-container">
-          <OGImageTemplate post={post} />
-        </div>
+      {/* Hidden OG image template for capture — off-screen so html-to-image reads full 1200×630 */}
+      <div style={{ position: 'fixed', left: '-9999px', top: '-9999px', width: '1200px', height: '630px', pointerEvents: 'none', zIndex: -1 }} aria-hidden="true">
+        <OGImageTemplate post={post} />
       </div>
     </div>
   );
