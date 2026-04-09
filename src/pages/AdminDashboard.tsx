@@ -482,7 +482,19 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
                     <img src={post.photoUrl} className="w-12 h-16 object-cover rounded shadow-sm opacity-60" alt="" />
                     <div className="flex-grow">
                       <h4 className="font-serif text-lg text-stone-700">{post.fullName}</h4>
-                      <p className="text-[10px] uppercase font-black tracking-widest text-stone-300">{post.type} • {post.city}</p>
+                      <div className="flex items-center gap-3">
+                        <p className="text-[10px] uppercase font-black tracking-widest text-stone-300">{post.type} • {post.city}</p>
+                        {post.ogStatus === 'failed' && (
+                          <span className="text-[8px] font-black uppercase px-2 py-0.5 bg-red-600 text-white flex items-center gap-1 leading-none">
+                            <AlertCircle size={8} /> OG ERROR
+                          </span>
+                        )}
+                        {post.ogStatus === 'pending' && (
+                          <span className="text-[8px] font-black uppercase px-2 py-0.5 bg-amber-500 text-white flex items-center gap-1 leading-none">
+                            <Loader2 className="animate-spin" size={8} /> ГЕНЕРИРАЊЕ
+                          </span>
+                        )}
+                      </div>
                     </div>
                     <div className="flex gap-1">
                       <button
@@ -498,6 +510,20 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
                         title="Јавен преглед"
                       >
                         <ExternalLink size={16} />
+                      </button>
+                      <button 
+                        onClick={() => {
+                          triggerOGGeneration(post.id);
+                          alert('Почна генерирањето на Facebook сликата...');
+                        }}
+                        className={`p-2 transition-all ${
+                          post.ogStatus === 'failed' ? 'text-red-600' : 
+                          post.ogStatus === 'pending' ? 'text-amber-600 animate-pulse' :
+                          'text-stone-300 hover:text-stone-900'
+                        }`}
+                        title="Освежи Facebook Слика"
+                      >
+                        <Share2 size={16} />
                       </button>
                       <button
                         onClick={() => onUpdateStatus(post.id, 'Во проверка')}
