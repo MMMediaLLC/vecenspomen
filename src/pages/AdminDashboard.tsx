@@ -382,13 +382,21 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
                           </span>
                         )}
                         {post.ogStatus === 'failed' && (
-                          <span className="text-[9px] font-black uppercase tracking-widest px-2 py-0.5 bg-red-600 text-white flex items-center gap-1">
-                            <AlertCircle size={10} /> OG ГРЕШКА
+                          <span className="text-[9px] font-black uppercase tracking-widest px-2 py-0.5 bg-red-600 text-white flex items-center gap-1 group/err relative cursor-help">
+                            <AlertCircle size={10} /> ГРЕШКА
+                            <div className="hidden group-hover/err:block absolute bottom-full left-0 mb-2 p-2 bg-stone-900 text-white text-[8px] whitespace-nowrap z-50 shadow-xl border border-stone-800">
+                              {post.ogError || 'Непозната грешка'}
+                            </div>
                           </span>
                         )}
                         {post.ogStatus === 'pending' && (
                           <span className="text-[9px] font-black uppercase tracking-widest px-2 py-0.5 bg-amber-500 text-white flex items-center gap-1">
                             <Loader2 className="animate-spin" size={10} /> ГЕНЕРИРАЊЕ...
+                          </span>
+                        )}
+                        {post.ogStatus === 'ready' && (
+                          <span className="text-[9px] font-black uppercase tracking-widest px-2 py-0.5 bg-green-500 text-white flex items-center gap-1">
+                            <CheckCircle size={10} /> СПОДЕЛУВАЊЕ ПОДГОТВЕНО
                           </span>
                         )}
                       </div>
@@ -441,18 +449,16 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
                         <X size={18} />
                       </button>
                       <button 
-                        onClick={() => {
-                          triggerOGGeneration(post.id);
-                          alert('Почна генерирањето на Facebook сликата...');
-                        }}
+                        onClick={() => triggerOGGeneration(post.id)}
+                        disabled={post.ogStatus === 'pending'}
                         className={`p-4 border transition-all ${
                           post.ogStatus === 'failed' ? 'bg-red-50 text-red-600 border-red-200' : 
-                          post.ogStatus === 'pending' ? 'bg-amber-50 text-amber-600 border-amber-200 animate-pulse' :
+                          post.ogStatus === 'pending' ? 'bg-amber-50 text-amber-600 border-amber-200 cursor-wait' :
                           'bg-stone-50 text-stone-400 hover:text-stone-900 border-stone-100'
                         }`}
                         title="Освежи Facebook Слика"
                       >
-                        <Share2 size={18} />
+                        {post.ogStatus === 'pending' ? <Loader2 className="animate-spin" size={18} /> : <Share2 size={18} />}
                       </button>
                       <button 
                         onClick={() => setPostToDelete(post)}
@@ -485,13 +491,21 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
                       <div className="flex items-center gap-3">
                         <p className="text-[10px] uppercase font-black tracking-widest text-stone-300">{post.type} • {post.city}</p>
                         {post.ogStatus === 'failed' && (
-                          <span className="text-[8px] font-black uppercase px-2 py-0.5 bg-red-600 text-white flex items-center gap-1 leading-none">
-                            <AlertCircle size={8} /> OG ERROR
+                          <span className="text-[8px] font-black uppercase px-2 py-0.5 bg-red-600 text-white flex items-center gap-1 leading-none group/err relative cursor-help">
+                            <AlertCircle size={8} /> ERROR
+                            <div className="hidden group-hover/err:block absolute bottom-full left-0 mb-1 p-1 bg-stone-900 text-white text-[7px] whitespace-nowrap z-50">
+                              {post.ogError || 'Check Logs'}
+                            </div>
                           </span>
                         )}
                         {post.ogStatus === 'pending' && (
                           <span className="text-[8px] font-black uppercase px-2 py-0.5 bg-amber-500 text-white flex items-center gap-1 leading-none">
                             <Loader2 className="animate-spin" size={8} /> ГЕНЕРИРАЊЕ
+                          </span>
+                        )}
+                        {post.ogStatus === 'ready' && (
+                          <span className="text-[8px] font-black uppercase px-2 py-0.5 bg-stone-900 text-white flex items-center gap-1 leading-none">
+                            <CheckCircle size={8} /> СЛИКА ПОДГОТВЕНА
                           </span>
                         )}
                       </div>

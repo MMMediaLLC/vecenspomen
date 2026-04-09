@@ -2,6 +2,7 @@ import { collection, doc, getDocs, setDoc, getDoc, updateDoc, deleteDoc, serverT
 import { db, isMock } from './firebase';
 import { MemorialPost, PostStatus } from '../types';
 import { SEEDED_POSTS } from '../constants';
+import { calculatePostVisualHash } from './og/hash';
 
 let mockPosts = [...SEEDED_POSTS];
 
@@ -54,6 +55,14 @@ export const addPost = async (post: MemorialPost): Promise<string> => {
     const docRef = await addDoc(postsCollection, enrichedPost);
     console.log('generated postId (Firestore):', docRef.id);
     
+    // Initial hash and status
+    const initialHash = calculatePostVisualHash(enrichedPost);
+    await updateDoc(doc(postsCollection, docRef.id), {
+      ogSourceHash: initialHash,
+      ogStatus: 'pending',
+      ogGenerationStartedAt: serverTimestamp(),
+    });
+
     // Trigger OG generation in background
     triggerOGGeneration(docRef.id);
     
@@ -131,10 +140,29 @@ export const updatePost = async (id: string, data: Partial<MemorialPost>): Promi
     return;
   }
   const docRef = doc(postsCollection, id);
-  await updateDoc(docRef, data);
   
-  // Re-trigger OG if visual data changes
-  triggerOGGeneration(id);
+  // 1. Get current post for hash comparison
+  const snap = await getDoc(docRef);
+  if (snap.exists()) {
+    const currentPost = { ...snap.data(), id: snap.id } as MemorialPost;
+    const updatedPost = { ...currentPost, ...data };
+    const newHash = calculatePostVisualHash(updatedPost);
+
+    // 2. Only trigger if hash changed
+    if (newHash !== currentPost.ogSourceHash) {
+      await updateDoc(docRef, {
+        ...data,
+        ogStatus: 'pending',
+        ogSourceHash: newHash,
+        ogGenerationStartedAt: serverTimestamp(),
+      });
+      triggerOGGeneration(id);
+    } else {
+      await updateDoc(docRef, data);
+    }
+  } else {
+    await updateDoc(docRef, data);
+  }
 };
 
 export const updateMemorialPost = async (id: string, data: Partial<MemorialPost>, adminEmail?: string | null): Promise<void> => {
@@ -153,14 +181,31 @@ export const updateMemorialPost = async (id: string, data: Partial<MemorialPost>
     return;
   }
   
-  await updateDoc(docRef, {
-    ...data,
-    updatedAt: serverTimestamp(),
-    lastEditedBy: adminEmail || 'Admin',
-  });
+  const docRef = doc(postsCollection, id);
+  const snap = await getDoc(docRef);
+  if (snap.exists()) {
+    const currentPost = { ...snap.data(), id: snap.id } as MemorialPost;
+    const updatedPost = { ...currentPost, ...data };
+    const newHash = calculatePostVisualHash(updatedPost);
 
-  // Re-trigger OG generation after admin update
-  triggerOGGeneration(id);
+    if (newHash !== currentPost.ogSourceHash) {
+      await updateDoc(docRef, {
+        ...data,
+        updatedAt: serverTimestamp(),
+        lastEditedBy: adminEmail || 'Admin',
+        ogStatus: 'pending',
+        ogSourceHash: newHash,
+        ogGenerationStartedAt: serverTimestamp(),
+      });
+      triggerOGGeneration(id);
+    } else {
+      await updateDoc(docRef, {
+        ...data,
+        updatedAt: serverTimestamp(),
+        lastEditedBy: adminEmail || 'Admin',
+      });
+    }
+  }
 };
 
 export const deleteMemorialPost = async (id: string): Promise<void> => {

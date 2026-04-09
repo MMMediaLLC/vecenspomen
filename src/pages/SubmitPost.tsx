@@ -221,13 +221,27 @@ export const SubmitPost: React.FC<SubmitPostProps> = ({ onComplete, initialPost,
             <p className="text-stone-600 leading-relaxed font-light">
               Вашата објава е во фаза на административна проверка. Штом биде одобрена, ќе добиете известување на вашата е-пошта и ќе биде јавно достапна на порталот.
             </p>
-            <div className="bg-stone-50 border border-stone-100 rounded-sm p-6 text-sm text-stone-500 space-y-2">
-              <p>ID на објава: <span className="font-mono text-stone-900">#{(post as any).id?.substring(0, 8)}</span></p>
-              <p>Статус: <strong className="text-stone-900">Во проверка</strong></p>
+            <div className="bg-stone-50 border border-stone-100 rounded-sm p-6 text-sm text-stone-500 space-y-4">
+              <div className="flex justify-between items-center border-b border-stone-100 pb-2">
+                <span>ID на објава:</span>
+                <span className="font-mono text-stone-900 uppercase">#{(post as any).id?.substring(0, 8)}</span>
+              </div>
+              
+              <div className="flex justify-between items-center">
+                <span>Facebook Преглед:</span>
+                <div className="flex items-center gap-2 text-stone-900 font-bold">
+                  <Loader2 className="animate-spin text-stone-400" size={14} />
+                  <span>Се подготвува...</span>
+                </div>
+              </div>
+              
+              <p className="text-[10px] uppercase tracking-widest text-stone-400 pt-2 italic">
+                * Сликата за споделување се генерира во позадина и ќе биде достапна за неколку секунди.
+              </p>
             </div>
             <button
               onClick={() => { navigate('/'); window.scrollTo(0, 0); }}
-              className="w-full py-4 bg-stone-900 text-white rounded-sm font-medium hover:bg-stone-800 transition-colors shadow-lg"
+              className="w-full py-4 bg-stone-900 text-white rounded-sm font-black uppercase tracking-[0.2em] text-[11px] hover:bg-stone-800 transition-all shadow-xl active:scale-[0.98]"
             >
               Врати се на почетна
             </button>

@@ -132,6 +132,8 @@ function serveGenericMeta(slug, baseUrl, res) {
   return res.status(200).send(buildHtml(title, description, image, url));
 }
 
+const DEFAULT_OG_IMAGE = 'https://vecenspomen.mk/default-og.png'; // Should exist in /public
+
 function serveMeta(id, post, baseUrl, res) {
   const years     = [post.birthYear, post.deathYear].filter(Boolean).join(' – ');
   const yearsPart = years ? ` (${years})` : '';
@@ -143,23 +145,10 @@ function serveMeta(id, post, baseUrl, res) {
     `Меморијална објава за ${post.fullName}${cityPart}. ${post.mainText || ''}`.trim()
   ).slice(0, 300);
 
-  // Use the pre-generated card image if available, else fall back to dynamic /api/og
+  // Strictly use the persisted shareImageUrl, or a safe default
   const image = (post.shareImageUrl && /^https:\/\/.+/.test(post.shareImageUrl))
     ? post.shareImageUrl
-    : ogImageUrl(baseUrl, {
-        slug:      post.slug || id,
-        name:      post.fullName,
-        birthYear: post.birthYear,
-        deathYear: post.deathYear || (post.dateOfDeath ? new Date(post.dateOfDeath).getFullYear() : ''),
-        city:      post.city,
-        lovedBy:   post.familyNote || post.senderName,
-        style:     post.selectedFrameStyle || 'klasicen',
-        package:   post.package || 'Основен',
-        message:   post.aiRefinedText || post.mainText || '',
-        photo:     post.photoUrl || '',
-        type:      post.type || 'ТАЖНА ВЕСТ',
-        intro:     post.introText || '',
-      });
+    : DEFAULT_OG_IMAGE;
 
   const url = `https://vecenspomen.mk/spomen/${post.slug || id}`;
 

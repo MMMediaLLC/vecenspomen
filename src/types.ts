@@ -71,7 +71,9 @@ export interface MemorialPost {
   relatedToSlug?: string;
   // OG Generation fields
   ogStatus?: 'pending' | 'ready' | 'failed';
-  ogGeneratedAt?: string;
+  ogGeneratedAt?: any;
+  ogGenerationStartedAt?: any;
+  ogSourceHash?: string;
   ogError?: string;
 }
 
