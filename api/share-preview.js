@@ -1,0 +1,234 @@
+import admin from 'firebase-admin';
+
+// ─── Firebase Admin lazy singleton ───────────────────────────────────────────
+let _db = null;
+
+function getDb() {
+  if (_db) return _db;
+
+  const raw = process.env.FIREBASE_SERVICE_ACCOUNT;
+  if (!raw) {
+    console.error('[Preview API/FB] FIREBASE_SERVICE_ACCOUNT is not set');
+    return null;
+  }
+
+  try {
+    // FIX: Normalize literal and escaped newlines in the private key
+    const normalised = raw
+      .replace(/\\n/g, '\n')
+      .replace(/\\r/g, '\r')
+      .replace(/\\t/g, '\t');
+
+    const serviceAccount = JSON.parse(normalised);
+
+    if (!serviceAccount.project_id) {
+      console.error('[Preview API/FB] Service account missing project_id');
+      return null;
+    }
+
+    if (!admin.apps.length) {
+      admin.initializeApp({ credential: admin.credential.cert(serviceAccount) });
+      console.log('[Preview API/FB] Admin SDK initialized:', serviceAccount.project_id);
+    }
+
+    _db = admin.firestore();
+    return _db;
+  } catch (err) {
+    console.error('[Preview API/FB] Init failed:', err.message);
+    return null;
+  }
+}
+
+/**
+ * Safely decode a slug that may have been percent-encoded once or twice.
+ */
+function safeDecodeSlug(raw) {
+  if (!raw) return raw;
+  try {
+    const once = decodeURIComponent(raw);
+    if (once !== raw && /%[0-9A-Fa-f]{2}/.test(once)) {
+      try { return decodeURIComponent(once); } catch { return once; }
+    }
+    return once;
+  } catch {
+    return raw;
+  }
+}
+
+export default async function handler(req, res) {
+  const { slug: rawSlug } = req.query;
+  const baseUrl = getBaseUrl(req);
+
+  if (!rawSlug) {
+    return serveGenericMeta(null, baseUrl, res);
+  }
+
+  const db = getDb();
+
+  if (!db) {
+    console.warn('[Preview API] Firebase unavailable — serving generic fallback');
+    return serveGenericMeta(rawSlug, baseUrl, res);
+  }
+
+  const slug = safeDecodeSlug(rawSlug);
+
+  try {
+    const postsRef = db.collection('posts');
+
+    // 1. Exact slug field match
+    let q = await postsRef.where('slug', '==', slug).limit(1).get();
+
+    // 2. Try raw value if decoding changed it
+    if (q.empty && rawSlug !== slug) {
+      q = await postsRef.where('slug', '==', rawSlug).limit(1).get();
+    }
+
+    // 3. Fall back to doc ID
+    if (q.empty) {
+      const docSnap = await postsRef.doc(slug).get();
+      if (!docSnap.exists) {
+        console.warn('[Preview API] Post not found for slug/ID:', slug);
+        return serveGenericMeta(slug, baseUrl, res);
+      }
+      return serveMeta(docSnap.id, docSnap.data(), baseUrl, res);
+    }
+
+    const postDoc = q.docs[0];
+    return serveMeta(postDoc.id, postDoc.data(), baseUrl, res);
+
+  } catch (err) {
+    console.error('[Preview API] Error fetching post:', err);
+    return serveGenericMeta(slug, baseUrl, res);
+  }
+}
+
+function getBaseUrl(req) {
+  if (process.env.PUBLIC_SITE_URL) {
+    return process.env.PUBLIC_SITE_URL.replace(/\/$/, '');
+  }
+  const protocol = req.headers['x-forwarded-proto'] || 'https';
+  const host = req.headers.host;
+  return `${protocol}://${host}`;
+}
+
+// Per-param char limits before URL encoding (Cyrillic = 3x encoded)
+const PARAM_LIMITS = { message: 100, intro: 80, lovedBy: 50, name: 80 };
+// Params dropped first if total URL exceeds 1900 chars (Facebook limit: 2048)
+const OPTIONAL_PARAMS = ['lovedBy', 'intro', 'message', 'photo'];
+
+function ogImageUrl(baseUrl, params = {}) {
+  const base = `${baseUrl}/api/og`;
+  const pairs = Object.entries(params)
+    .filter(([, v]) => v != null && v !== '')
+    .map(([k, v]) => [k, encodeURIComponent(String(v).slice(0, PARAM_LIMITS[k] ?? 200))]);
+
+  const build = (ps) => {
+    const qs = ps.map(([k, v]) => `${k}=${v}`).join('&');
+    return qs ? `${base}?${qs}` : base;
+  };
+
+  let url = build(pairs);
+  if (url.length <= 1900) return url;
+
+  // Drop optional params one by one until under limit
+  let filtered = [...pairs];
+  for (const drop of OPTIONAL_PARAMS) {
+    filtered = filtered.filter(([k]) => k !== drop);
+    url = build(filtered);
+    if (url.length <= 1900) return url;
+  }
+  return url;
+}
+
+function serveGenericMeta(slug, baseUrl, res) {
+  const title       = 'Вечен Спомен — Меморијален портал';
+  const description = 'Достоинствени меморијални објави за починати. Последни поздрави, сочувства и пригодни пораки.';
+  const image       = ogImageUrl(baseUrl, { name: 'Вечен Спомен' });
+  const url         = slug ? `${baseUrl}/spomen/${slug}` : baseUrl;
+
+  res.setHeader('Content-Type', 'text/html');
+  res.setHeader('Cache-Control', 'public, max-age=60');
+  return res.status(200).send(buildHtml(title, description, image, url));
+}
+
+function serveMeta(id, post, baseUrl, res) {
+  const years     = [post.birthYear, post.deathYear].filter(Boolean).join(' – ');
+  const yearsPart = years ? ` (${years})` : '';
+  const cityPart  = post.city ? ` од ${post.city}` : '';
+
+  const title       = `Во Вечен Спомен — ${post.fullName}${yearsPart}`;
+  const description = (
+    post.introText ||
+    `Меморијална објава за ${post.fullName}${cityPart}. ${post.mainText || ''}`.trim()
+  ).slice(0, 300);
+  const imageAlt    = `Меморијална слика за ${post.fullName}${yearsPart}`;
+
+  // Use the pre-generated card image from Firebase Storage if available,
+  // otherwise fall back to the dynamic /api/og endpoint.
+  const image = (post.shareImageUrl && /^https:\/\/.+/.test(post.shareImageUrl))
+    ? post.shareImageUrl
+    : ogImageUrl(baseUrl, {
+        slug:      post.slug || id,
+        name:      post.fullName,
+        birthYear: post.birthYear,
+        deathYear: post.deathYear || (post.dateOfDeath ? new Date(post.dateOfDeath).getFullYear() : ''),
+        city:      post.city,
+        lovedBy:   post.familyNote || post.senderName,
+        style:     post.selectedFrameStyle || 'elegant',
+        package:   post.package || 'Основен',
+        message:   post.aiRefinedText || post.mainText || '',
+        photo:     post.photoUrl || '',
+        type:      post.type || 'ТАЖНА ВЕСТ',
+        intro:     post.introText || '',
+      });
+
+  const url = `${baseUrl}/spomen/${post.slug || id}`;
+
+  res.setHeader('Content-Type', 'text/html');
+  res.setHeader('Cache-Control', 'public, max-age=300');
+  return res.status(200).send(buildHtml(title, description, image, url, imageAlt));
+}
+
+function buildHtml(title, description, image, url, imageAlt) {
+  const altText = imageAlt || title;
+  const esc = (s) => String(s)
+    .replace(/&/g, '&amp;')
+    .replace(/"/g, '&quot;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;');
+
+  return `<!DOCTYPE html>
+<html lang="mk">
+<head>
+  <meta charset="UTF-8">
+  <title>${esc(title)}</title>
+  <meta name="description" content="${esc(description)}">
+  <link rel="canonical" href="${esc(url)}">
+
+  <meta property="og:type" content="article">
+  <meta property="og:site_name" content="Вечен Спомен">
+  <meta property="og:url" content="${esc(url)}">
+  <meta property="og:title" content="${esc(title)}">
+  <meta property="og:description" content="${esc(description)}">
+  <meta property="og:image" content="${esc(image)}">
+  <meta property="og:image:secure_url" content="${esc(image)}">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:image:alt" content="${esc(altText)}">
+  <meta property="og:locale" content="mk_MK">
+
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:url" content="${esc(url)}">
+  <meta name="twitter:title" content="${esc(title)}">
+  <meta name="twitter:description" content="${esc(description)}">
+  <meta name="twitter:image" content="${esc(image)}">
+  <meta name="twitter:image:alt" content="${esc(altText)}">
+
+  <meta http-equiv="refresh" content="0; url=${esc(url)}">
+</head>
+<body>
+  <p>Ве пренасочуваме... <a href="${esc(url)}">Кликнете овде</a></p>
+  <script>window.location.href="${esc(url)}";</script>
+</body>
+</html>`;
+}
