@@ -62,19 +62,12 @@ export interface MemorialPost {
   paymentStatus?: 'unpaid' | 'paid' | 'cancelled' | 'failed' | 'refunded';
   paymentCheckoutId?: string;
   paymentOrderId?: string;
-  shareImageUrl?: string;
   paidAt?: string;
   featuredUntil?: string;
   refundAt?: string;
   // Link to a main memorial post (e.g. For condolences or farewells)
   relatedToId?: string;
   relatedToSlug?: string;
-  // OG Generation fields
-  ogStatus?: 'pending' | 'ready' | 'failed';
-  ogGeneratedAt?: any;
-  ogGenerationStartedAt?: any;
-  ogSourceHash?: string;
-  ogError?: string;
 }
 
 export interface City {

@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
-import { useHead } from '@unhead/react';
 import { MemorialPost } from '../types';
 import { MemorialTemplate } from '../components/MemorialTemplate';
 import { Guestbook } from '../components/Guestbook';
@@ -8,7 +7,7 @@ import { getRelatedPosts, getPostById, getPostBySlug, addGuestbookEntry } from '
 import { format } from 'date-fns';
 import { mk } from 'date-fns/locale';
 import {
-  Facebook, Link as LinkIcon, Download, MessageCircle,
+  Link as LinkIcon, MessageCircle,
   ArrowLeft, Check, Loader2, AlertCircle, Home
 } from 'lucide-react';
 
@@ -21,58 +20,6 @@ export const SinglePost: React.FC = () => {
   const [relatedPosts, setRelatedPosts] = useState<MemorialPost[]>([]);
 
   const [copied, setCopied] = useState(false);
-  const [isDownloading, setIsDownloading] = useState(false);
-
-  useHead({
-    title: post ? `Во Вечен Спомен — ${post.fullName}` : 'Вечен Спомен',
-    meta: post ? (() => {
-      const baseUrl = window.location.origin;
-      const years = [post.birthYear, post.deathYear].filter(Boolean).join(' – ');
-      const yearsPart = years ? ` (${years})` : '';
-      const cityPart = post.city ? ` од ${post.city}` : '';
-      const title = `Во Вечен Спомен — ${post.fullName}${yearsPart}`;
-      const description = post.introText
-        || `Меморијална објава за ${post.fullName}${cityPart}. ${post.mainText || ''}`.trim();
-        
-      const ogParams = new URLSearchParams({
-        name:      post.fullName,
-        ...(post.birthYear  ? { birthYear: String(post.birthYear) }  : {}),
-        ...(post.deathYear  ? { deathYear: String(post.deathYear) }  : {}),
-        ...(post.city       ? { city: post.city }                    : {}),
-        ...(post.photoUrl   ? { photo: post.photoUrl }               : {}),
-        ...((post.familyNote || post.senderName) ? { lovedBy: post.familyNote || post.senderName! } : {}),
-        style: post.selectedFrameStyle || 'elegant',
-        package: post.package || 'Основен',
-        message: post.aiRefinedText || post.mainText || '',
-      });
-      
-      const image = (post.shareImageUrl && /^https:\/\/.+/.test(post.shareImageUrl))
-        ? post.shareImageUrl
-        : `${baseUrl}/api/og?${ogParams.toString()}`;
-        
-      const url = `https://vecenspomen.mk/spomen/${post.slug || post.id}`;
-      
-      return [
-        { name: 'description', content: description },
-        { property: 'og:type', content: 'article' },
-        { property: 'og:site_name', content: 'Вечен Спомен' },
-        { property: 'og:url', content: url },
-        { property: 'og:title', content: title },
-        { property: 'og:description', content: description },
-        { property: 'og:image', content: image },
-        { property: 'og:image:secure_url', content: image },
-        { property: 'og:image:width', content: '1200' },
-        { property: 'og:image:height', content: '630' },
-        { property: 'og:image:type', content: 'image/png' },
-        { property: 'og:locale', content: 'mk_MK' },
-        { name: 'twitter:card', content: 'summary_large_image' },
-        { name: 'twitter:url', content: url },
-        { name: 'twitter:title', content: title },
-        { name: 'twitter:description', content: description },
-        { name: 'twitter:image', content: image },
-      ];
-    })() : []
-  });
 
   useEffect(() => {
     if (post?.id) {
@@ -126,39 +73,6 @@ export const SinglePost: React.FC = () => {
       setCopied(true);
       setTimeout(() => setCopied(false), 2500);
     }
-  };
-
-  const handleDownloadImage = async () => {
-    if (isDownloading || !post) return;
-    setIsDownloading(true);
-    try {
-      const ogParams = new URLSearchParams({
-        name:      post.fullName,
-        ...(post.birthYear  ? { birthYear: String(post.birthYear) }  : {}),
-        ...(post.deathYear  ? { deathYear: String(post.deathYear) }  : {}),
-        ...(post.city       ? { city: post.city }                    : {}),
-        ...(post.photoUrl   ? { photo: post.photoUrl }               : {}),
-        ...((post.familyNote || post.senderName) ? { lovedBy: post.familyNote || post.senderName! } : {}),
-        style: post.selectedFrameStyle || 'klasicen',
-      });
-      const res = await fetch(`/api/og?${ogParams.toString()}`);
-      const blob = await res.blob();
-      const url = URL.createObjectURL(blob);
-      const link = document.createElement('a');
-      link.download = `vechen-spomen-${post.fullName.replace(/\s+/g, '-').toLowerCase()}.png`;
-      link.href = url;
-      link.click();
-      URL.revokeObjectURL(url);
-    } catch (err) {
-      console.error('Error downloading image', err);
-    } finally {
-      setIsDownloading(false);
-    }
-  };
-
-  const handleFacebookShare = () => {
-    const url = encodeURIComponent(window.location.href);
-    window.open(`https://www.facebook.com/sharer/sharer.php?u=${url}`, '_blank', 'noopener');
   };
 
   const handleViberShare = () => {
@@ -240,13 +154,6 @@ export const SinglePost: React.FC = () => {
           {/* Share Action Bar */}
           <div className="flex flex-row flex-nowrap items-center justify-center md:justify-end gap-[4px] md:gap-[8px] text-stone-500 font-sans order-1 md:order-2 w-full md:w-auto mb-2 md:mb-0 overflow-x-auto hide-scrollbar py-1">
             <button
-              onClick={handleFacebookShare}
-              className="flex items-center justify-center gap-1 h-7 px-1.5 bg-white border border-stone-200 rounded-[6px] text-[9px] md:text-xs font-medium text-stone-500 hover:border-stone-300 hover:text-stone-700 transition-all shadow-sm flex-shrink-0"
-              aria-label="Сподели на Facebook"
-            >
-              <Facebook size={11} /> <span>Facebook</span>
-            </button>
-            <button
               onClick={handleViberShare}
               className="flex items-center justify-center gap-1 h-7 px-1.5 bg-white border border-stone-200 rounded-[6px] text-[9px] md:text-xs font-medium text-stone-500 hover:border-stone-300 hover:text-stone-700 transition-all shadow-sm flex-shrink-0"
               aria-label="Сподели на Viber"
@@ -260,15 +167,6 @@ export const SinglePost: React.FC = () => {
             >
               {copied ? <Check size={11} className="text-green-600" /> : <LinkIcon size={11} />}
               <span>{copied ? 'Ископирано' : 'Линк'}</span>
-            </button>
-            <button
-              onClick={handleDownloadImage}
-              disabled={isDownloading}
-              className="flex items-center justify-center gap-1 h-7 px-1.5 bg-white border border-stone-200 rounded-[6px] text-[9px] md:text-xs font-medium text-stone-500 hover:border-stone-300 hover:text-stone-700 transition-all shadow-sm disabled:opacity-50 flex-shrink-0"
-              aria-label="Преземи слика"
-            >
-              <Download size={11} />
-              <span>{isDownloading ? '...' : 'Слика'}</span>
             </button>
           </div>
         </div>
