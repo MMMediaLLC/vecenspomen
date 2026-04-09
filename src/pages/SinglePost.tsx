@@ -46,8 +46,11 @@ export const SinglePost: React.FC = () => {
         message: post.aiRefinedText || post.mainText || '',
       });
       
-      const image = `${baseUrl}/api/og?${ogParams.toString()}`;
-      const url = `${baseUrl}/spomen/${post.slug || post.id}`;
+      const image = (post.shareImageUrl && /^https:\/\/.+/.test(post.shareImageUrl))
+        ? post.shareImageUrl
+        : `${baseUrl}/api/og?${ogParams.toString()}`;
+        
+      const url = `https://vecenspomen.mk/spomen/${post.slug || post.id}`;
       
       return [
         { name: 'description', content: description },
@@ -60,6 +63,7 @@ export const SinglePost: React.FC = () => {
         { property: 'og:image:secure_url', content: image },
         { property: 'og:image:width', content: '1200' },
         { property: 'og:image:height', content: '630' },
+        { property: 'og:image:type', content: 'image/png' },
         { property: 'og:locale', content: 'mk_MK' },
         { name: 'twitter:card', content: 'summary_large_image' },
         { name: 'twitter:url', content: url },

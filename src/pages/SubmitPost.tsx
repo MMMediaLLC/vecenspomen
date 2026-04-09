@@ -6,8 +6,6 @@ import { Step1 } from '../components/SubmissionFlow/Step1';
 import { Step2 } from '../components/SubmissionFlow/Step2';
 import { Step3 } from '../components/SubmissionFlow/Step3';
 import { Step5 } from '../components/SubmissionFlow/Step5'; // Now becomes conceptual Step 4
-import { OGImageTemplate } from '../components/OGImageTemplate';
-import { generateAndUploadOGImage } from '../lib/og';
 import { PACKAGES } from '../constants';
 import { Check, ArrowRight, ArrowLeft, Loader2, AlertCircle, Share2 } from 'lucide-react';
 
@@ -158,21 +156,10 @@ export const SubmitPost: React.FC<SubmitPostProps> = ({ onComplete, initialPost,
         ? post.slug
         : generateSlug(post.fullName || 'memorial', post.deathYear);
 
-      // 1. Generate OG Image BEFORE final submission if possible
-      // We need to render the template first (it's in the JSX below)
-      setIsGeneratingOG(true);
-      
-      // Small delay to ensure the hidden template is rendered with current 'post' state
-      await new Promise(resolve => setTimeout(resolve, 500));
-      
-      const shareImageUrl = await generateAndUploadOGImage({ ...post, id: tempId, slug: tempSlug }, 'og-image-container');
-      setIsGeneratingOG(false);
-
       const finalPost: MemorialPost = {
         ...post,
         id: tempId,
         slug: tempSlug,
-        shareImageUrl: shareImageUrl || post.shareImageUrl || '',
         guestbookEnabled: post.package === 'Истакнат',
       } as MemorialPost;
 
@@ -345,10 +332,6 @@ export const SubmitPost: React.FC<SubmitPostProps> = ({ onComplete, initialPost,
             </button>
           </div>
         )}
-      </div>
-      {/* Hidden OG image template for capture — off-screen so html-to-image reads full 1200×630 */}
-      <div style={{ position: 'fixed', left: '-9999px', top: '-9999px', width: '1200px', height: '630px', pointerEvents: 'none', zIndex: -1 }} aria-hidden="true">
-        <OGImageTemplate post={post} />
       </div>
     </div>
   );

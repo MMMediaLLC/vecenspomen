@@ -53,6 +53,10 @@ export const addPost = async (post: MemorialPost): Promise<string> => {
   try {
     const docRef = await addDoc(postsCollection, enrichedPost);
     console.log('generated postId (Firestore):', docRef.id);
+    
+    // Trigger OG generation in background
+    triggerOGGeneration(docRef.id);
+    
     return docRef.id;
   } catch (err) {
     console.error('Firestore save failed:', err);
@@ -128,6 +132,9 @@ export const updatePost = async (id: string, data: Partial<MemorialPost>): Promi
   }
   const docRef = doc(postsCollection, id);
   await updateDoc(docRef, data);
+  
+  // Re-trigger OG if visual data changes
+  triggerOGGeneration(id);
 };
 
 export const updateMemorialPost = async (id: string, data: Partial<MemorialPost>, adminEmail?: string | null): Promise<void> => {
@@ -146,12 +153,14 @@ export const updateMemorialPost = async (id: string, data: Partial<MemorialPost>
     return;
   }
   
-  const docRef = doc(postsCollection, id);
   await updateDoc(docRef, {
     ...data,
     updatedAt: serverTimestamp(),
     lastEditedBy: adminEmail || 'Admin',
   });
+
+  // Re-trigger OG generation after admin update
+  triggerOGGeneration(id);
 };
 
 export const deleteMemorialPost = async (id: string): Promise<void> => {
@@ -245,5 +254,25 @@ export const deleteGuestbookEntry = async (postId: string, entryId: string): Pro
   if (post && post.guestbookEntries) {
     const updatedEntries = post.guestbookEntries.filter(e => e.id !== entryId);
     await updateDoc(doc(postsCollection, postId), { guestbookEntries: updatedEntries });
+  }
+};
+
+/**
+ * Triggers the server-side OG image generation API.
+ */
+export const triggerOGGeneration = async (postId: string): Promise<void> => {
+  if (isMock) return;
+  try {
+    const res = await fetch('/api/generate-stable-og', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ postId })
+    });
+    const result = await res.json();
+    if (!result.success) {
+      console.error('[OG Trigger] API reported error:', result.error);
+    }
+  } catch (err) {
+    console.error('[OG Trigger] Failed to call generation API:', err);
   }
 };

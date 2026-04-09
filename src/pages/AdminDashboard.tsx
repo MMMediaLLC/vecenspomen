@@ -4,10 +4,11 @@ import { MemorialTemplate } from '../components/MemorialTemplate';
 import { 
   Check, X, AlertCircle, Clock, LayoutDashboard, CheckCircle, 
   XCircle, ChevronRight, LogOut, MessageSquare, Trash2, Eye, 
-  Bell, Search, User as UserIcon, Calendar, Filter, Pencil, Archive, ExternalLink
+  Bell, Search, User as UserIcon, Calendar, Filter, Pencil, Archive, ExternalLink, Share2, Loader2
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { auth, isMock } from '../lib/firebase';
+import { triggerOGGeneration } from '../lib/posts';
 import { signInWithEmailAndPassword, onAuthStateChanged, signOut, User } from 'firebase/auth';
 
 interface AdminDashboardProps {
@@ -380,6 +381,16 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
                             <Clock size={10} /> Неплатено
                           </span>
                         )}
+                        {post.ogStatus === 'failed' && (
+                          <span className="text-[9px] font-black uppercase tracking-widest px-2 py-0.5 bg-red-600 text-white flex items-center gap-1">
+                            <AlertCircle size={10} /> OG ГРЕШКА
+                          </span>
+                        )}
+                        {post.ogStatus === 'pending' && (
+                          <span className="text-[9px] font-black uppercase tracking-widest px-2 py-0.5 bg-amber-500 text-white flex items-center gap-1">
+                            <Loader2 className="animate-spin" size={10} /> ГЕНЕРИРАЊЕ...
+                          </span>
+                        )}
                       </div>
                       <div className="grid grid-cols-2 md:grid-cols-4 gap-x-8 gap-y-2 text-[10px] font-bold text-stone-500 uppercase tracking-widest">
                         <div className="flex flex-col gap-0.5">
@@ -428,6 +439,20 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
                         title="Одбиј"
                       >
                         <X size={18} />
+                      </button>
+                      <button 
+                        onClick={() => {
+                          triggerOGGeneration(post.id);
+                          alert('Почна генерирањето на Facebook сликата...');
+                        }}
+                        className={`p-4 border transition-all ${
+                          post.ogStatus === 'failed' ? 'bg-red-50 text-red-600 border-red-200' : 
+                          post.ogStatus === 'pending' ? 'bg-amber-50 text-amber-600 border-amber-200 animate-pulse' :
+                          'bg-stone-50 text-stone-400 hover:text-stone-900 border-stone-100'
+                        }`}
+                        title="Освежи Facebook Слика"
+                      >
+                        <Share2 size={18} />
                       </button>
                       <button 
                         onClick={() => setPostToDelete(post)}

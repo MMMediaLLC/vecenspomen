@@ -69,6 +69,10 @@ export interface MemorialPost {
   // Link to a main memorial post (e.g. For condolences or farewells)
   relatedToId?: string;
   relatedToSlug?: string;
+  // OG Generation fields
+  ogStatus?: 'pending' | 'ready' | 'failed';
+  ogGeneratedAt?: string;
+  ogError?: string;
 }
 
 export interface City {

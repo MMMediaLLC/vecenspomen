@@ -153,7 +153,7 @@ function serveMeta(id, post, baseUrl, res) {
         deathYear: post.deathYear || (post.dateOfDeath ? new Date(post.dateOfDeath).getFullYear() : ''),
         city:      post.city,
         lovedBy:   post.familyNote || post.senderName,
-        style:     post.selectedFrameStyle || 'elegant',
+        style:     post.selectedFrameStyle || 'klasicen',
         package:   post.package || 'Основен',
         message:   post.aiRefinedText || post.mainText || '',
         photo:     post.photoUrl || '',
@@ -161,7 +161,7 @@ function serveMeta(id, post, baseUrl, res) {
         intro:     post.introText || '',
       });
 
-  const url = `${baseUrl}/spomen/${post.slug || id}`;
+  const url = `https://vecenspomen.mk/spomen/${post.slug || id}`;
 
   res.setHeader('Content-Type', 'text/html');
   res.setHeader('Cache-Control', 'public, max-age=300');
@@ -192,6 +192,7 @@ function buildHtml(title, description, image, url) {
   <meta property="og:image:secure_url" content="${esc(image)}">
   <meta property="og:image:width" content="1200">
   <meta property="og:image:height" content="630">
+  <meta property="og:image:type" content="image/png">
   <meta property="og:locale" content="mk_MK">
 
   <meta name="twitter:card" content="summary_large_image">
