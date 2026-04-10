@@ -167,9 +167,8 @@ export const SubmitPost: React.FC<SubmitPostProps> = ({ onComplete, initialPost,
       const checkoutPostId = (typeof savedId === 'string' && savedId) ? savedId : finalPost.id;
 
       if (!isEditMode && finalPost.package) {
-        console.log('redirecting to Lemon with postId:', checkoutPostId);
-        const checkoutUrl = await createLemonCheckout(checkoutPostId, finalPost.package);
-        window.location.href = checkoutUrl;
+        await createLemonCheckout(checkoutPostId, finalPost.package);
+        // redirect се случува внатре во createLemonCheckout
       } else {
         // If edit mode, skip checkout and show success
         setStep(5);

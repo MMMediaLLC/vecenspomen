@@ -4,18 +4,29 @@
  * за да не се изложи API клучот во browser-от.
  */
 
-export const createLemonCheckout = async (postId: string, packageName: string): Promise<string> => {
+export const createLemonCheckout = async (postId: string, packageName: string): Promise<void> => {
+  console.log('[payments] calling /api/create-checkout', { postId, packageName });
+
   const response = await fetch('/api/create-checkout', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ postId, packageName }),
   });
 
+  const raw = await response.text();
+  console.log('[payments] raw response:', raw);
+
   if (!response.ok) {
-    const err = await response.json().catch(() => ({}));
-    throw new Error(err.error || 'Failed to create checkout session');
+    throw new Error(`Checkout failed (${response.status}): ${raw}`);
   }
 
-  const { url } = await response.json();
-  return url;
+  const data = JSON.parse(raw);
+  console.log('[payments] parsed data:', data);
+
+  const url = data.url || data.checkoutUrl;
+  console.log('[payments] redirecting to:', url);
+
+  if (!url) throw new Error('No checkout URL in response');
+
+  window.location.href = url;
 };
