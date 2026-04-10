@@ -16,11 +16,19 @@ export default async function handler(req, res) {
   }
 
   console.log('[checkout] postId:', postId, 'packageName:', packageName);
+  console.log('[checkout] packageName charCodes:', [...packageName].map(c => c.charCodeAt(0)));
 
-  const baseCheckout = packageName === '\u0418\u0441\u0442\u0430\u043a\u043d\u0430\u0442' ? URL_FEATURED : URL_BASIC;
+  const isFeature =
+    packageName === '\u0418\u0441\u0442\u0430\u043a\u043d\u0430\u0442' || // Истакнат (Cyrillic)
+    packageName === 'Истакнат' ||
+    packageName.toLowerCase() === 'istaknat';
+
+  console.log('[checkout] isFeature:', isFeature);
+
+  const baseCheckout = isFeature ? URL_FEATURED : URL_BASIC;
 
   const url = `${baseCheckout}?checkout[custom][postId]=${encodeURIComponent(postId)}&checkout[custom][packageType]=${encodeURIComponent(packageName)}`;
 
-  console.log('[checkout] url:', url);
+  console.log('[checkout] selectedUrl:', baseCheckout);
   return res.status(200).json({ url });
 }
