@@ -159,7 +159,8 @@ const AppRoutes = () => {
         <Route path="/objavi" element={
           <SubmitPost
             onComplete={async (post) => {
-              await addPost(post);
+              const realId = await addPost(post);
+              return realId;
             }}
           />
         } />
