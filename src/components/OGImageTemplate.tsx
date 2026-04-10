@@ -88,7 +88,7 @@ const Frame: React.FC<{ style: FrameStyle; children: React.ReactNode }> = ({ sty
           position: 'absolute',
           top: INSET - 13,
           left: '50%',
-          transform: 'translateX(-50%)',
+          transform: `translateX(-50%)${style === 'muslim' ? ' scaleX(-1)' : ''}`,
           background: BG,
           padding: '0 10px',
           fontSize: '22px',
