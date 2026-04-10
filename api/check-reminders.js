@@ -27,7 +27,10 @@ async function sendReminderEmail(post, reminderType) {
   const appUrl = (process.env.VITE_APP_URL || 'https://vechen-spomen.mk').replace(/\/$/, '');
   const response = await fetch(`${appUrl}/api/send-email`, {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
+    headers: {
+      'Content-Type': 'application/json',
+      'x-internal-secret': process.env.INTERNAL_API_SECRET || '',
+    },
     body: JSON.stringify({
       type: 'reminder',
       post: { ...post, reminderType },

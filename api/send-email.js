@@ -207,11 +207,15 @@ export default async function handler(req, res) {
     return res.status(405).json({ error: 'Method Not Allowed' });
   }
 
-  // Дозволи само internal повици (од webhook, cron, или admin frontend на истиот домен)
-  const origin = req.headers['origin'] || '';
+  // Заштита: bara internal secret header или same-origin browser повик
   const appUrl = (process.env.VITE_APP_URL || 'https://vechen-spomen.mk').replace(/\/$/, '');
-  const isInternal = !origin || origin === appUrl || origin.includes('localhost');
-  if (!isInternal) {
+  const internalSecret = process.env.INTERNAL_API_SECRET;
+  const providedSecret = req.headers['x-internal-secret'] || '';
+  const origin = req.headers['origin'] || '';
+  const isSameOrigin = origin === appUrl || origin.includes('localhost');
+  const hasSecret = internalSecret && providedSecret === internalSecret;
+
+  if (!isSameOrigin && !hasSecret) {
     return res.status(403).json({ error: 'Forbidden' });
   }
 

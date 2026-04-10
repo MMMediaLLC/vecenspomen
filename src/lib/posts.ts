@@ -9,10 +9,7 @@ const postsCollection = isMock ? ({} as any) : collection(db, 'posts');
 
 export const getPosts = async (): Promise<MemorialPost[]> => {
   if (isMock) return mockPosts;
-  console.log('--- FIRESTORE READ ---');
-  console.log('Querying collection: posts');
-  console.log('Exact path: projects/[VITE_FIREBASE_PROJECT_ID]/databases/(default)/documents/posts');
-  console.log('----------------------');
+  if (import.meta.env.DEV) console.log('Querying Firestore: posts collection');
   try {
     const snapshot = await getDocs(postsCollection);
     return snapshot.docs.map(doc => {
@@ -31,7 +28,7 @@ export const getPosts = async (): Promise<MemorialPost[]> => {
 };
 
 export const addPost = async (post: MemorialPost): Promise<string> => {
-  console.log('saving draft to Firestore...', post);
+  if (import.meta.env.DEV) console.log('saving draft to Firestore...', post);
   const enrichedPost: any = {
     ...post,
     status: 'pending_payment',
@@ -43,7 +40,7 @@ export const addPost = async (post: MemorialPost): Promise<string> => {
     enrichedPost.createdAt = new Date().toISOString();
     enrichedPost.id = 'mock-' + Date.now();
     mockPosts = [enrichedPost as MemorialPost, ...mockPosts];
-    console.log('generated postId (mock):', enrichedPost.id);
+    if (import.meta.env.DEV) console.log('generated postId (mock):', enrichedPost.id);
     return enrichedPost.id;
   }
   
@@ -52,7 +49,7 @@ export const addPost = async (post: MemorialPost): Promise<string> => {
 
   try {
     const docRef = await addDoc(postsCollection, enrichedPost);
-    console.log('generated postId (Firestore):', docRef.id);
+    if (import.meta.env.DEV) console.log('generated postId (Firestore):', docRef.id);
     return docRef.id;
   } catch (err) {
     console.error('Firestore save failed:', err);
