@@ -181,14 +181,15 @@ export const OGImageTemplate = React.forwardRef<HTMLDivElement, OGImageTemplateP
         position: 'relative',
         zIndex: 0,
       }}>
-        {/* Type label */}
+        {/* TOP: type label + name + years */}
         <div>
+          {/* 3. Type label — поголем и поимпозантен */}
           <div style={{
-            fontSize: '11px',
-            letterSpacing: '0.25em',
+            fontSize: '13px',
+            letterSpacing: '0.4em',
             textTransform: 'uppercase',
             color: '#a8a29e',
-            marginBottom: '20px',
+            marginBottom: '16px',
             fontFamily: 'Georgia, serif',
           }}>
             {typeLabel(post)}
@@ -196,11 +197,11 @@ export const OGImageTemplate = React.forwardRef<HTMLDivElement, OGImageTemplateP
 
           {/* Name */}
           <div style={{
-            fontSize: '46px',
+            fontSize: '44px',
             fontWeight: 'normal',
             color: '#1c1917',
             lineHeight: 1.1,
-            marginBottom: '14px',
+            marginBottom: '12px',
             letterSpacing: '-0.5px',
           }}>
             {post.fullName}
@@ -209,76 +210,78 @@ export const OGImageTemplate = React.forwardRef<HTMLDivElement, OGImageTemplateP
           {/* Years */}
           {years && (
             <div style={{
-              fontSize: '18px',
+              fontSize: '17px',
               color: '#78716c',
-              marginBottom: '28px',
               letterSpacing: '0.15em',
             }}>
               {years}
             </div>
           )}
+        </div>
 
-          {/* Divider */}
-          <div style={{ width: '40px', height: '1px', background: '#d6d3d1', marginBottom: '24px' }} />
+        {/* MIDDLE: divider + info + text — 4. space-between го дистрибуира ова рамномерно */}
+        <div>
+          <div style={{ width: '40px', height: '1px', background: '#d6d3d1', marginBottom: '20px' }} />
 
           {/* Funeral info */}
           {post.type === 'ТАЖНА ВЕСТ' && (post.dateOfFuneral || post.placeOfFuneral) && (
-            <div style={{ marginBottom: '16px' }}>
-              <div style={{ fontSize: '10px', letterSpacing: '0.2em', textTransform: 'uppercase', color: '#a8a29e', marginBottom: '6px' }}>Погреб</div>
-              <div style={{ fontSize: '17px', color: '#1c1917', lineHeight: 1.4 }}>
+            <div style={{ marginBottom: '14px' }}>
+              <div style={{ fontSize: '10px', letterSpacing: '0.2em', textTransform: 'uppercase', color: '#a8a29e', marginBottom: '5px' }}>Погреб</div>
+              <div style={{ fontSize: '16px', color: '#1c1917', lineHeight: 1.4 }}>
                 {post.dateOfFuneral && formatDate(post.dateOfFuneral)}
                 {post.timeOfFuneral && ` во ${post.timeOfFuneral} часот`}
               </div>
               {post.placeOfFuneral && (
-                <div style={{ fontSize: '14px', color: '#78716c', marginTop: '4px' }}>{post.placeOfFuneral}</div>
+                <div style={{ fontSize: '13px', color: '#78716c', marginTop: '3px' }}>{post.placeOfFuneral}</div>
               )}
             </div>
           )}
 
           {/* Pomen info */}
           {post.type === 'ПОМЕН' && post.pomenDate && (
-            <div style={{ marginBottom: '16px' }}>
-              <div style={{ fontSize: '10px', letterSpacing: '0.2em', textTransform: 'uppercase', color: '#a8a29e', marginBottom: '6px' }}>
+            <div style={{ marginBottom: '14px' }}>
+              <div style={{ fontSize: '10px', letterSpacing: '0.2em', textTransform: 'uppercase', color: '#a8a29e', marginBottom: '5px' }}>
                 {post.pomenSubtype === 'Сеќавање' ? 'Сеќавање' : 'Парастос'}
               </div>
-              <div style={{ fontSize: '17px', color: '#1c1917', lineHeight: 1.4 }}>
+              <div style={{ fontSize: '16px', color: '#1c1917', lineHeight: 1.4 }}>
                 {formatDate(post.pomenDate)}
                 {post.pomenTime && ` во ${post.pomenTime} часот`}
               </div>
               {post.pomenPlace && (
-                <div style={{ fontSize: '14px', color: '#78716c', marginTop: '4px' }}>{post.pomenPlace}</div>
+                <div style={{ fontSize: '13px', color: '#78716c', marginTop: '3px' }}>{post.pomenPlace}</div>
               )}
             </div>
           )}
 
-          {/* Text excerpt */}
+          {/* 2. Text excerpt — 4-5 линии, помал font */}
           {displayText && (
             <div style={{
-              fontSize: '15px',
+              fontSize: '14px',
               color: '#57534e',
-              lineHeight: 1.5,
+              lineHeight: 1.55,
               fontStyle: 'italic',
               overflow: 'hidden',
-              maxHeight: '48px',
+              maxHeight: '90px',
               maxWidth: '580px',
             }}>
-              "{displayText}"
+              „{displayText}"
             </div>
           )}
         </div>
 
-        {/* Bottom: sender + logo */}
+        {/* BOTTOM: sender + logo */}
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end' }}>
           <div>
-            <div style={{ fontSize: '10px', letterSpacing: '0.2em', textTransform: 'uppercase', color: '#a8a29e', marginBottom: '6px' }}>
+            <div style={{ fontSize: '10px', letterSpacing: '0.2em', textTransform: 'uppercase', color: '#a8a29e', marginBottom: '5px' }}>
               {post.type === 'СОЧУВСТВО' ? 'Искрено сочувство' :
                post.type === 'ПОСЛЕДЕН ПОЗДРАВ' ? 'Последен поздрав од' :
                'Со почит од:'}
             </div>
-            <div style={{ fontSize: '18px', color: '#1c1917' }}>
+            <div style={{ fontSize: '17px', color: '#1c1917' }}>
               {post.familyNote || post.senderName}
             </div>
           </div>
+          {/* 5. Лого — vecenspomen.mk */}
           <div style={{ textAlign: 'right' }}>
             <div style={{ fontSize: '13px', letterSpacing: '0.15em', color: '#a8a29e', textTransform: 'uppercase' }}>Вечен Спомен</div>
             <div style={{ fontSize: '11px', color: '#c7c3bd', marginTop: '2px' }}>vecenspomen.mk</div>
@@ -317,9 +320,12 @@ export const OGImageTemplate = React.forwardRef<HTMLDivElement, OGImageTemplateP
               onLoad={() => onReady?.()}
               onError={() => onReady?.()}
               style={{
+                position: 'absolute',
+                top: 0, left: 0,
                 width: '100%',
                 height: '100%',
                 objectFit: 'cover',
+                objectPosition: 'center top',
                 opacity: 0.85,
                 filter: 'grayscale(10%) contrast(1.05)',
                 display: 'block',
