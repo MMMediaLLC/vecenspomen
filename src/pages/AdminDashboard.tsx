@@ -94,26 +94,47 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
   // Triggered by the hidden OGImageTemplate ref becoming ready
   const ogRefCallback = useCallback((node: HTMLDivElement | null) => {
     if (!node || !ogGeneratingPost) return;
-    (ogRef as React.MutableRefObject<HTMLDivElement | null>).current = node;
 
-    html2canvas(node, { scale: 1, useCORS: true, backgroundColor: '#faf9f7', logging: false })
-      .then(canvas => canvas.toBlob(blob => {
-        if (blob) {
-          uploadOgImage(ogGeneratingPost.id, blob).catch(console.error);
-        }
-        onUpdateStatus(ogGeneratingPost.id, 'Објавено');
-        sendStatusEmail('approved', ogGeneratingPost);
-        setOgGeneratingPost(null);
-        setApprovingId(null);
-      }, 'image/png'))
-      .catch(err => {
-        console.error('OG image generation failed:', err);
-        // Still approve even if image fails
-        onUpdateStatus(ogGeneratingPost.id, 'Објавено');
-        sendStatusEmail('approved', ogGeneratingPost);
-        setOgGeneratingPost(null);
-        setApprovingId(null);
-      });
+    const runCapture = () => {
+      html2canvas(node, { scale: 1, useCORS: true, allowTaint: true, backgroundColor: '#faf9f7', logging: false })
+        .then(canvas => canvas.toBlob(blob => {
+          if (blob) {
+            uploadOgImage(ogGeneratingPost.id, blob).catch(console.error);
+          }
+          onUpdateStatus(ogGeneratingPost.id, 'Објавено');
+          sendStatusEmail('approved', ogGeneratingPost);
+          setOgGeneratingPost(null);
+          setApprovingId(null);
+        }, 'image/png'))
+        .catch(err => {
+          console.error('OG image generation failed:', err);
+          onUpdateStatus(ogGeneratingPost.id, 'Објавено');
+          sendStatusEmail('approved', ogGeneratingPost);
+          setOgGeneratingPost(null);
+          setApprovingId(null);
+        });
+    };
+
+    // Wait for all images inside the template to load
+    const images = Array.from(node.querySelectorAll('img'));
+    if (images.length === 0) {
+      setTimeout(runCapture, 100);
+      return;
+    }
+    const pending = images.filter(img => !img.complete);
+    if (pending.length === 0) {
+      setTimeout(runCapture, 100);
+      return;
+    }
+    let loaded = 0;
+    const onLoad = () => {
+      loaded++;
+      if (loaded >= pending.length) setTimeout(runCapture, 100);
+    };
+    pending.forEach(img => {
+      img.addEventListener('load', onLoad, { once: true });
+      img.addEventListener('error', onLoad, { once: true });
+    });
   }, [ogGeneratingPost, onUpdateStatus]);
 
 
