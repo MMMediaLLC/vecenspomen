@@ -3,6 +3,7 @@ import { MemorialPost } from '../types';
 
 interface OGImageTemplateProps {
   post: MemorialPost;
+  onReady?: () => void;
 }
 
 const formatDate = (dateStr?: string): string => {
@@ -126,11 +127,15 @@ const Frame: React.FC<{ style: FrameStyle; children: React.ReactNode }> = ({ sty
 
 // Rendered off-screen at exactly 1200x630 for html2canvas capture
 export const OGImageTemplate = React.forwardRef<HTMLDivElement, OGImageTemplateProps>(
-  ({ post }, ref) => {
+  ({ post, onReady }, ref) => {
     const [photoDataUrl, setPhotoDataUrl] = useState<string | null>(null);
 
     useEffect(() => {
-      if (!post.photoUrl) return;
+      if (!post.photoUrl) {
+        // No photo — ready immediately
+        onReady?.();
+        return;
+      }
       fetch(post.photoUrl)
         .then(res => {
           console.log('Photo fetch status:', res.status, res.ok);
@@ -148,6 +153,8 @@ export const OGImageTemplate = React.forwardRef<HTMLDivElement, OGImageTemplateP
         .catch(err => {
           console.error('Photo fetch failed:', err);
           setPhotoDataUrl(post.photoUrl);
+          // Even on error, signal ready so approval is not blocked
+          onReady?.();
         });
     }, [post.photoUrl]);
 
@@ -308,6 +315,8 @@ export const OGImageTemplate = React.forwardRef<HTMLDivElement, OGImageTemplateP
             <img
               src={photoDataUrl}
               alt={post.fullName}
+              onLoad={() => onReady?.()}
+              onError={() => onReady?.()}
               style={{
                 width: '100%',
                 height: '100%',

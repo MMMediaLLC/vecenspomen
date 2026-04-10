@@ -91,8 +91,14 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
     setOgGeneratingPost(post);
   }, []);
 
-  // Triggered by the hidden OGImageTemplate ref becoming ready
+  // Just saves the DOM node — html2canvas is triggered by onOGReady
   const ogRefCallback = useCallback((node: HTMLDivElement | null) => {
+    (ogRef as React.MutableRefObject<HTMLDivElement | null>).current = node;
+  }, []);
+
+  // Called by OGImageTemplate once photoDataUrl is set and img.onLoad fired
+  const onOGReady = useCallback(() => {
+    const node = (ogRef as React.MutableRefObject<HTMLDivElement | null>).current;
     if (!node || !ogGeneratingPost) return;
 
     const approve = () => {
@@ -102,28 +108,12 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
       setApprovingId(null);
     };
 
-    const runCapture = () => {
-      html2canvas(node, { scale: 1, backgroundColor: '#faf9f7', logging: false })
-        .then(canvas => canvas.toBlob(blob => {
-          if (blob) uploadOgImage(ogGeneratingPost.id, blob).catch(console.error);
-          approve();
-        }, 'image/png'))
-        .catch(err => { console.error('OG capture failed:', err); approve(); });
-    };
-
-    // OGImageTemplate internally fetches the photo as a blob URL.
-    // Poll via rAF until all <img> elements are complete (src is set + decoded).
-    const waitAndCapture = () => {
-      const images = Array.from(node.querySelectorAll('img'));
-      const allReady = images.length === 0 || images.every(img => img.complete && img.naturalWidth > 0);
-      if (allReady) {
-        runCapture();
-      } else {
-        requestAnimationFrame(waitAndCapture);
-      }
-    };
-
-    requestAnimationFrame(waitAndCapture);
+    html2canvas(node, { scale: 1, backgroundColor: '#faf9f7', logging: false })
+      .then(canvas => canvas.toBlob(blob => {
+        if (blob) uploadOgImage(ogGeneratingPost.id, blob).catch(console.error);
+        approve();
+      }, 'image/png'))
+      .catch(err => { console.error('OG capture failed:', err); approve(); });
   }, [ogGeneratingPost, onUpdateStatus]);
 
 
@@ -852,7 +842,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
       {/* Hidden OG image renderer — off-screen, 1200x630 */}
       {ogGeneratingPost && (
         <div style={{ position: 'fixed', left: '-9999px', top: 0, zIndex: -1 }}>
-          <OGImageTemplate ref={ogRefCallback} post={ogGeneratingPost} />
+          <OGImageTemplate ref={ogRefCallback} post={ogGeneratingPost} onReady={onOGReady} />
         </div>
       )}
     </div>
