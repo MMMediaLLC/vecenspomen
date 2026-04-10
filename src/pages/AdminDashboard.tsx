@@ -111,30 +111,19 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
         .catch(err => { console.error('OG capture failed:', err); approve(); });
     };
 
-    // Fetch all img srcs → blob URLs to avoid CORS issues with html2canvas
-    const images = Array.from(node.querySelectorAll('img'));
-    if (images.length === 0) { runCapture(); return; }
-
-    const blobUrls: string[] = [];
-    Promise.all(
-      images.map(img =>
-        fetch(img.src)
-          .then(r => r.blob())
-          .then(blob => {
-            const blobUrl = URL.createObjectURL(blob);
-            blobUrls.push(blobUrl);
-            img.src = blobUrl;
-          })
-          .catch(() => {}) // skip failed images, still capture
-      )
-    ).then(() => {
-      // Give browser a tick to repaint with new src values
-      requestAnimationFrame(() => {
+    // OGImageTemplate internally fetches the photo as a blob URL.
+    // Poll via rAF until all <img> elements are complete (src is set + decoded).
+    const waitAndCapture = () => {
+      const images = Array.from(node.querySelectorAll('img'));
+      const allReady = images.length === 0 || images.every(img => img.complete && img.naturalWidth > 0);
+      if (allReady) {
         runCapture();
-        // Revoke blob URLs after capture
-        blobUrls.forEach(u => URL.revokeObjectURL(u));
-      });
-    });
+      } else {
+        requestAnimationFrame(waitAndCapture);
+      }
+    };
+
+    requestAnimationFrame(waitAndCapture);
   }, [ogGeneratingPost, onUpdateStatus]);
 
 

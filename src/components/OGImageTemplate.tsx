@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { MemorialPost } from '../types';
 
 interface OGImageTemplateProps {
@@ -127,6 +127,19 @@ const Frame: React.FC<{ style: FrameStyle; children: React.ReactNode }> = ({ sty
 // Rendered off-screen at exactly 1200x630 for html2canvas capture
 export const OGImageTemplate = React.forwardRef<HTMLDivElement, OGImageTemplateProps>(
   ({ post }, ref) => {
+    const [blobUrl, setBlobUrl] = useState<string | null>(null);
+
+    useEffect(() => {
+      if (!post.photoUrl) return;
+      fetch(post.photoUrl)
+        .then(res => res.blob())
+        .then(blob => setBlobUrl(URL.createObjectURL(blob)))
+        .catch(() => setBlobUrl(post.photoUrl));
+      return () => {
+        if (blobUrl) URL.revokeObjectURL(blobUrl);
+      };
+    }, [post.photoUrl]);
+
     const displayText = post.aiRefinedText || post.mainText;
     const years = post.birthYear && (post.deathYear || post.dateOfDeath)
       ? `${post.birthYear} – ${post.deathYear || new Date(post.dateOfDeath!).getFullYear()}`
@@ -280,11 +293,10 @@ export const OGImageTemplate = React.forwardRef<HTMLDivElement, OGImageTemplateP
           position: 'relative',
           background: '#1c1917',
         }}>
-          {post.photoUrl ? (
+          {blobUrl ? (
             <img
-              src={post.photoUrl}
+              src={blobUrl}
               alt={post.fullName}
-              crossOrigin="anonymous"
               style={{
                 width: '100%',
                 height: '100%',
