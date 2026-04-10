@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import { MemorialPost } from '../types';
 import { MemorialTemplate } from '../components/MemorialTemplate';
@@ -6,8 +6,9 @@ import { Guestbook } from '../components/Guestbook';
 import { getRelatedPosts, getPostById, getPostBySlug, addGuestbookEntry } from '../lib/posts';
 import { format } from 'date-fns';
 import { mk } from 'date-fns/locale';
+import html2canvas from 'html2canvas';
 import {
-  Link as LinkIcon, MessageCircle,
+  Link as LinkIcon, MessageCircle, Facebook, Download,
   ArrowLeft, Check, Loader2, AlertCircle, Home
 } from 'lucide-react';
 
@@ -20,6 +21,8 @@ export const SinglePost: React.FC = () => {
   const [relatedPosts, setRelatedPosts] = useState<MemorialPost[]>([]);
 
   const [copied, setCopied] = useState(false);
+  const [downloading, setDownloading] = useState(false);
+  const memorialRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     if (post?.id) {
@@ -79,6 +82,32 @@ export const SinglePost: React.FC = () => {
     if (!post) return;
     const text = encodeURIComponent(`${post.fullName} — Вечен Спомен\n${window.location.href}`);
     window.open(`viber://forward?text=${text}`, '_blank');
+  };
+
+  const handleFacebookShare = () => {
+    const url = encodeURIComponent(window.location.href);
+    window.open(`https://www.facebook.com/sharer/sharer.php?u=${url}`, '_blank', 'width=600,height=400');
+  };
+
+  const handleDownloadImage = async () => {
+    if (!memorialRef.current) return;
+    setDownloading(true);
+    try {
+      const canvas = await html2canvas(memorialRef.current, {
+        scale: 2,
+        useCORS: true,
+        backgroundColor: '#ffffff',
+        logging: false,
+      });
+      const link = document.createElement('a');
+      link.download = `${post?.fullName || 'spomen'}.png`;
+      link.href = canvas.toDataURL('image/png');
+      link.click();
+    } catch (err) {
+      console.error('Download error:', err);
+    } finally {
+      setDownloading(false);
+    }
   };
 
   const handleAddGuestbookEntry = async (entry: { senderName: string; text: string }) => {
@@ -154,6 +183,13 @@ export const SinglePost: React.FC = () => {
           {/* Share Action Bar */}
           <div className="flex flex-row flex-nowrap items-center justify-center md:justify-end gap-[4px] md:gap-[8px] text-stone-500 font-sans order-1 md:order-2 w-full md:w-auto mb-2 md:mb-0 overflow-x-auto hide-scrollbar py-1">
             <button
+              onClick={handleFacebookShare}
+              className="flex items-center justify-center gap-1 h-7 px-1.5 bg-white border border-stone-200 rounded-[6px] text-[9px] md:text-xs font-medium text-stone-500 hover:border-stone-300 hover:text-stone-700 transition-all shadow-sm flex-shrink-0"
+              aria-label="Сподели на Facebook"
+            >
+              <Facebook size={11} /> <span>Facebook</span>
+            </button>
+            <button
               onClick={handleViberShare}
               className="flex items-center justify-center gap-1 h-7 px-1.5 bg-white border border-stone-200 rounded-[6px] text-[9px] md:text-xs font-medium text-stone-500 hover:border-stone-300 hover:text-stone-700 transition-all shadow-sm flex-shrink-0"
               aria-label="Сподели на Viber"
@@ -168,12 +204,23 @@ export const SinglePost: React.FC = () => {
               {copied ? <Check size={11} className="text-green-600" /> : <LinkIcon size={11} />}
               <span>{copied ? 'Ископирано' : 'Линк'}</span>
             </button>
+            <button
+              onClick={handleDownloadImage}
+              disabled={downloading}
+              className="flex items-center justify-center gap-1 h-7 px-1.5 bg-white border border-stone-200 rounded-[6px] text-[9px] md:text-xs font-medium text-stone-500 hover:border-stone-300 hover:text-stone-700 transition-all shadow-sm flex-shrink-0 disabled:opacity-50"
+              aria-label="Симни слика"
+            >
+              {downloading ? <Loader2 size={11} className="animate-spin" /> : <Download size={11} />}
+              <span>{downloading ? 'Се симнува...' : 'Симни'}</span>
+            </button>
           </div>
         </div>
 
         {/* Memorial card + action buttons as one flush unit */}
         <div className="animate-in fade-in zoom-in-95 duration-1000">
-          <MemorialTemplate post={post} />
+          <div ref={memorialRef}>
+            <MemorialTemplate post={post} />
+          </div>
 
           {post.type === 'ТАЖНА ВЕСТ' && (
             <div className="max-w-2xl mx-auto mt-5 flex gap-3">
@@ -191,6 +238,7 @@ export const SinglePost: React.FC = () => {
               </Link>
             </div>
           )}
+
         </div>
 
         {/* Related Posts */}
