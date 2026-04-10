@@ -1,7 +1,8 @@
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useEffect, useMemo, useRef, useCallback } from 'react';
 import { MemorialPost, GuestbookEntry, PostStatus, ReminderIntent } from '../types';
 import { MemorialTemplate } from '../components/MemorialTemplate';
-import { 
+import { OGImageTemplate } from '../components/OGImageTemplate';
+import {
   Check, X, AlertCircle, Clock, LayoutDashboard, CheckCircle,
   XCircle, ChevronRight, LogOut, MessageSquare, Trash2, Eye,
   Bell, Search, User as UserIcon, Calendar, Filter, Pencil, Archive, ExternalLink, Loader2
@@ -10,6 +11,8 @@ import { useNavigate } from 'react-router-dom';
 import { auth, isMock } from '../lib/firebase';
 import { signInWithEmailAndPassword, onAuthStateChanged, signOut, User } from 'firebase/auth';
 import { sendStatusEmail } from '../lib/email';
+import { uploadOgImage } from '../lib/posts';
+import html2canvas from 'html2canvas';
 
 interface AdminDashboardProps {
   posts: MemorialPost[];
@@ -36,6 +39,9 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
   const [selectedPost, setSelectedPost] = useState<MemorialPost | null>(null);
   const [previewPhoto, setPreviewPhoto] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
+  const [ogGeneratingPost, setOgGeneratingPost] = useState<MemorialPost | null>(null);
+  const [approvingId, setApprovingId] = useState<string | null>(null);
+  const ogRef = useRef<HTMLDivElement>(null);
 
   // Auth State
   const [user, setUser] = useState<User | null>(null);
@@ -78,6 +84,37 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
     }
     await signOut(auth);
   };
+
+  // Generate OG image then approve
+  const handleApprove = useCallback((post: MemorialPost) => {
+    setApprovingId(post.id);
+    setOgGeneratingPost(post);
+  }, []);
+
+  // Triggered by the hidden OGImageTemplate ref becoming ready
+  const ogRefCallback = useCallback((node: HTMLDivElement | null) => {
+    if (!node || !ogGeneratingPost) return;
+    (ogRef as React.MutableRefObject<HTMLDivElement | null>).current = node;
+
+    html2canvas(node, { scale: 1, useCORS: true, backgroundColor: '#faf9f7', logging: false })
+      .then(canvas => canvas.toBlob(blob => {
+        if (blob) {
+          uploadOgImage(ogGeneratingPost.id, blob).catch(console.error);
+        }
+        onUpdateStatus(ogGeneratingPost.id, 'Објавено');
+        sendStatusEmail('approved', ogGeneratingPost);
+        setOgGeneratingPost(null);
+        setApprovingId(null);
+      }, 'image/png'))
+      .catch(err => {
+        console.error('OG image generation failed:', err);
+        // Still approve even if image fails
+        onUpdateStatus(ogGeneratingPost.id, 'Објавено');
+        sendStatusEmail('approved', ogGeneratingPost);
+        setOgGeneratingPost(null);
+        setApprovingId(null);
+      });
+  }, [ogGeneratingPost, onUpdateStatus]);
 
 
 
@@ -418,10 +455,12 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
                         <ExternalLink size={18} />
                       </button>
                       <button
-                        onClick={() => { onUpdateStatus(post.id, 'Објавено'); sendStatusEmail('approved', post); }}
-                        className="px-6 py-4 bg-stone-900 text-white font-black uppercase tracking-[0.2em] text-[10px] hover:bg-stone-800 transition-all shadow-lg active:scale-95 flex items-center gap-2"
+                        onClick={() => handleApprove(post)}
+                        disabled={approvingId === post.id}
+                        className="px-6 py-4 bg-stone-900 text-white font-black uppercase tracking-[0.2em] text-[10px] hover:bg-stone-800 transition-all shadow-lg active:scale-95 flex items-center gap-2 disabled:opacity-60"
                       >
-                        <Check size={16} /> Одобри
+                        {approvingId === post.id ? <Loader2 size={16} className="animate-spin" /> : <Check size={16} />}
+                        Одобри
                       </button>
                       <button
                         onClick={() => { onUpdateStatus(post.id, 'Одбиено'); sendStatusEmail('rejected', post); }}
@@ -799,6 +838,13 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
           background: rgba(0,0,0,0.2);
         }
       `}</style>
+
+      {/* Hidden OG image renderer — off-screen, 1200x630 */}
+      {ogGeneratingPost && (
+        <div style={{ position: 'fixed', left: '-9999px', top: 0, zIndex: -1 }}>
+          <OGImageTemplate ref={ogRefCallback} post={ogGeneratingPost} />
+        </div>
+      )}
     </div>
   );
 };

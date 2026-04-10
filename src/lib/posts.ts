@@ -1,5 +1,6 @@
 import { collection, doc, getDocs, setDoc, getDoc, updateDoc, deleteDoc, serverTimestamp, addDoc } from 'firebase/firestore';
-import { db, isMock } from './firebase';
+import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
+import { db, storage, isMock } from './firebase';
 import { MemorialPost, PostStatus } from '../types';
 import { SEEDED_POSTS } from '../constants';
 
@@ -116,6 +117,15 @@ export const updatePostStatus = async (id: string, status: PostStatus): Promise<
   }
   const docRef = doc(postsCollection, id);
   await updateDoc(docRef, { status });
+};
+
+export const uploadOgImage = async (postId: string, blob: Blob): Promise<string> => {
+  if (isMock) return '';
+  const storageRef = ref(storage, `og-images/${postId}.png`);
+  await uploadBytes(storageRef, blob, { contentType: 'image/png' });
+  const url = await getDownloadURL(storageRef);
+  await updateDoc(doc(postsCollection, postId), { ogImageUrl: url });
+  return url;
 };
 
 export const updatePost = async (id: string, data: Partial<MemorialPost>): Promise<void> => {

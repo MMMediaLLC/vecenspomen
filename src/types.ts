@@ -68,6 +68,8 @@ export interface MemorialPost {
   // Link to a main memorial post (e.g. For condolences or farewells)
   relatedToId?: string;
   relatedToSlug?: string;
+  // OG image for social sharing (1200x630 PNG stored in Firebase Storage)
+  ogImageUrl?: string;
 }
 
 export interface City {
