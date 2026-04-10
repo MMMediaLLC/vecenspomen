@@ -1,6 +1,11 @@
 // api/create-checkout.js
-// Server-side Lemon Squeezy checkout creation
-// API клучот останува на серверот, не е видлив во browser
+// Builds a direct Lemon Squeezy checkout URL with custom postId and packageType params.
+// No API key needed — buy links are public, custom data is passed via query string.
+
+const CHECKOUT_URLS = {
+  Основен:   'https://vechen-spomen.lemonsqueezy.com/checkout/buy/41103419-5df8-4e67-bb45-112dca3f0ba8',
+  Истакнат:  'https://vechen-spomen.lemonsqueezy.com/checkout/buy/391e17b3-fa55-4e03-967d-9be57b4b83bc',
+};
 
 export default async function handler(req, res) {
   if (req.method !== 'POST') {
@@ -12,57 +17,9 @@ export default async function handler(req, res) {
     return res.status(400).json({ error: 'Missing postId or packageName' });
   }
 
-  const storeId   = process.env.LEMON_STORE_ID;
-  const apiKey    = process.env.LEMON_API_KEY;
-  const baseUrl   = (process.env.VITE_APP_URL || 'https://vecenspomen.mk').replace(/\/$/, '');
+  const baseCheckout = CHECKOUT_URLS[packageName] || CHECKOUT_URLS['Основен'];
 
-  const variantId = packageName === 'Истакнат'
-    ? process.env.LEMON_FEATURED_VARIANT_ID
-    : process.env.LEMON_BASIC_VARIANT_ID;
+  const url = `${baseCheckout}?checkout[custom][postId]=${encodeURIComponent(postId)}&checkout[custom][packageType]=${encodeURIComponent(packageName)}`;
 
-  if (!apiKey || !storeId || !variantId) {
-    console.error('[Checkout] Missing Lemon Squeezy env vars');
-    return res.status(500).json({ error: 'Checkout service not configured' });
-  }
-
-  try {
-    const response = await fetch('https://api.lemonsqueezy.com/v1/checkouts', {
-      method: 'POST',
-      headers: {
-        'Accept': 'application/vnd.api+json',
-        'Content-Type': 'application/vnd.api+json',
-        'Authorization': `Bearer ${apiKey}`,
-      },
-      body: JSON.stringify({
-        data: {
-          type: 'checkouts',
-          attributes: {
-            checkout_data: {
-              custom_data: { postId, package: packageName }
-            },
-            product_options: {
-              redirect_url: `${baseUrl}/payment/success?postId=${postId}`
-            }
-          },
-          relationships: {
-            store:   { data: { type: 'stores',   id: storeId.toString() } },
-            variant: { data: { type: 'variants', id: variantId.toString() } }
-          }
-        }
-      })
-    });
-
-    if (!response.ok) {
-      const err = await response.text();
-      console.error('[Checkout] Lemon API error:', err);
-      return res.status(502).json({ error: 'Failed to create checkout' });
-    }
-
-    const result = await response.json();
-    return res.status(200).json({ url: result.data.attributes.url });
-
-  } catch (err) {
-    console.error('[Checkout] Unexpected error:', err.message);
-    return res.status(500).json({ error: 'Internal server error' });
-  }
+  return res.status(200).json({ url });
 }
