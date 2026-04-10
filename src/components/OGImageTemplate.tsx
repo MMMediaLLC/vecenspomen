@@ -127,17 +127,19 @@ const Frame: React.FC<{ style: FrameStyle; children: React.ReactNode }> = ({ sty
 // Rendered off-screen at exactly 1200x630 for html2canvas capture
 export const OGImageTemplate = React.forwardRef<HTMLDivElement, OGImageTemplateProps>(
   ({ post }, ref) => {
-    const [blobUrl, setBlobUrl] = useState<string | null>(null);
+    const [photoDataUrl, setPhotoDataUrl] = useState<string | null>(null);
 
     useEffect(() => {
       if (!post.photoUrl) return;
       fetch(post.photoUrl)
         .then(res => res.blob())
-        .then(blob => setBlobUrl(URL.createObjectURL(blob)))
-        .catch(() => setBlobUrl(post.photoUrl));
-      return () => {
-        if (blobUrl) URL.revokeObjectURL(blobUrl);
-      };
+        .then(blob => new Promise<string>((resolve) => {
+          const reader = new FileReader();
+          reader.onloadend = () => resolve(reader.result as string);
+          reader.readAsDataURL(blob);
+        }))
+        .then(dataUrl => setPhotoDataUrl(dataUrl))
+        .catch(() => setPhotoDataUrl(post.photoUrl));
     }, [post.photoUrl]);
 
     const displayText = post.aiRefinedText || post.mainText;
@@ -293,9 +295,9 @@ export const OGImageTemplate = React.forwardRef<HTMLDivElement, OGImageTemplateP
           position: 'relative',
           background: '#1c1917',
         }}>
-          {blobUrl ? (
+          {photoDataUrl ? (
             <img
-              src={blobUrl}
+              src={photoDataUrl}
               alt={post.fullName}
               style={{
                 width: '100%',
