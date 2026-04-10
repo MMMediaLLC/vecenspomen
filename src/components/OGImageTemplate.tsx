@@ -307,9 +307,10 @@ export const OGImageTemplate = React.forwardRef<HTMLDivElement, OGImageTemplateP
       >
         {/* Left — photo panel */}
         <div style={{
-          width: '420px',
-          height: '630px',
+          width: '380px',
+          height: '100%',
           flexShrink: 0,
+          overflow: 'hidden',
           position: 'relative',
           background: '#1c1917',
         }}>
@@ -320,8 +321,6 @@ export const OGImageTemplate = React.forwardRef<HTMLDivElement, OGImageTemplateP
               onLoad={() => onReady?.()}
               onError={() => onReady?.()}
               style={{
-                position: 'absolute',
-                top: 0, left: 0,
                 width: '100%',
                 height: '100%',
                 objectFit: 'cover',
