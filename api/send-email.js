@@ -1,7 +1,7 @@
 // api/send-email.js
 // Serverless function за испраќање email нотификации преку Resend
 
-const FROM_EMAIL = process.env.RESEND_FROM_EMAIL || 'Вечен Спомен <noreply@vechen-spomen.mk>';
+const FROM_EMAIL = process.env.RESEND_FROM_EMAIL || 'Вечен Спомен <noreply@vecenspomen.mk>';
 
 async function sendViaResend(to, subject, html) {
   const apiKey = process.env.RESEND_API_KEY;
@@ -145,7 +145,7 @@ function emailApproved(post, appUrl) {
 }
 
 function emailRejected(post) {
-  const adminEmail = process.env.ADMIN_EMAIL || 'info@vechen-spomen.mk';
+  const adminEmail = process.env.ADMIN_EMAIL || 'info@vecenspomen.mk';
   return baseTemplate(`
     <h1 style="margin:0 0 8px;color:#1c1917;font-size:28px;font-weight:400;letter-spacing:-0.5px;">Известување за вашата објава</h1>
     <p style="margin:0 0 32px;color:#a8a29e;font-size:9px;letter-spacing:3px;font-family:Arial,sans-serif;text-transform:uppercase;">Потребна е дополнителна информација</p>
@@ -208,7 +208,7 @@ export default async function handler(req, res) {
   }
 
   // Заштита: bara internal secret header или same-origin browser повик
-  const appUrl = (process.env.VITE_APP_URL || 'https://vechen-spomen.mk').replace(/\/$/, '');
+  const appUrl = (process.env.VITE_APP_URL || 'https://vecenspomen.mk').replace(/\/$/, '');
   const internalSecret = process.env.INTERNAL_API_SECRET;
   const providedSecret = req.headers['x-internal-secret'] || '';
   const origin = req.headers['origin'] || '';

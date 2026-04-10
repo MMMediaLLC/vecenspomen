@@ -26,7 +26,7 @@ export const EditPost: React.FC<EditPostProps> = ({ posts }) => {
 
   const handleComplete = async (updatedPost: MemorialPost) => {
     try {
-      const adminEmail = auth.currentUser?.email || 'admin@vechen-spomen.mk';
+      const adminEmail = auth.currentUser?.email || 'admin@vecenspomen.mk';
       await updateMemorialPost(updatedPost.id, updatedPost, adminEmail);
       navigate('/admin');
       window.scrollTo(0, 0);

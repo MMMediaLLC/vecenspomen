@@ -14,7 +14,7 @@ export default async function handler(req, res) {
 
   const storeId   = process.env.LEMON_STORE_ID;
   const apiKey    = process.env.LEMON_API_KEY;
-  const baseUrl   = (process.env.VITE_APP_URL || 'https://vechen-spomen.mk').replace(/\/$/, '');
+  const baseUrl   = (process.env.VITE_APP_URL || 'https://vecenspomen.mk').replace(/\/$/, '');
 
   const variantId = packageName === 'Истакнат'
     ? process.env.LEMON_FEATURED_VARIANT_ID

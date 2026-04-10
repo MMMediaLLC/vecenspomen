@@ -24,7 +24,7 @@ function getDb() {
 }
 
 async function sendReminderEmail(post, reminderType) {
-  const appUrl = (process.env.VITE_APP_URL || 'https://vechen-spomen.mk').replace(/\/$/, '');
+  const appUrl = (process.env.VITE_APP_URL || 'https://vecenspomen.mk').replace(/\/$/, '');
   const response = await fetch(`${appUrl}/api/send-email`, {
     method: 'POST',
     headers: {

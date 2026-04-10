@@ -8,7 +8,7 @@ export default async function handler(req, res) {
 
   const projectId = process.env.VITE_FIREBASE_PROJECT_ID;
   const apiKey    = process.env.VITE_FIREBASE_API_KEY;
-  const baseUrl   = (process.env.VITE_APP_URL || 'https://vechen-spomen.mk').replace(/\/$/, '');
+  const baseUrl   = (process.env.VITE_APP_URL || 'https://vecenspomen.mk').replace(/\/$/, '');
 
   let post = null;
 
@@ -66,7 +66,7 @@ export default async function handler(req, res) {
   const title   = post ? `${post.fullName} — Вечен Спомен` : 'Вечен Спомен';
   const desc    = post
     ? `${post.type} · ${post.city}${post.birthYear ? ` · ${post.birthYear}–${post.deathYear}` : ''}`
-    : 'Меморијал на vechen-spomen.mk';
+    : 'Меморијал на vecenspomen.mk';
   const image   = post?.ogImageUrl || `${baseUrl}/og-default.png`;
 
   res.setHeader('Content-Type', 'text/html; charset=utf-8');

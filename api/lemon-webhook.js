@@ -150,7 +150,7 @@ export default async function handler(req, res) {
       // Send confirmation email to user + admin notification
       try {
         const postData = existing;
-        const appUrl = (process.env.VITE_APP_URL || 'https://vechen-spomen.mk').replace(/\/$/, '');
+        const appUrl = (process.env.VITE_APP_URL || 'https://vecenspomen.mk').replace(/\/$/, '');
         await fetch(`${appUrl}/api/send-email`, {
           method: 'POST',
           headers: {

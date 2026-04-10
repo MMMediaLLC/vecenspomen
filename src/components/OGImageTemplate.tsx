@@ -281,7 +281,7 @@ export const OGImageTemplate = React.forwardRef<HTMLDivElement, OGImageTemplateP
           </div>
           <div style={{ textAlign: 'right' }}>
             <div style={{ fontSize: '13px', letterSpacing: '0.15em', color: '#a8a29e', textTransform: 'uppercase' }}>Вечен Спомен</div>
-            <div style={{ fontSize: '11px', color: '#c7c3bd', marginTop: '2px' }}>vechen-spomen.mk</div>
+            <div style={{ fontSize: '11px', color: '#c7c3bd', marginTop: '2px' }}>vecenspomen.mk</div>
           </div>
         </div>
       </div>

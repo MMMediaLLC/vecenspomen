@@ -52,7 +52,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
 
   useEffect(() => {
     if (isMock) {
-      setUser({ email: 'admin@vechen-spomen.mk' } as User);
+      setUser({ email: 'admin@vecenspomen.mk' } as User);
       setIsAuthLoading(false);
       return;
     }
@@ -236,7 +236,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 className="w-full p-4 border border-stone-100 bg-stone-50 focus:bg-white focus:border-stone-900 focus:outline-none transition-all placeholder:text-stone-300"
-                placeholder="admin@vechen-spomen.mk"
+                placeholder="admin@vecenspomen.mk"
                 required
               />
             </div>
