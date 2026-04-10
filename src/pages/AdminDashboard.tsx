@@ -8,7 +8,7 @@ import {
   Bell, Search, User as UserIcon, Calendar, Filter, Pencil, Archive, ExternalLink, Loader2
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
-import { auth, isMock } from '../lib/firebase';
+import { auth } from '../lib/firebase';
 import { signInWithEmailAndPassword, onAuthStateChanged, signOut, User } from 'firebase/auth';
 import { sendStatusEmail } from '../lib/email';
 import { uploadOgImage } from '../lib/posts';
@@ -51,11 +51,6 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
   const [isAuthLoading, setIsAuthLoading] = useState(true);
 
   useEffect(() => {
-    if (isMock) {
-      setUser({ email: 'admin@vecenspomen.mk' } as User);
-      setIsAuthLoading(false);
-      return;
-    }
     const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
       setUser(currentUser);
       setIsAuthLoading(false);
@@ -66,10 +61,6 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoginError('');
-    if (isMock) {
-      setUser({ email } as User);
-      return;
-    }
     try {
       await signInWithEmailAndPassword(auth, email, password);
     } catch (err: any) {
@@ -78,10 +69,6 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
   };
 
   const handleLogout = async () => {
-    if (isMock) {
-      setUser(null);
-      return;
-    }
     await signOut(auth);
   };
 
@@ -257,11 +244,6 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
             >
               Најава во систем
             </button>
-            {isMock && (
-              <p className="text-[9px] text-stone-400 text-center mt-6 border-t border-stone-100 pt-6 uppercase tracking-widest">
-                Системот е во тест режим. Внесете било која е-пошта.
-              </p>
-            )}
           </form>
         </div>
       </div>
@@ -287,11 +269,9 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
       <aside className="w-full md:w-72 bg-white border-r border-stone-200 flex flex-col pt-12 shrink-0 z-20">
         <div className="px-8 mb-16">
           <h2 className="text-xl font-serif font-black tracking-tighter">ВЕЧЕН СПОМЕН</h2>
-            <div className={`flex items-center gap-2 mt-2 ${isMock ? 'text-amber-500' : 'text-green-500'}`}>
-              <div className={`w-1.5 h-1.5 rounded-full ${isMock ? 'bg-amber-500' : 'bg-green-500 shadow-[0_0_8px_rgba(34,197,94,0.5)]'}`} />
-              <span className="text-[9px] font-black uppercase tracking-[0.2em]">
-                {isMock ? 'Тест Режим (Mock)' : 'Систем во живо'}
-              </span>
+            <div className="flex items-center gap-2 mt-2 text-green-500">
+              <div className="w-1.5 h-1.5 rounded-full bg-green-500 shadow-[0_0_8px_rgba(34,197,94,0.5)]" />
+              <span className="text-[9px] font-black uppercase tracking-[0.2em]">Систем во живо</span>
             </div>
         </div>
 

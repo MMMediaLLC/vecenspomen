@@ -1,7 +1,7 @@
 import React, { useState, useRef } from 'react';
 import { Upload, Check, Image as ImageIcon, Loader2, AlertCircle, RefreshCw } from 'lucide-react';
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
-import { storage, isMock } from '../../lib/firebase';
+import { storage } from '../../lib/firebase';
 
 interface Step3Props {
   photoUrl: string;
@@ -25,21 +25,6 @@ export const Step3: React.FC<Step3Props> = ({ photoUrl, onPhotoChange }) => {
     setUploadProgress(10);
 
     try {
-      if (isMock) {
-        let p = 0;
-        const int = setInterval(() => {
-          p += 20;
-          setUploadProgress(p);
-          if (p >= 100) {
-            clearInterval(int);
-            onPhotoChange(URL.createObjectURL(file));
-            setUploadSuccess(true);
-            setIsUploading(false);
-          }
-        }, 200);
-        return;
-      }
-
       const filename = `posts/${file.name}-${Date.now()}`;
       const storageRef = ref(storage, filename);
       
