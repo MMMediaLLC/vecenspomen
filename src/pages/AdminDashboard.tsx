@@ -9,6 +9,7 @@ import {
 import { useNavigate } from 'react-router-dom';
 import { auth, isMock } from '../lib/firebase';
 import { signInWithEmailAndPassword, onAuthStateChanged, signOut, User } from 'firebase/auth';
+import { sendStatusEmail } from '../lib/email';
 
 interface AdminDashboardProps {
   posts: MemorialPost[];
@@ -416,14 +417,14 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
                       >
                         <ExternalLink size={18} />
                       </button>
-                      <button 
-                        onClick={() => onUpdateStatus(post.id, 'Објавено')}
+                      <button
+                        onClick={() => { onUpdateStatus(post.id, 'Објавено'); sendStatusEmail('approved', post); }}
                         className="px-6 py-4 bg-stone-900 text-white font-black uppercase tracking-[0.2em] text-[10px] hover:bg-stone-800 transition-all shadow-lg active:scale-95 flex items-center gap-2"
                       >
                         <Check size={16} /> Одобри
                       </button>
-                      <button 
-                        onClick={() => onUpdateStatus(post.id, 'Одбиено')}
+                      <button
+                        onClick={() => { onUpdateStatus(post.id, 'Одбиено'); sendStatusEmail('rejected', post); }}
                         className="p-4 bg-white text-stone-200 hover:text-red-500 hover:border-red-100 transition-all border border-stone-100"
                         title="Одбиј"
                       >

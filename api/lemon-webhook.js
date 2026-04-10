@@ -147,6 +147,31 @@ export default async function handler(req, res) {
       await postRef.update(update);
       console.log(`[Webhook] order_created SUCCESS: Post ${postId} updated to status 'Чека одобрување'`);
 
+      // Send confirmation email to user + admin notification
+      try {
+        const postData = existing;
+        const appUrl = (process.env.VITE_APP_URL || 'https://vechen-spomen.mk').replace(/\/$/, '');
+        await fetch(`${appUrl}/api/send-email`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            type: 'payment_confirmed',
+            post: {
+              id: postId,
+              slug: postData.slug,
+              fullName: postData.fullName,
+              email: postData.email,
+              type: postData.type,
+              package: postData.package,
+              city: postData.city,
+            },
+          }),
+        });
+        console.log(`[Webhook] Email notification triggered for post ${postId}`);
+      } catch (emailErr) {
+        console.warn('[Webhook] Email notification failed (non-critical):', emailErr.message);
+      }
+
     // F. order_refunded
     } else if (eventName === 'order_refunded') {
 
