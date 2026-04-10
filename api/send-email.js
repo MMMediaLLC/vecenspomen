@@ -207,13 +207,20 @@ export default async function handler(req, res) {
     return res.status(405).json({ error: 'Method Not Allowed' });
   }
 
+  // Дозволи само internal повици (од webhook, cron, или admin frontend на истиот домен)
+  const origin = req.headers['origin'] || '';
+  const appUrl = (process.env.VITE_APP_URL || 'https://vechen-spomen.mk').replace(/\/$/, '');
+  const isInternal = !origin || origin === appUrl || origin.includes('localhost');
+  if (!isInternal) {
+    return res.status(403).json({ error: 'Forbidden' });
+  }
+
   if (!process.env.RESEND_API_KEY) {
     console.warn('[Email] RESEND_API_KEY not set — skipping email');
     return res.status(200).json({ sent: false, reason: 'not_configured' });
   }
 
   const { type, post } = req.body;
-  const appUrl = (process.env.VITE_APP_URL || 'https://vechen-spomen.mk').replace(/\/$/, '');
   const adminEmail = process.env.ADMIN_EMAIL;
 
   if (!type || !post) {
