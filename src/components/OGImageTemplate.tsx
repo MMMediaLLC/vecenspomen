@@ -132,30 +132,29 @@ export const OGImageTemplate = React.forwardRef<HTMLDivElement, OGImageTemplateP
 
     useEffect(() => {
       if (!post.photoUrl) {
-        // No photo — ready immediately
+        console.log('OGImageTemplate: no photoUrl');
         onReady?.();
         return;
       }
+      console.log('OGImageTemplate: fetching', post.photoUrl);
       fetch(post.photoUrl)
         .then(res => {
-          console.log('Photo fetch status:', res.status, res.ok);
+          console.log('OGImageTemplate: fetch status', res.status, res.ok);
           return res.blob();
         })
         .then(blob => {
-          console.log('Blob size:', blob.size);
+          console.log('OGImageTemplate: blob size', blob.size);
           return new Promise<string>((resolve) => {
             const reader = new FileReader();
             reader.onloadend = () => resolve(reader.result as string);
             reader.readAsDataURL(blob);
           });
         })
-        .then(dataUrl => setPhotoDataUrl(dataUrl))
-        .catch(err => {
-          console.error('Photo fetch failed:', err);
-          setPhotoDataUrl(post.photoUrl);
-          // Even on error, signal ready so approval is not blocked
-          onReady?.();
-        });
+        .then(dataUrl => {
+          console.log('OGImageTemplate: dataUrl length', dataUrl.length);
+          setPhotoDataUrl(dataUrl);
+        })
+        .catch(err => console.error('OGImageTemplate: fetch error', err));
     }, [post.photoUrl]);
 
     const displayText = post.aiRefinedText || post.mainText;
