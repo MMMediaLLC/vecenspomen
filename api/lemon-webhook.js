@@ -19,7 +19,18 @@ function getDb() {
   }
 
   try {
-    const serviceAccount = JSON.parse(raw.replace(/\\n/g, '\n'));
+    let serviceAccount;
+    try {
+      // Case 1: Vercel stored \n as escaped backslash+n (correct)
+      serviceAccount = JSON.parse(raw.replace(/\\n/g, '\n'));
+    } catch {
+      // Case 2: Vercel converted \n to actual newlines — escape them back, then fix private_key
+      const escaped = raw.replace(/\n/g, '\\n');
+      serviceAccount = JSON.parse(escaped);
+      if (serviceAccount.private_key) {
+        serviceAccount.private_key = serviceAccount.private_key.replace(/\\n/g, '\n');
+      }
+    }
 
     if (!serviceAccount.project_id) {
       console.error('[Webhook/FB] Service account missing project_id');
