@@ -42,27 +42,32 @@ export default async function handler(req, res) {
 
     if (doc?.fields) {
       const f = doc.fields;
+      // Extract postId from the Firestore document name: .../documents/posts/{postId}
+      const postId = doc.name?.split('/').pop() || null;
       post = {
-        fullName:   f.fullName?.stringValue   || '',
-        type:       f.type?.stringValue        || '',
-        city:       f.city?.stringValue        || '',
-        birthYear:  f.birthYear?.integerValue  || '',
-        deathYear:  f.deathYear?.integerValue  || '',
-        mainText:   f.mainText?.stringValue    || '',
-        ogImageUrl: f.ogImageUrl?.stringValue  || null,
-        slug:       f.slug?.stringValue        || slug,
+        fullName:  f.fullName?.stringValue  || '',
+        type:      f.type?.stringValue      || '',
+        city:      f.city?.stringValue      || '',
+        birthYear: f.birthYear?.integerValue || '',
+        deathYear: f.deathYear?.integerValue || '',
+        mainText:  f.mainText?.stringValue  || '',
+        slug:      f.slug?.stringValue      || slug,
+        // Construct OG image URL from postId — no token, requires public Storage rules
+        ogImageUrl: postId
+          ? `https://firebasestorage.googleapis.com/v0/b/${projectId}.firebasestorage.app/o/og-images%2F${postId}.png?alt=media`
+          : (f.ogImageUrl?.stringValue || null),
       };
     }
   } catch (err) {
     console.error('[share-preview] Firestore error:', err);
   }
 
-  const pageUrl   = `${baseUrl}/spomen/${encodeURIComponent(slug)}`;
-  const title     = post ? `${post.fullName} — Вечен Спомен` : 'Вечен Спомен';
-  const desc      = post
+  const pageUrl = `${baseUrl}/spomen/${encodeURIComponent(slug)}`;
+  const title   = post ? `${post.fullName} — Вечен Спомен` : 'Вечен Спомен';
+  const desc    = post
     ? `${post.type} · ${post.city}${post.birthYear ? ` · ${post.birthYear}–${post.deathYear}` : ''}`
     : 'Меморијал на vechen-spomen.mk';
-  const image     = post?.ogImageUrl || `${baseUrl}/og-default.png`;
+  const image   = post?.ogImageUrl || `${baseUrl}/og-default.png`;
 
   res.setHeader('Content-Type', 'text/html; charset=utf-8');
   res.setHeader('Cache-Control', 's-maxage=3600, stale-while-revalidate=86400');
