@@ -171,7 +171,7 @@ export const OGImageTemplate = React.forwardRef<HTMLDivElement, OGImageTemplateP
         <div style={{ marginBottom: 'auto' }}>
 
           <div style={{
-            fontSize: '11px',
+            fontSize: '14px',
             letterSpacing: '0.32em',
             textTransform: 'uppercase',
             color: '#a8a29e',
@@ -182,7 +182,7 @@ export const OGImageTemplate = React.forwardRef<HTMLDivElement, OGImageTemplateP
           </div>
 
           <div style={{
-            fontSize: '52px',
+            fontSize: '62px',
             fontWeight: 'normal',
             color: '#1c1917',
             lineHeight: 1.05,
@@ -195,7 +195,7 @@ export const OGImageTemplate = React.forwardRef<HTMLDivElement, OGImageTemplateP
 
           {years && (
             <div style={{
-              fontSize: '16px',
+              fontSize: '19px',
               color: '#78716c',
               letterSpacing: '0.18em',
               fontFamily: 'Georgia, serif',
@@ -220,7 +220,7 @@ export const OGImageTemplate = React.forwardRef<HTMLDivElement, OGImageTemplateP
           {post.type === 'ТАЖНА ВЕСТ' && (post.dateOfFuneral || post.placeOfFuneral) && (
             <div style={{ marginBottom: '18px' }}>
               <div style={{
-                fontSize: '10px',
+                fontSize: '12px',
                 letterSpacing: '0.22em',
                 textTransform: 'uppercase',
                 color: '#a8a29e',
@@ -229,12 +229,12 @@ export const OGImageTemplate = React.forwardRef<HTMLDivElement, OGImageTemplateP
               }}>
                 Погреб
               </div>
-              <div style={{ fontSize: '16px', color: '#1c1917', lineHeight: 1.4, fontFamily: 'Georgia, serif' }}>
+              <div style={{ fontSize: '19px', color: '#1c1917', lineHeight: 1.4, fontFamily: 'Georgia, serif' }}>
                 {post.dateOfFuneral && formatDate(post.dateOfFuneral)}
                 {post.timeOfFuneral && ` во ${post.timeOfFuneral} часот`}
               </div>
               {post.placeOfFuneral && (
-                <div style={{ fontSize: '13px', color: '#78716c', marginTop: '3px', fontFamily: 'Georgia, serif' }}>
+                <div style={{ fontSize: '15px', color: '#78716c', marginTop: '3px', fontFamily: 'Georgia, serif' }}>
                   {post.placeOfFuneral}
                 </div>
               )}
@@ -244,7 +244,7 @@ export const OGImageTemplate = React.forwardRef<HTMLDivElement, OGImageTemplateP
           {post.type === 'ПОМЕН' && post.pomenDate && (
             <div style={{ marginBottom: '18px' }}>
               <div style={{
-                fontSize: '10px',
+                fontSize: '12px',
                 letterSpacing: '0.22em',
                 textTransform: 'uppercase',
                 color: '#a8a29e',
@@ -253,12 +253,12 @@ export const OGImageTemplate = React.forwardRef<HTMLDivElement, OGImageTemplateP
               }}>
                 {post.pomenSubtype === 'Сеќавање' ? 'Сеќавање' : 'Парастос'}
               </div>
-              <div style={{ fontSize: '16px', color: '#1c1917', lineHeight: 1.4, fontFamily: 'Georgia, serif' }}>
+              <div style={{ fontSize: '19px', color: '#1c1917', lineHeight: 1.4, fontFamily: 'Georgia, serif' }}>
                 {formatDate(post.pomenDate)}
                 {post.pomenTime && ` во ${post.pomenTime} часот`}
               </div>
               {post.pomenPlace && (
-                <div style={{ fontSize: '13px', color: '#78716c', marginTop: '3px', fontFamily: 'Georgia, serif' }}>
+                <div style={{ fontSize: '15px', color: '#78716c', marginTop: '3px', fontFamily: 'Georgia, serif' }}>
                   {post.pomenPlace}
                 </div>
               )}
@@ -267,7 +267,7 @@ export const OGImageTemplate = React.forwardRef<HTMLDivElement, OGImageTemplateP
 
           {displayText && (
             <div style={{
-              fontSize: '13.5px',
+              fontSize: '16px',
               color: '#57534e',
               lineHeight: 1.65,
               fontStyle: 'italic',
@@ -294,7 +294,7 @@ export const OGImageTemplate = React.forwardRef<HTMLDivElement, OGImageTemplateP
         }}>
           <div>
             <div style={{
-              fontSize: '10px',
+              fontSize: '12px',
               letterSpacing: '0.2em',
               textTransform: 'uppercase',
               color: '#a8a29e',
@@ -304,7 +304,7 @@ export const OGImageTemplate = React.forwardRef<HTMLDivElement, OGImageTemplateP
               {senderLabel(post)}
             </div>
             <div style={{
-              fontSize: '16px',
+              fontSize: '19px',
               color: '#1c1917',
               fontFamily: 'Georgia, serif',
             }}>
@@ -314,7 +314,7 @@ export const OGImageTemplate = React.forwardRef<HTMLDivElement, OGImageTemplateP
 
           <div style={{ textAlign: 'right' }}>
             <div style={{
-              fontSize: '12px',
+              fontSize: '13px',
               letterSpacing: '0.18em',
               color: '#a8a29e',
               textTransform: 'uppercase',
@@ -323,7 +323,7 @@ export const OGImageTemplate = React.forwardRef<HTMLDivElement, OGImageTemplateP
               Вечен Спомен
             </div>
             <div style={{
-              fontSize: '11px',
+              fontSize: '12px',
               color: '#c7c3bd',
               marginTop: '2px',
               fontFamily: 'Georgia, serif',
