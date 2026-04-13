@@ -18,7 +18,7 @@ const formatDate = (dateStr?: string): string => {
 
 const typeLabel = (post: MemorialPost): string => {
   if (post.type === 'ПОМЕН') {
-    if (post.pomenSubtype === '40 дена') return 'Четриесетдневен помен';
+    if (post.pomenSubtype === '40 дена') return 'Четириесетдневен помен';
     if (post.pomenSubtype === '6 месеци') return 'Шестмесечен помен';
     if (post.pomenSubtype === '1 година') return 'Годишен помен';
     if (post.pomenSubtype === 'Сеќавање') return 'Сеќавање';

@@ -55,7 +55,7 @@ export const PostCard: React.FC<PostCardProps> = ({ post, onClick }) => {
         <div className="absolute top-4 left-4 flex flex-col gap-2">
           <span className="px-2.5 py-1 text-[8px] font-medium tracking-wider uppercase rounded-sm bg-stone-900/60 backdrop-blur-sm text-white/70 transition-all group-hover:bg-stone-900/75 group-hover:text-white/90 font-sans">
             {post.type === 'ПОМЕН' ? (
-              post.pomenSubtype === '40 дена' ? 'Четриесетдневен помен' :
+              post.pomenSubtype === '40 дена' ? 'Четириесетдневен помен' :
               post.pomenSubtype === '6 месеци' ? 'Шестмесечен помен' :
               post.pomenSubtype === '1 година' ? 'Годишен помен' :
               post.pomenSubtype === 'Сеќавање' ? 'Сеќавање' : 'Помен'
