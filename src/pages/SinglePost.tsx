@@ -226,13 +226,47 @@ export const SinglePost: React.FC = () => {
             <div className="max-w-2xl mx-auto mt-5 flex gap-3">
               <Link
                 to={`/objavi?type=СОЧУВСТВО&fullName=${encodeURIComponent(post.fullName)}&relId=${post.id}&relSlug=${post.slug}&photoUrl=${encodeURIComponent(post.photoUrl || '')}`}
-                className="flex-1 flex items-center justify-center py-3.5 bg-white/80 border border-stone-200/60 font-serif text-[10px] font-semibold uppercase tracking-normal text-stone-400 hover:bg-white hover:border-stone-300 hover:text-stone-600 transition-all duration-[1200ms] ease-in-out"
+                style={{
+                  flex: 1,
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  padding: '14px 24px',
+                  background: '#faf9f7',
+                  border: '1px solid #d6d3d1',
+                  borderRadius: '4px',
+                  fontFamily: 'Georgia, serif',
+                  fontSize: '14px',
+                  letterSpacing: '0.08em',
+                  color: '#57534e',
+                  cursor: 'pointer',
+                  transition: 'background 0.2s, border-color 0.2s',
+                }}
+                onMouseEnter={e => { (e.currentTarget as HTMLElement).style.background = '#f0ede8'; (e.currentTarget as HTMLElement).style.borderColor = '#a8a29e'; }}
+                onMouseLeave={e => { (e.currentTarget as HTMLElement).style.background = '#faf9f7'; (e.currentTarget as HTMLElement).style.borderColor = '#d6d3d1'; }}
               >
                 Изрази сочувство
               </Link>
               <Link
                 to={`/objavi?type=ПОСЛЕДЕН ПОЗДРАВ&fullName=${encodeURIComponent(post.fullName)}&relId=${post.id}&relSlug=${post.slug}&photoUrl=${encodeURIComponent(post.photoUrl || '')}`}
-                className="flex-1 flex items-center justify-center py-3.5 bg-white/80 border border-stone-200/60 font-serif text-[10px] font-semibold uppercase tracking-normal text-stone-400 hover:bg-white hover:border-stone-300 hover:text-stone-600 transition-all duration-[1200ms] ease-in-out"
+                style={{
+                  flex: 1,
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  padding: '14px 24px',
+                  background: '#faf9f7',
+                  border: '1px solid #d6d3d1',
+                  borderRadius: '4px',
+                  fontFamily: 'Georgia, serif',
+                  fontSize: '14px',
+                  letterSpacing: '0.08em',
+                  color: '#57534e',
+                  cursor: 'pointer',
+                  transition: 'background 0.2s, border-color 0.2s',
+                }}
+                onMouseEnter={e => { (e.currentTarget as HTMLElement).style.background = '#f0ede8'; (e.currentTarget as HTMLElement).style.borderColor = '#a8a29e'; }}
+                onMouseLeave={e => { (e.currentTarget as HTMLElement).style.background = '#faf9f7'; (e.currentTarget as HTMLElement).style.borderColor = '#d6d3d1'; }}
               >
                 Последен поздрав
               </Link>
