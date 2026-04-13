@@ -18,62 +18,64 @@ const formatDate = (dateStr?: string): string => {
 
 const typeLabel = (post: MemorialPost): string => {
   if (post.type === 'ПОМЕН') {
-    if (post.pomenSubtype === '40 дена') return 'Четириесетдневен помен';
+    if (post.pomenSubtype === '7 дена')   return 'Седумдневен помен';
+    if (post.pomenSubtype === '40 дена')  return 'Четириесетдневен помен';
     if (post.pomenSubtype === '6 месеци') return 'Шестмесечен помен';
     if (post.pomenSubtype === '1 година') return 'Годишен помен';
+    if (post.pomenSubtype === '2 години') return 'Двегодишен помен';
+    if (post.pomenSubtype === '5 години') return 'Петгодишен помен';
+    if (post.pomenSubtype === '10 години') return 'Десетгодишен помен';
     if (post.pomenSubtype === 'Сеќавање') return 'Сеќавање';
     return 'Помен';
   }
-  if (post.type === 'ТАЖНА ВЕСТ') return 'Тажна вест';
+  if (post.type === 'ТАЖНА ВЕСТ')      return 'Тажна вест';
   if (post.type === 'ПОСЛЕДЕН ПОЗДРАВ') return 'Последен поздрав';
-  if (post.type === 'СОЧУВСТВО') return 'Сочувство';
+  if (post.type === 'СОЧУВСТВО')        return 'Сочувство';
   return post.type;
+};
+
+const senderLabel = (post: MemorialPost): string => {
+  if (post.type === 'СОЧУВСТВО')        return 'Искрено сочувство од';
+  if (post.type === 'ПОСЛЕДЕН ПОЗДРАВ') return 'Последен поздрав од';
+  return 'Со почит од';
 };
 
 type FrameStyle = 'elegant' | 'orthodox' | 'catholic' | 'muslim' | 'star' | 'clean';
 
 interface FrameConfig {
-  borderStyle: string;  // CSS border shorthand
+  borderStyle: string;
   symbol: string | null;
-  cornerSymbol: string | null; // for catholic ◆ corners
-  pointedCorners: boolean;     // for muslim
+  cornerSymbol: string | null;
+  pointedCorners: boolean;
 }
 
 const FRAME: Record<FrameStyle, FrameConfig> = {
-  elegant: { borderStyle: '2px dashed #c7c3bd', symbol: null,  cornerSymbol: null, pointedCorners: false },
-  orthodox: { borderStyle: '1px solid #c7c3bd', symbol: '†',   cornerSymbol: null, pointedCorners: false },
-  catholic: { borderStyle: '1px solid #c7c3bd', symbol: '✝',   cornerSymbol: '◆',  pointedCorners: false },
-  muslim:   { borderStyle: '1px solid #b5c4b1', symbol: '☽',   cornerSymbol: null, pointedCorners: true  },
-  star:     { borderStyle: '2px dashed #c7c3bd', symbol: '★',  cornerSymbol: null, pointedCorners: false },
-  clean:    { borderStyle: '1px solid #c7c3bd', symbol: null,  cornerSymbol: null, pointedCorners: false },
+  elegant:  { borderStyle: '2px dashed #c7c3bd', symbol: null,  cornerSymbol: null, pointedCorners: false },
+  orthodox: { borderStyle: '1px solid #c7c3bd',  symbol: '†',   cornerSymbol: null, pointedCorners: false },
+  catholic: { borderStyle: '1px solid #c7c3bd',  symbol: '✝',   cornerSymbol: '◆',  pointedCorners: false },
+  muslim:   { borderStyle: '1px solid #b5c4b1',  symbol: '☽',   cornerSymbol: null, pointedCorners: true  },
+  star:     { borderStyle: '2px dashed #c7c3bd', symbol: '★',   cornerSymbol: null, pointedCorners: false },
+  clean:    { borderStyle: '1px solid #c7c3bd',  symbol: null,  cornerSymbol: null, pointedCorners: false },
 };
 
 const BG = '#faf9f7';
-const INSET = 16; // px inset from right-panel edge
+const INSET = 16;
 
 const Frame: React.FC<{ style: FrameStyle; children: React.ReactNode }> = ({ style, children }) => {
   const cfg = FRAME[style];
 
-  // Muslim pointed corners: clip the corners with a rotated square overlay
   const pointedCornerStyle = (corner: 'tl' | 'tr' | 'bl' | 'br'): React.CSSProperties => {
     const size = 14;
     const pos: React.CSSProperties = { position: 'absolute', width: size, height: size };
-    if (corner === 'tl') { pos.top = INSET - size / 2; pos.left = INSET - size / 2; }
-    if (corner === 'tr') { pos.top = INSET - size / 2; pos.right = INSET - size / 2; }
-    if (corner === 'bl') { pos.bottom = INSET - size / 2; pos.left = INSET - size / 2; }
+    if (corner === 'tl') { pos.top = INSET - size / 2;    pos.left  = INSET - size / 2; }
+    if (corner === 'tr') { pos.top = INSET - size / 2;    pos.right = INSET - size / 2; }
+    if (corner === 'bl') { pos.bottom = INSET - size / 2; pos.left  = INSET - size / 2; }
     if (corner === 'br') { pos.bottom = INSET - size / 2; pos.right = INSET - size / 2; }
-    return {
-      ...pos,
-      background: BG,
-      transform: 'rotate(45deg)',
-      border: cfg.borderStyle,
-      zIndex: 2,
-    };
+    return { ...pos, background: BG, transform: 'rotate(45deg)', border: cfg.borderStyle, zIndex: 2 };
   };
 
   return (
     <div style={{ position: 'relative', flex: 1, display: 'flex', flexDirection: 'column' }}>
-      {/* Decorative inner border */}
       <div style={{
         position: 'absolute',
         inset: INSET,
@@ -82,7 +84,6 @@ const Frame: React.FC<{ style: FrameStyle; children: React.ReactNode }> = ({ sty
         zIndex: 1,
       }} />
 
-      {/* Top-center symbol — white bg breaks the border */}
       {cfg.symbol && (
         <div style={{
           position: 'absolute',
@@ -101,12 +102,11 @@ const Frame: React.FC<{ style: FrameStyle; children: React.ReactNode }> = ({ sty
         </div>
       )}
 
-      {/* Catholic corner ◆ decorations */}
       {cfg.cornerSymbol && (['tl', 'tr', 'bl', 'br'] as const).map(corner => {
         const pos: React.CSSProperties = { position: 'absolute', fontSize: '10px', color: '#a8a29e', zIndex: 3, lineHeight: 1 };
-        if (corner === 'tl') { pos.top = INSET - 7; pos.left = INSET - 6; }
-        if (corner === 'tr') { pos.top = INSET - 7; pos.right = INSET - 6; }
-        if (corner === 'bl') { pos.bottom = INSET - 7; pos.left = INSET - 6; }
+        if (corner === 'tl') { pos.top = INSET - 7;    pos.left  = INSET - 6; }
+        if (corner === 'tr') { pos.top = INSET - 7;    pos.right = INSET - 6; }
+        if (corner === 'bl') { pos.bottom = INSET - 7; pos.left  = INSET - 6; }
         if (corner === 'br') { pos.bottom = INSET - 7; pos.right = INSET - 6; }
         return (
           <div key={corner} style={{ ...pos, background: BG, padding: '0 2px' }}>
@@ -115,7 +115,6 @@ const Frame: React.FC<{ style: FrameStyle; children: React.ReactNode }> = ({ sty
         );
       })}
 
-      {/* Muslim pointed corners — rotated squares that cap the border corners */}
       {cfg.pointedCorners && (['tl', 'tr', 'bl', 'br'] as const).map(corner => (
         <div key={corner} style={pointedCornerStyle(corner)} />
       ))}
@@ -125,7 +124,6 @@ const Frame: React.FC<{ style: FrameStyle; children: React.ReactNode }> = ({ sty
   );
 };
 
-// Rendered off-screen at exactly 1200x630 for html2canvas capture
 export const OGImageTemplate = React.forwardRef<HTMLDivElement, OGImageTemplateProps>(
   ({ post, onReady }, ref) => {
     const [photoDataUrl, setPhotoDataUrl] = useState<string | null>(null);
@@ -143,7 +141,7 @@ export const OGImageTemplate = React.forwardRef<HTMLDivElement, OGImageTemplateP
           reader.readAsDataURL(blob);
         }))
         .then(dataUrl => setPhotoDataUrl(dataUrl))
-        .catch(err => console.error('OGImageTemplate: fetch error', err));
+        .catch(() => onReady?.());
     }, [post.photoUrl]);
 
     const displayText = post.aiRefinedText || post.mainText;
@@ -153,129 +151,188 @@ export const OGImageTemplate = React.forwardRef<HTMLDivElement, OGImageTemplateP
 
     const frameStyle = post.selectedFrameStyle as FrameStyle | undefined;
     const hasFrame = frameStyle && frameStyle in FRAME;
+    const hasSymbol = hasFrame && !!FRAME[frameStyle!].symbol;
 
-    // Content padding — extra top padding when frame has a symbol (needs room)
-    const symbolStyles = hasFrame && FRAME[frameStyle!].symbol;
     const contentPadding = hasFrame
-      ? `${symbolStyles ? 52 : 40}px 56px 36px ${56 + INSET}px`
-      : '48px 56px 40px 56px';
+      ? `${hasSymbol ? 54 : 42}px 52px 36px ${INSET + 40}px`
+      : '52px 56px 40px 56px';
 
     const ContentInner = (
       <div style={{
         flex: 1,
         display: 'flex',
         flexDirection: 'column',
-        justifyContent: 'space-between',
         padding: contentPadding,
         position: 'relative',
         zIndex: 0,
       }}>
-        {/* TOP: type label + name + years */}
-        <div>
-          {/* 3. Type label — поголем и поимпозантен */}
+
+        {/* ── ГОРЕН ДЕЛ: повод + ime + години ── */}
+        <div style={{ marginBottom: 'auto' }}>
+
           <div style={{
-            fontSize: '13px',
-            letterSpacing: '0.4em',
+            fontSize: '11px',
+            letterSpacing: '0.32em',
             textTransform: 'uppercase',
             color: '#a8a29e',
-            marginBottom: '16px',
+            marginBottom: '18px',
             fontFamily: 'Georgia, serif',
           }}>
             {typeLabel(post)}
           </div>
 
-          {/* Name */}
           <div style={{
-            fontSize: '44px',
+            fontSize: '52px',
             fontWeight: 'normal',
             color: '#1c1917',
-            lineHeight: 1.1,
+            lineHeight: 1.05,
             marginBottom: '12px',
-            letterSpacing: '-0.5px',
+            letterSpacing: '-0.3px',
+            fontFamily: 'Georgia, "Times New Roman", serif',
           }}>
             {post.fullName}
           </div>
 
-          {/* Years */}
           {years && (
             <div style={{
-              fontSize: '17px',
+              fontSize: '16px',
               color: '#78716c',
-              letterSpacing: '0.15em',
+              letterSpacing: '0.18em',
+              fontFamily: 'Georgia, serif',
             }}>
               {years}
             </div>
           )}
         </div>
 
-        {/* MIDDLE: divider + info + text — 4. space-between го дистрибуира ова рамномерно */}
-        <div>
-          <div style={{ width: '40px', height: '1px', background: '#d6d3d1', marginBottom: '20px' }} />
+        {/* ── СРЕДИНА: разделник ── */}
+        <div style={{
+          width: '40px',
+          height: '1px',
+          background: '#d6d3d1',
+          margin: '28px 0 24px',
+          flexShrink: 0,
+        }} />
 
-          {/* Funeral info */}
+        {/* ── СРЕДНО-ДОЛЕН ДЕЛ: детали + цитат ── */}
+        <div style={{ flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'flex-start' }}>
+
           {post.type === 'ТАЖНА ВЕСТ' && (post.dateOfFuneral || post.placeOfFuneral) && (
-            <div style={{ marginBottom: '14px' }}>
-              <div style={{ fontSize: '10px', letterSpacing: '0.2em', textTransform: 'uppercase', color: '#a8a29e', marginBottom: '5px' }}>Погреб</div>
-              <div style={{ fontSize: '16px', color: '#1c1917', lineHeight: 1.4 }}>
+            <div style={{ marginBottom: '18px' }}>
+              <div style={{
+                fontSize: '10px',
+                letterSpacing: '0.22em',
+                textTransform: 'uppercase',
+                color: '#a8a29e',
+                marginBottom: '5px',
+                fontFamily: 'Georgia, serif',
+              }}>
+                Погреб
+              </div>
+              <div style={{ fontSize: '16px', color: '#1c1917', lineHeight: 1.4, fontFamily: 'Georgia, serif' }}>
                 {post.dateOfFuneral && formatDate(post.dateOfFuneral)}
                 {post.timeOfFuneral && ` во ${post.timeOfFuneral} часот`}
               </div>
               {post.placeOfFuneral && (
-                <div style={{ fontSize: '13px', color: '#78716c', marginTop: '3px' }}>{post.placeOfFuneral}</div>
+                <div style={{ fontSize: '13px', color: '#78716c', marginTop: '3px', fontFamily: 'Georgia, serif' }}>
+                  {post.placeOfFuneral}
+                </div>
               )}
             </div>
           )}
 
-          {/* Pomen info */}
           {post.type === 'ПОМЕН' && post.pomenDate && (
-            <div style={{ marginBottom: '14px' }}>
-              <div style={{ fontSize: '10px', letterSpacing: '0.2em', textTransform: 'uppercase', color: '#a8a29e', marginBottom: '5px' }}>
+            <div style={{ marginBottom: '18px' }}>
+              <div style={{
+                fontSize: '10px',
+                letterSpacing: '0.22em',
+                textTransform: 'uppercase',
+                color: '#a8a29e',
+                marginBottom: '5px',
+                fontFamily: 'Georgia, serif',
+              }}>
                 {post.pomenSubtype === 'Сеќавање' ? 'Сеќавање' : 'Парастос'}
               </div>
-              <div style={{ fontSize: '16px', color: '#1c1917', lineHeight: 1.4 }}>
+              <div style={{ fontSize: '16px', color: '#1c1917', lineHeight: 1.4, fontFamily: 'Georgia, serif' }}>
                 {formatDate(post.pomenDate)}
                 {post.pomenTime && ` во ${post.pomenTime} часот`}
               </div>
               {post.pomenPlace && (
-                <div style={{ fontSize: '13px', color: '#78716c', marginTop: '3px' }}>{post.pomenPlace}</div>
+                <div style={{ fontSize: '13px', color: '#78716c', marginTop: '3px', fontFamily: 'Georgia, serif' }}>
+                  {post.pomenPlace}
+                </div>
               )}
             </div>
           )}
 
-          {/* 2. Text excerpt — 4-5 линии, помал font */}
           {displayText && (
             <div style={{
-              fontSize: '14px',
+              fontSize: '13.5px',
               color: '#57534e',
-              lineHeight: 1.55,
+              lineHeight: 1.65,
               fontStyle: 'italic',
+              borderLeft: '2px solid #d6d3d1',
+              paddingLeft: '14px',
               overflow: 'hidden',
-              maxHeight: '90px',
-              maxWidth: '580px',
+              maxHeight: '88px',
+              fontFamily: 'Georgia, serif',
             }}>
               „{displayText}"
             </div>
           )}
         </div>
 
-        {/* BOTTOM: sender + logo */}
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end' }}>
+        {/* ── FOOTER: испраќач + бренд ── */}
+        <div style={{
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'flex-end',
+          borderTop: '0.5px solid #e7e5e4',
+          paddingTop: '16px',
+          marginTop: '20px',
+          flexShrink: 0,
+        }}>
           <div>
-            <div style={{ fontSize: '10px', letterSpacing: '0.2em', textTransform: 'uppercase', color: '#a8a29e', marginBottom: '5px' }}>
-              {post.type === 'СОЧУВСТВО' ? 'Искрено сочувство' :
-               post.type === 'ПОСЛЕДЕН ПОЗДРАВ' ? 'Последен поздрав од' :
-               'Со почит од:'}
+            <div style={{
+              fontSize: '10px',
+              letterSpacing: '0.2em',
+              textTransform: 'uppercase',
+              color: '#a8a29e',
+              marginBottom: '4px',
+              fontFamily: 'Georgia, serif',
+            }}>
+              {senderLabel(post)}
             </div>
-            <div style={{ fontSize: '17px', color: '#1c1917' }}>
+            <div style={{
+              fontSize: '16px',
+              color: '#1c1917',
+              fontFamily: 'Georgia, serif',
+            }}>
               {post.familyNote || post.senderName}
             </div>
           </div>
-          {/* 5. Лого — vecenspomen.mk */}
+
           <div style={{ textAlign: 'right' }}>
-            <div style={{ fontSize: '13px', letterSpacing: '0.15em', color: '#a8a29e', textTransform: 'uppercase' }}>Вечен Спомен</div>
-            <div style={{ fontSize: '11px', color: '#c7c3bd', marginTop: '2px' }}>vecenspomen.mk</div>
+            <div style={{
+              fontSize: '12px',
+              letterSpacing: '0.18em',
+              color: '#a8a29e',
+              textTransform: 'uppercase',
+              fontFamily: 'Georgia, serif',
+            }}>
+              Вечен Спомен
+            </div>
+            <div style={{
+              fontSize: '11px',
+              color: '#c7c3bd',
+              marginTop: '2px',
+              fontFamily: 'Georgia, serif',
+            }}>
+              vecenspomen.mk
+            </div>
           </div>
         </div>
+
       </div>
     );
 
@@ -290,14 +347,12 @@ export const OGImageTemplate = React.forwardRef<HTMLDivElement, OGImageTemplateP
           background: BG,
           overflow: 'hidden',
           position: 'relative',
-          // undefined/basic — само box-shadow, без рамка
-          boxShadow: !hasFrame ? 'inset 0 0 0 1px rgba(0,0,0,0.06)' : 'none',
         }}
       >
-        {/* Left — photo panel */}
+        {/* ── ЛЕВО: фото панел 440px ── */}
         <div style={{
-          width: '380px',
-          height: '100%',
+          width: '440px',
+          height: '630px',
           flexShrink: 0,
           overflow: 'hidden',
           position: 'relative',
@@ -314,46 +369,66 @@ export const OGImageTemplate = React.forwardRef<HTMLDivElement, OGImageTemplateP
                 height: '100%',
                 objectFit: 'cover',
                 objectPosition: 'center top',
-                opacity: 0.85,
+                opacity: 0.9,
                 filter: 'grayscale(10%) contrast(1.05)',
                 display: 'block',
               }}
             />
           ) : (
-            <div style={{
-              width: '100%',
-              height: '100%',
-              background: '#292524',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-            }}>
-              <span style={{ color: '#57534e', fontSize: '13px', letterSpacing: '0.2em', textTransform: 'uppercase' }}>Фотографија</span>
+            <div
+              style={{
+                width: '100%',
+                height: '100%',
+                background: '#292524',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+              }}
+              ref={el => { if (el) onReady?.(); }}
+            >
+              <span style={{
+                color: '#57534e',
+                fontSize: '13px',
+                letterSpacing: '0.2em',
+                textTransform: 'uppercase',
+              }}>
+                Фотографија
+              </span>
             </div>
           )}
-          {/* gradient bottom */}
+
           <div style={{
             position: 'absolute',
             bottom: 0, left: 0, right: 0,
-            height: '160px',
-            background: 'linear-gradient(to top, rgba(0,0,0,0.6), transparent)',
+            height: '140px',
+            background: 'linear-gradient(to top, rgba(0,0,0,0.55), transparent)',
+            pointerEvents: 'none',
           }} />
-          {/* city */}
-          <div style={{
-            position: 'absolute',
-            bottom: '20px',
-            left: '24px',
-            color: 'rgba(255,255,255,0.6)',
-            fontSize: '11px',
-            letterSpacing: '0.2em',
-            textTransform: 'uppercase',
-          }}>
-            {post.city}
-          </div>
+
+          {post.city && (
+            <div style={{
+              position: 'absolute',
+              bottom: '20px',
+              left: '22px',
+              color: 'rgba(255,255,255,0.55)',
+              fontSize: '11px',
+              letterSpacing: '0.2em',
+              textTransform: 'uppercase',
+              fontFamily: 'Georgia, serif',
+            }}>
+              {post.city}
+            </div>
+          )}
         </div>
 
-        {/* Right — content panel, with or without frame */}
-        <div style={{ flex: 1, display: 'flex', flexDirection: 'column', background: BG, position: 'relative' }}>
+        {/* ── ДЕСНО: текст панел (760px) ── */}
+        <div style={{
+          flex: 1,
+          display: 'flex',
+          flexDirection: 'column',
+          background: BG,
+          position: 'relative',
+        }}>
           {hasFrame ? (
             <Frame style={frameStyle!}>
               {ContentInner}
@@ -364,3 +439,5 @@ export const OGImageTemplate = React.forwardRef<HTMLDivElement, OGImageTemplateP
     );
   }
 );
+
+OGImageTemplate.displayName = 'OGImageTemplate';
