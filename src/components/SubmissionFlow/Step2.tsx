@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { MemorialPost } from '../../types';
 import { CITIES } from '../../constants';
 import { Sparkles, Loader2, Check, Search, MapPin, X } from 'lucide-react';
@@ -105,6 +105,53 @@ const CitySelector: React.FC<{
   );
 };
 
+const DateInput: React.FC<{
+  value: string;
+  onChange: (value: string) => void;
+  className?: string;
+}> = ({ value, onChange, className }) => {
+  const toDisplay = (stored: string) => {
+    if (!stored) return '';
+    const parts = stored.split('-');
+    if (parts.length === 3) return `${parts[2]}/${parts[1]}/${parts[0]}`;
+    return stored;
+  };
+
+  const toStored = (display: string) => {
+    const parts = display.split('/');
+    if (parts.length === 3 && parts[2].length === 4) {
+      return `${parts[2]}-${parts[1].padStart(2, '0')}-${parts[0].padStart(2, '0')}`;
+    }
+    return '';
+  };
+
+  const [displayValue, setDisplayValue] = useState(toDisplay(value));
+
+  useEffect(() => {
+    setDisplayValue(toDisplay(value));
+  }, [value]);
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const raw = e.target.value.replace(/\D/g, '').slice(0, 8);
+    let formatted = raw.slice(0, 2);
+    if (raw.length >= 3) formatted += '/' + raw.slice(2, 4);
+    if (raw.length >= 5) formatted += '/' + raw.slice(4, 8);
+    setDisplayValue(formatted);
+    onChange(toStored(formatted) || '');
+  };
+
+  return (
+    <input
+      type="text"
+      inputMode="numeric"
+      value={displayValue}
+      onChange={handleChange}
+      placeholder="ДД/ММ/ГГГГ"
+      className={className}
+    />
+  );
+};
+
 export const Step2: React.FC<Step2Props> = ({ post, updatePost }) => {
   const [isRefining, setIsRefining] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -205,14 +252,25 @@ export const Step2: React.FC<Step2Props> = ({ post, updatePost }) => {
             </div>
             <div className="space-y-1">
               <label className={labelClass}>Датум на смрт {required}</label>
-              <input type="date" name="dateOfDeath" value={post.dateOfDeath || ''} onChange={handleChange} className={inputClass} />
+              <DateInput
+                value={post.dateOfDeath || ''}
+                onChange={(value) => {
+                  const year = value ? new Date(value).getFullYear() : undefined;
+                  updatePost({ dateOfDeath: value, deathYear: year });
+                }}
+                className={inputClass}
+              />
             </div>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
             <div className="space-y-1">
               <label className={labelClass}>Датум на погреб {required}</label>
-              <input type="date" name="dateOfFuneral" value={post.dateOfFuneral || ''} onChange={handleChange} className={inputClass} />
+              <DateInput
+                value={post.dateOfFuneral || ''}
+                onChange={(value) => updatePost({ dateOfFuneral: value })}
+                className={inputClass}
+              />
             </div>
             <div className="space-y-1">
               <label className={labelClass}>Време на погреб {required}</label>
@@ -289,8 +347,8 @@ export const Step2: React.FC<Step2Props> = ({ post, updatePost }) => {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8 border-t border-stone-100 pt-10">
-            <div className="space-y-1"><label className={labelClass}>Контакт мејл</label><input type="email" name="email" value={post.email || ''} onChange={handleChange} placeholder="пр. kontakt@email.com" className={inputClass} /></div>
-            <div className="space-y-1"><label className={labelClass}>Телефон</label><input type="tel" name="phone" value={post.phone || ''} onChange={handleChange} placeholder="пр. 07X XXX XXX" className={inputClass} /></div>
+            <div className="space-y-1"><label className={labelClass}>Контакт е-маил {required}</label><input type="email" name="email" value={post.email || ''} onChange={handleChange} placeholder="пр. kontakt@email.com" className={inputClass} /></div>
+            <div className="space-y-1"><label className={labelClass}>Контакт телефон <span className="text-stone-400 ml-1 text-[9px] normal-case tracking-normal">(незадолжително)</span></label><input type="tel" name="phone" value={post.phone || ''} onChange={handleChange} placeholder="пр. 07X XXX XXX" className={inputClass} /></div>
           </div>
         </div>
       </div>
@@ -336,8 +394,8 @@ export const Step2: React.FC<Step2Props> = ({ post, updatePost }) => {
             <input type="text" name="senderName" value={post.senderName || ''} onChange={handleChange} placeholder="пр. Од сопругата, децата и внуците" className={inputClass} />
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8 border-t border-stone-100 pt-10">
-            <div className="space-y-1"><label className={labelClass}>Контакт мејл</label><input type="email" name="email" value={post.email || ''} onChange={handleChange} placeholder="пр. kontakt@email.com" className={inputClass} /></div>
-            <div className="space-y-1"><label className={labelClass}>Телефон</label><input type="tel" name="phone" value={post.phone || ''} onChange={handleChange} placeholder="пр. 07X XXX XXX" className={inputClass} /></div>
+            <div className="space-y-1"><label className={labelClass}>Контакт е-маил {required}</label><input type="email" name="email" value={post.email || ''} onChange={handleChange} placeholder="пр. kontakt@email.com" className={inputClass} /></div>
+            <div className="space-y-1"><label className={labelClass}>Контакт телефон <span className="text-stone-400 ml-1 text-[9px] normal-case tracking-normal">(незадолжително)</span></label><input type="tel" name="phone" value={post.phone || ''} onChange={handleChange} placeholder="пр. 07X XXX XXX" className={inputClass} /></div>
           </div>
         </div>
       </div>
@@ -378,8 +436,8 @@ export const Step2: React.FC<Step2Props> = ({ post, updatePost }) => {
             <input type="text" name="senderName" value={post.senderName || ''} onChange={handleChange} placeholder="пр. Од семејството Јовановски" className={inputClass} />
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8 border-t border-stone-100 pt-10">
-            <div className="space-y-1"><label className={labelClass}>Контакт мејл</label><input type="email" name="email" value={post.email || ''} onChange={handleChange} placeholder="пр. kontakt@email.com" className={inputClass} /></div>
-            <div className="space-y-1"><label className={labelClass}>Телефон</label><input type="tel" name="phone" value={post.phone || ''} onChange={handleChange} placeholder="пр. 07X XXX XXX" className={inputClass} /></div>
+            <div className="space-y-1"><label className={labelClass}>Контакт е-маил {required}</label><input type="email" name="email" value={post.email || ''} onChange={handleChange} placeholder="пр. kontakt@email.com" className={inputClass} /></div>
+            <div className="space-y-1"><label className={labelClass}>Контакт телефон <span className="text-stone-400 ml-1 text-[9px] normal-case tracking-normal">(незадолжително)</span></label><input type="tel" name="phone" value={post.phone || ''} onChange={handleChange} placeholder="пр. 07X XXX XXX" className={inputClass} /></div>
           </div>
         </div>
       </div>
@@ -418,8 +476,14 @@ export const Step2: React.FC<Step2Props> = ({ post, updatePost }) => {
               </select>
             </div>
             <div className="space-y-1">
-              <label className={labelClass}>Датум на помен {required}</label>
-              <input type="date" name="pomenDate" value={post.pomenDate || ''} onChange={handleChange} className={inputClass} />
+              <label className={labelClass}>
+                Датум на помен {post.pomenSubtype !== 'Сеќавање' ? required : <span className="text-stone-400 ml-1 text-[9px] normal-case tracking-normal">(незадолжително)</span>}
+              </label>
+              <DateInput
+                value={post.pomenDate || ''}
+                onChange={(value) => updatePost({ pomenDate: value })}
+                className={inputClass}
+              />
             </div>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
@@ -451,8 +515,8 @@ export const Step2: React.FC<Step2Props> = ({ post, updatePost }) => {
             <input type="text" name="familyNote" value={post.familyNote || ''} onChange={handleChange} placeholder="пр. Сопругата, децата, внуците и роднините" className={inputClass} />
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8 border-t border-stone-100 pt-10">
-            <div className="space-y-1"><label className={labelClass}>Контакт мејл</label><input type="email" name="email" value={post.email || ''} onChange={handleChange} placeholder="пр. kontakt@email.com" className={inputClass} /></div>
-            <div className="space-y-1"><label className={labelClass}>Телефон</label><input type="tel" name="phone" value={post.phone || ''} onChange={handleChange} placeholder="пр. 07X XXX XXX" className={inputClass} /></div>
+            <div className="space-y-1"><label className={labelClass}>Контакт е-маил {required}</label><input type="email" name="email" value={post.email || ''} onChange={handleChange} placeholder="пр. kontakt@email.com" className={inputClass} /></div>
+            <div className="space-y-1"><label className={labelClass}>Контакт телефон <span className="text-stone-400 ml-1 text-[9px] normal-case tracking-normal">(незадолжително)</span></label><input type="tel" name="phone" value={post.phone || ''} onChange={handleChange} placeholder="пр. 07X XXX XXX" className={inputClass} /></div>
           </div>
         </div>
       </div>

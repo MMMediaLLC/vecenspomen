@@ -63,7 +63,7 @@ export const Layout: React.FC<LayoutProps> = ({ children }) => {
                 className="bg-white text-stone-900 px-6 py-2.5 rounded-[3px] text-[13px] font-bold font-sans uppercase tracking-[0.05em] hover:bg-stone-200 transition-all shadow-sm"
                 aria-label="Поднеси нова објава"
               >
-                Поднеси објава
+                Објави тажна вест
               </Link>
             </div>
 
@@ -109,14 +109,14 @@ export const Layout: React.FC<LayoutProps> = ({ children }) => {
               onClick={() => { setIsMenuOpen(false); window.scrollTo(0, 0); }}
               className="block w-full text-center bg-white text-stone-900 py-3 rounded-[3px] font-medium font-sans uppercase tracking-[0.05em] text-[13px] mt-2"
             >
-              Поднеси објава
+              Објави тажна вест
             </Link>
           </div>
         )}
       </nav>
 
       {/* Main Content */}
-      <main className="flex-grow">
+      <main key={location.pathname} className="flex-grow fade-in">
         {children}
       </main>
 

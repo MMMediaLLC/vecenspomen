@@ -105,10 +105,12 @@ export const SubmitPost: React.FC<SubmitPostProps> = ({ onComplete, initialPost,
         } else if (post.type === 'ПОМЕН') {
           if (!post.city) return 'Изберете град.';
           if (!post.pomenSubtype) return 'Изберете тип на помен.';
-          if (!post.pomenDate) return 'Внесете датум на помен.';
+          if (!post.pomenDate && post.pomenSubtype !== 'Сеќавање') return 'Внесете датум на помен.';
           if (!post.pomenTime) return 'Внесете време на помен.';
           if (!post.familyNote?.trim()) return 'Внесете „Со љубов и почит од".';
         }
+        if (!post.email?.trim()) return 'Внесете контакт е-маил адреса.';
+        if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(post.email || '')) return 'Внесете валидна е-маил адреса.';
         break;
       case 3: // Photo step
         if (post.type === 'СОЧУВСТВО' && (!post.photoUrl || post.photoUrl === DEFAULT_PHOTO)) {
