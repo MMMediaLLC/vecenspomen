@@ -365,13 +365,14 @@ export const OGImageTemplate = React.forwardRef<HTMLDivElement, OGImageTemplateP
               onLoad={() => onReady?.()}
               onError={() => onReady?.()}
               style={{
-                width: '100%',
-                height: '100%',
+                width: '440px',
+                height: '630px',
                 objectFit: 'cover',
                 objectPosition: 'center top',
                 opacity: 0.9,
                 filter: 'grayscale(10%) contrast(1.05)',
                 display: 'block',
+                flexShrink: 0,
               }}
             />
           ) : (
