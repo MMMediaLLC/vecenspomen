@@ -234,7 +234,7 @@ export const Step3: React.FC<Step3Props> = ({
       });
 
       // Upload cropped image
-      const croppedRef = ref(storage, `og-photos/cropped-${Date.now()}.jpg`);
+      const croppedRef = ref(storage, `posts/cropped-${Date.now()}.jpg`);
       const croppedSnapshot = await uploadBytes(croppedRef, croppedBlob, { contentType: 'image/jpeg' });
       const croppedUrl = await getDownloadURL(croppedSnapshot.ref);
 
