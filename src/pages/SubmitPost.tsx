@@ -202,7 +202,12 @@ export const SubmitPost: React.FC<SubmitPostProps> = ({ onComplete, initialPost,
       case 2:
         return <Step2 post={post} updatePost={updatePost} />;
       case 3:
-        return <Step3 photoUrl={post.photoUrl || DEFAULT_PHOTO} onPhotoChange={(url) => updatePost({ photoUrl: url })} />;
+        return <Step3
+          photoUrl={post.photoUrl || DEFAULT_PHOTO}
+          onPhotoChange={(url) => updatePost({ photoUrl: url })}
+          onPositionChange={(position) => updatePost({ photoPosition: position })}
+          photoPosition={post.photoPosition}
+        />;
       case 4:
         return (
           <Step5

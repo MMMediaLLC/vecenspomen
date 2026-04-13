@@ -70,6 +70,8 @@ export interface MemorialPost {
   relatedToSlug?: string;
   // OG image for social sharing (1200x630 PNG stored in Firebase Storage)
   ogImageUrl?: string;
+  // Photo crop position (CSS object-position value, e.g. "center 30%")
+  photoPosition?: string;
 }
 
 export interface City {

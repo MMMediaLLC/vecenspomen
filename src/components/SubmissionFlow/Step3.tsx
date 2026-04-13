@@ -1,22 +1,142 @@
-import React, { useState, useRef } from 'react';
-import { Upload, Check, Image as ImageIcon, Loader2, AlertCircle, RefreshCw } from 'lucide-react';
+import React, { useState, useRef, useCallback, useEffect } from 'react';
+import { Upload, Check, Loader2, AlertCircle, RefreshCw, Move } from 'lucide-react';
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import { storage } from '../../lib/firebase';
 
 interface Step3Props {
   photoUrl: string;
   onPhotoChange: (url: string) => void;
+  onPositionChange: (position: string) => void;
+  photoPosition?: string;
 }
 
 const DEFAULT_PHOTO = 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&q=80&w=400';
 
-export const Step3: React.FC<Step3Props> = ({ photoUrl, onPhotoChange }) => {
+// Frame dimensions — same proportions as OG card photo panel (440×630)
+const FRAME_W = 220;
+const FRAME_H = 315;
+
+const CropSelector: React.FC<{
+  photoUrl: string;
+  position: string;
+  onChange: (position: string) => void;
+}> = ({ photoUrl, position, onChange }) => {
+  const frameRef = useRef<HTMLDivElement>(null);
+  const isDragging = useRef(false);
+  const lastPointer = useRef({ x: 0, y: 0 });
+
+  // Parse current position into x/y percentages (0–100)
+  const parsePosition = (pos: string): { x: number; y: number } => {
+    const parts = pos.trim().split(/\s+/);
+    const parseVal = (s: string) => {
+      if (s === 'center') return 50;
+      if (s === 'top' || s === 'left') return 0;
+      if (s === 'bottom' || s === 'right') return 100;
+      return parseFloat(s) || 50;
+    };
+    return {
+      x: parts.length >= 1 ? parseVal(parts[0]) : 50,
+      y: parts.length >= 2 ? parseVal(parts[1]) : 50,
+    };
+  };
+
+  const posToString = (x: number, y: number): string => {
+    const cx = Math.round(Math.max(0, Math.min(100, x)));
+    const cy = Math.round(Math.max(0, Math.min(100, y)));
+    return `${cx}% ${cy}%`;
+  };
+
+  const current = parsePosition(position);
+
+  const onPointerDown = useCallback((e: React.PointerEvent) => {
+    e.preventDefault();
+    isDragging.current = true;
+    lastPointer.current = { x: e.clientX, y: e.clientY };
+    (e.target as HTMLElement).setPointerCapture(e.pointerId);
+  }, []);
+
+  const onPointerMove = useCallback((e: React.PointerEvent) => {
+    if (!isDragging.current) return;
+    const dx = e.clientX - lastPointer.current.x;
+    const dy = e.clientY - lastPointer.current.y;
+    lastPointer.current = { x: e.clientX, y: e.clientY };
+
+    // Moving photo right = moving focal point left (invert x), same for y
+    const sensitivity = 0.3;
+    const newX = current.x - dx * sensitivity;
+    const newY = current.y - dy * sensitivity;
+    onChange(posToString(newX, newY));
+  }, [current, onChange]);
+
+  const onPointerUp = useCallback(() => {
+    isDragging.current = false;
+  }, []);
+
+  return (
+    <div className="flex flex-col items-center gap-4">
+      <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-stone-400">
+        Позиционирај ја фотографијата
+      </p>
+
+      {/* Crop frame */}
+      <div
+        ref={frameRef}
+        onPointerDown={onPointerDown}
+        onPointerMove={onPointerMove}
+        onPointerUp={onPointerUp}
+        onPointerLeave={onPointerUp}
+        style={{ width: FRAME_W, height: FRAME_H }}
+        className="relative overflow-hidden rounded-sm border-2 border-stone-900 cursor-grab active:cursor-grabbing shadow-xl select-none"
+      >
+        <img
+          src={photoUrl}
+          alt="Crop preview"
+          draggable={false}
+          style={{
+            width: '100%',
+            height: '100%',
+            objectFit: 'cover',
+            objectPosition: position,
+            display: 'block',
+            userSelect: 'none',
+            pointerEvents: 'none',
+          }}
+        />
+        {/* Crosshair overlay */}
+        <div className="absolute inset-0 pointer-events-none flex items-center justify-center">
+          <div className="w-6 h-6 flex items-center justify-center opacity-60">
+            <Move size={20} className="text-white drop-shadow-md" />
+          </div>
+        </div>
+      </div>
+
+      <p className="text-[10px] text-stone-400 font-light text-center">
+        Повлечи за да ја центрираш фотографијата
+      </p>
+
+      {/* Reset button */}
+      {position !== '50% 0%' && (
+        <button
+          onClick={() => onChange('50% 0%')}
+          className="text-[10px] text-stone-400 hover:text-stone-700 uppercase tracking-widest font-bold transition-colors"
+        >
+          Ресетирај позиција
+        </button>
+      )}
+    </div>
+  );
+};
+
+export const Step3: React.FC<Step3Props> = ({ photoUrl, onPhotoChange, onPositionChange, photoPosition }) => {
   const [isDragging, setIsDragging] = useState(false);
   const [isUploading, setIsUploading] = useState(false);
   const [uploadProgress, setUploadProgress] = useState(0);
   const [uploadError, setUploadError] = useState<string | null>(null);
-  const [uploadSuccess, setUploadSuccess] = useState(photoUrl !== DEFAULT_PHOTO);
+  const [uploadSuccess, setUploadSuccess] = useState(photoUrl !== DEFAULT_PHOTO && !!photoUrl);
   const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const position = photoPosition ?? '50% 0%';
+  const isDefault = !photoUrl || photoUrl === DEFAULT_PHOTO;
 
   const uploadFile = async (file: File) => {
     setIsUploading(true);
@@ -27,23 +147,23 @@ export const Step3: React.FC<Step3Props> = ({ photoUrl, onPhotoChange }) => {
     try {
       const filename = `posts/${file.name}-${Date.now()}`;
       const storageRef = ref(storage, filename);
-      
+
       setUploadProgress(40);
       const snapshot = await uploadBytes(storageRef, file);
-      
+
       setUploadProgress(80);
       const downloadURL = await getDownloadURL(snapshot.ref);
-      
+
       setUploadProgress(100);
       onPhotoChange(downloadURL);
+      onPositionChange('50% 0%');
       setUploadSuccess(true);
       setIsUploading(false);
     } catch (err: any) {
-      console.error('Firebase Storage upload error:', err);
       if (err.code === 'storage/unauthorized') {
         setUploadError('Firebase врати "Unauthorized". Ве молиме отворете Firebase Console -> Storage -> Rules и ставете allow read, write: if true;');
       } else {
-         setUploadError('Грешка при прикачување. Проверете Firebase конфигурацијата (.env) и CORS полисите.');
+        setUploadError('Грешка при прикачување. Проверете Firebase конфигурацијата (.env) и CORS полисите.');
       }
       setIsUploading(false);
     }
@@ -67,8 +187,6 @@ export const Step3: React.FC<Step3Props> = ({ photoUrl, onPhotoChange }) => {
     const file = e.dataTransfer.files[0];
     if (file) handleFile(file);
   };
-
-  const isDefault = photoUrl === DEFAULT_PHOTO || !photoUrl;
 
   return (
     <div className="space-y-8">
@@ -106,8 +224,8 @@ export const Step3: React.FC<Step3Props> = ({ photoUrl, onPhotoChange }) => {
             <Loader2 className="animate-spin" size={48} />
             <p className="font-medium">Прикачување... {uploadProgress}%</p>
             <div className="w-full max-w-xs bg-stone-200 h-1.5 rounded-full mt-2 overflow-hidden">
-              <div 
-                className="bg-stone-900 h-full transition-all duration-300" 
+              <div
+                className="bg-stone-900 h-full transition-all duration-300"
                 style={{ width: `${uploadProgress}%` }}
               />
             </div>
@@ -140,28 +258,16 @@ export const Step3: React.FC<Step3Props> = ({ photoUrl, onPhotoChange }) => {
         </div>
       )}
 
-      {/* Preview */}
-      <div className="flex flex-col items-center gap-4 pt-2">
-        <p className="text-[10px] font-bold uppercase tracking-widest text-stone-400">Преглед</p>
-        <div className="relative w-36 h-52 overflow-hidden rounded-md shadow-xl border-4 border-white ring-1 ring-stone-200">
-          <img
-            src={photoUrl || DEFAULT_PHOTO}
-            className="w-full h-full object-cover"
-            alt="Преглед"
-            onError={(e) => { (e.target as HTMLImageElement).src = DEFAULT_PHOTO; }}
+      {/* Crop selector — only shown after successful upload */}
+      {uploadSuccess && !isDefault && (
+        <div className="flex justify-center pt-4 border-t border-stone-100 animate-in fade-in slide-in-from-bottom-4 duration-500">
+          <CropSelector
+            photoUrl={photoUrl}
+            position={position}
+            onChange={onPositionChange}
           />
-          {isDefault && (
-            <div className="absolute inset-0 bg-stone-900/30 flex items-center justify-center">
-              <ImageIcon className="text-white/80" size={28} />
-            </div>
-          )}
         </div>
-        {isDefault && (
-          <p className="text-stone-400 text-xs text-center">
-            Сите фотографии се означуваат со црна лента во аголот во спомен на починатиот.
-          </p>
-        )}
-      </div>
+      )}
     </div>
   );
 };
