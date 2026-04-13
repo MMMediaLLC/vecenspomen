@@ -238,7 +238,7 @@ export const Home: React.FC<HomeProps> = ({ posts }) => {
           onClick={onNavigateSubmit}
           className="w-full bg-stone-900 text-white py-4 rounded-sm text-sm font-medium tracking-wide shadow-lg flex justify-center items-center gap-2"
         >
-          Поднеси објава <ArrowRight size={16} />
+          Објави тажна вест <ArrowRight size={16} />
         </button>
       </div>
 
