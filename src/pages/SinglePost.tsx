@@ -225,13 +225,13 @@ export const SinglePost: React.FC = () => {
           {post.type === 'ТАЖНА ВЕСТ' && (
             <div className="max-w-2xl mx-auto mt-5 flex gap-3">
               <Link
-                to={`/objavi?type=СОЧУВСТВО&fullName=${encodeURIComponent(post.fullName)}&relId=${post.id}&relSlug=${post.slug}`}
+                to={`/objavi?type=СОЧУВСТВО&fullName=${encodeURIComponent(post.fullName)}&relId=${post.id}&relSlug=${post.slug}&photoUrl=${encodeURIComponent(post.photoUrl || '')}`}
                 className="flex-1 flex items-center justify-center py-3.5 bg-white/80 border border-stone-200/60 font-serif text-[10px] font-semibold uppercase tracking-normal text-stone-400 hover:bg-white hover:border-stone-300 hover:text-stone-600 transition-all duration-[1200ms] ease-in-out"
               >
                 Изрази сочувство
               </Link>
               <Link
-                to={`/objavi?type=ПОСЛЕДЕН ПОЗДРАВ&fullName=${encodeURIComponent(post.fullName)}&relId=${post.id}&relSlug=${post.slug}`}
+                to={`/objavi?type=ПОСЛЕДЕН ПОЗДРАВ&fullName=${encodeURIComponent(post.fullName)}&relId=${post.id}&relSlug=${post.slug}&photoUrl=${encodeURIComponent(post.photoUrl || '')}`}
                 className="flex-1 flex items-center justify-center py-3.5 bg-white/80 border border-stone-200/60 font-serif text-[10px] font-semibold uppercase tracking-normal text-stone-400 hover:bg-white hover:border-stone-300 hover:text-stone-600 transition-all duration-[1200ms] ease-in-out"
               >
                 Последен поздрав

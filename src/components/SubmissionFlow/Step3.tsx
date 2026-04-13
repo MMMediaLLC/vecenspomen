@@ -8,6 +8,7 @@ interface Step3Props {
   onPhotoChange: (url: string) => void;
   onPositionChange: (position: string) => void;
   photoPosition?: string;
+  prefilled?: boolean;
 }
 
 const DEFAULT_PHOTO = 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&q=80&w=400';
@@ -141,13 +142,14 @@ const CropSelector: React.FC<CropSelectorProps> = ({
 // ─── Step3 ───────────────────────────────────────────────────────────────────
 
 export const Step3: React.FC<Step3Props> = ({
-  photoUrl, onPhotoChange, onPositionChange, photoPosition,
+  photoUrl, onPhotoChange, onPositionChange, photoPosition, prefilled,
 }) => {
   const [isDraggingOver, setIsDraggingOver] = useState(false);
   const [isUploading, setIsUploading] = useState(false);
   const [uploadProgress, setUploadProgress] = useState(0);
   const [uploadError, setUploadError] = useState<string | null>(null);
-  const [uploadSuccess, setUploadSuccess] = useState(photoUrl !== DEFAULT_PHOTO && !!photoUrl);
+  const isPrefilledPhoto = prefilled && photoUrl !== DEFAULT_PHOTO && !!photoUrl;
+  const [uploadSuccess, setUploadSuccess] = useState(isPrefilledPhoto || (photoUrl !== DEFAULT_PHOTO && !!photoUrl));
   const [isCropping, setIsCropping] = useState(false);
   const [cropConfirmed, setCropConfirmed] = useState(false);
 

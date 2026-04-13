@@ -30,12 +30,13 @@ export const SubmitPost: React.FC<SubmitPostProps> = ({ onComplete, initialPost,
     const fullName = searchParams.get('fullName') || '';
     const relId = searchParams.get('relId') || '';
     const relSlug = searchParams.get('relSlug') || '';
+    const photoUrl = searchParams.get('photoUrl') || '';
 
     return {
       ...(initialPost || {}),
       status: 'Во проверка',
       createdAt: new Date().toISOString(),
-      photoUrl: DEFAULT_PHOTO,
+      photoUrl: photoUrl || DEFAULT_PHOTO,
       guestbookEnabled: true,
       ...(type ? { type } : {}),
       ...(fullName ? { fullName } : {}),
@@ -207,6 +208,7 @@ export const SubmitPost: React.FC<SubmitPostProps> = ({ onComplete, initialPost,
           onPhotoChange={(url) => updatePost({ photoUrl: url })}
           onPositionChange={(position) => updatePost({ photoPosition: position })}
           photoPosition={post.photoPosition}
+          prefilled={!!searchParams.get('photoUrl')}
         />;
       case 4:
         return (
