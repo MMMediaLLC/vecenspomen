@@ -371,7 +371,7 @@ export const OGImageTemplate = React.forwardRef<HTMLDivElement, OGImageTemplateP
               style={{
                 width: '440px',
                 height: '630px',
-                objectFit: 'contain',
+                objectFit: 'cover',
                 objectPosition: 'center center',
                 opacity: 0.9,
                 filter: 'grayscale(10%) contrast(1.05)',
