@@ -42,10 +42,11 @@ interface CropSelectorProps {
   onConfirm: () => void;
   isCropping: boolean;
   cropConfirmed: boolean;
+  imgRef: React.RefObject<HTMLImageElement>;
 }
 
 const CropSelector: React.FC<CropSelectorProps> = ({
-  photoUrl, position, onChange, onConfirm, isCropping, cropConfirmed,
+  photoUrl, position, onChange, onConfirm, isCropping, cropConfirmed, imgRef,
 }) => {
   const isDragging = useRef(false);
   const lastPointer = useRef({ x: 0, y: 0 });
@@ -85,8 +86,10 @@ const CropSelector: React.FC<CropSelectorProps> = ({
         className="relative overflow-hidden rounded-sm border-2 border-stone-900 cursor-grab active:cursor-grabbing shadow-xl select-none"
       >
         <img
+          ref={imgRef}
           src={photoUrl}
           alt="Crop preview"
+          crossOrigin="anonymous"
           draggable={false}
           style={{
             width: '100%',
@@ -154,6 +157,7 @@ export const Step3: React.FC<Step3Props> = ({
   );
 
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const imgRef = useRef<HTMLImageElement>(null);
   const position = photoPosition ?? '50% 0%';
   const isDefault = !photoUrl || photoUrl === DEFAULT_PHOTO;
 
@@ -195,17 +199,8 @@ export const Step3: React.FC<Step3Props> = ({
     setUploadError(null);
 
     try {
-      // Fetch original image as blob to avoid CORS issues with canvas
-      const response = await fetch(originalUrl);
-      const blob = await response.blob();
-      const objectUrl = URL.createObjectURL(blob);
-
-      const img = await new Promise<HTMLImageElement>((resolve, reject) => {
-        const image = new Image();
-        image.onload = () => resolve(image);
-        image.onerror = reject;
-        image.src = objectUrl;
-      });
+      const img = imgRef.current;
+      if (!img) throw new Error('Image ref not available');
 
       // Crop to 2:3 ratio based on position
       const { x: px, y: py } = parsePosition(position);
@@ -230,8 +225,6 @@ export const Step3: React.FC<Step3Props> = ({
       const ctx = canvas.getContext('2d')!;
       ctx.drawImage(img, sx, sy, cropW, cropH, 0, 0, canvasW, canvasH);
 
-      URL.revokeObjectURL(objectUrl);
-
       const croppedBlob = await new Promise<Blob>((resolve, reject) => {
         canvas.toBlob(
           (b) => (b ? resolve(b) : reject(new Error('Canvas toBlob failed'))),
@@ -248,6 +241,7 @@ export const Step3: React.FC<Step3Props> = ({
       onPhotoChange(croppedUrl);
       setCropConfirmed(true);
     } catch (err) {
+      console.error('cropAndUpload failed:', err);
       setUploadError('Грешка при обработка на фотографијата. Обидете се повторно.');
     } finally {
       setIsCropping(false);
@@ -348,6 +342,7 @@ export const Step3: React.FC<Step3Props> = ({
             onConfirm={cropAndUpload}
             isCropping={isCropping}
             cropConfirmed={cropConfirmed}
+            imgRef={imgRef}
           />
         </div>
       )}
