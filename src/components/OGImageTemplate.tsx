@@ -171,8 +171,8 @@ export const OGImageTemplate = React.forwardRef<HTMLDivElement, OGImageTemplateP
         <div style={{ marginBottom: 'auto' }}>
 
           <div style={{
-            fontSize: '14px',
-            letterSpacing: '0.32em',
+            fontSize: '17px',
+            letterSpacing: '0.28em',
             textTransform: 'uppercase',
             color: '#a8a29e',
             marginBottom: '18px',
@@ -199,7 +199,7 @@ export const OGImageTemplate = React.forwardRef<HTMLDivElement, OGImageTemplateP
               fontSize: '19px',
               color: '#78716c',
               letterSpacing: '0.18em',
-              marginTop: '8px',
+              marginTop: '16px',
               fontFamily: 'Georgia, serif',
             }}>
               {years}
@@ -236,7 +236,7 @@ export const OGImageTemplate = React.forwardRef<HTMLDivElement, OGImageTemplateP
                 {post.timeOfFuneral && ` во ${post.timeOfFuneral} часот`}
               </div>
               {post.placeOfFuneral && (
-                <div style={{ fontSize: '15px', color: '#78716c', marginTop: '3px', fontFamily: 'Georgia, serif' }}>
+                <div style={{ fontSize: '15px', color: '#78716c', marginTop: '3px', marginBottom: '12px', fontFamily: 'Georgia, serif' }}>
                   {post.placeOfFuneral}
                 </div>
               )}
@@ -260,7 +260,7 @@ export const OGImageTemplate = React.forwardRef<HTMLDivElement, OGImageTemplateP
                 {post.pomenTime && ` во ${post.pomenTime} часот`}
               </div>
               {post.pomenPlace && (
-                <div style={{ fontSize: '15px', color: '#78716c', marginTop: '3px', fontFamily: 'Georgia, serif' }}>
+                <div style={{ fontSize: '15px', color: '#78716c', marginTop: '3px', marginBottom: '12px', fontFamily: 'Georgia, serif' }}>
                   {post.pomenPlace}
                 </div>
               )}
@@ -272,7 +272,7 @@ export const OGImageTemplate = React.forwardRef<HTMLDivElement, OGImageTemplateP
               fontSize: '16px',
               color: '#57534e',
               lineHeight: 1.65,
-              fontStyle: 'italic',
+
               borderLeft: '2px solid #d6d3d1',
               paddingLeft: '14px',
               overflow: 'hidden',

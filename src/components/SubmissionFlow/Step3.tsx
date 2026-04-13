@@ -1,6 +1,6 @@
 import React, { useState, useRef, useCallback } from 'react';
 import { Upload, Check, Loader2, AlertCircle, RefreshCw, Move, Scissors } from 'lucide-react';
-import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
+import { ref, uploadBytes, getDownloadURL, deleteObject } from 'firebase/storage';
 import { storage } from '../../lib/firebase';
 
 interface Step3Props {
@@ -239,6 +239,17 @@ export const Step3: React.FC<Step3Props> = ({
       const croppedUrl = await getDownloadURL(croppedSnapshot.ref);
 
       onPhotoChange(croppedUrl);
+
+      try {
+        const originalRef = ref(storage, originalUrl
+          .split('/o/')[1]
+          .split('?')[0]
+          .replace(/%2F/g, '/'));
+        await deleteObject(originalRef);
+      } catch (deleteErr) {
+        console.warn('Original photo delete failed (non-critical):', deleteErr);
+      }
+
       setCropConfirmed(true);
     } catch (err) {
       console.error('cropAndUpload failed:', err);
