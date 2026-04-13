@@ -276,7 +276,7 @@ export const OGImageTemplate = React.forwardRef<HTMLDivElement, OGImageTemplateP
               borderLeft: '2px solid #d6d3d1',
               paddingLeft: '14px',
               overflow: 'hidden',
-              maxHeight: '88px',
+              flex: 1,
               fontFamily: 'Georgia, serif',
             }}>
               „{displayText}"
@@ -320,6 +320,7 @@ export const OGImageTemplate = React.forwardRef<HTMLDivElement, OGImageTemplateP
               letterSpacing: '0.18em',
               color: '#a8a29e',
               textTransform: 'uppercase',
+              whiteSpace: 'nowrap',
               fontFamily: 'Georgia, serif',
             }}>
               Вечен Спомен
@@ -328,6 +329,7 @@ export const OGImageTemplate = React.forwardRef<HTMLDivElement, OGImageTemplateP
               fontSize: '12px',
               color: '#c7c3bd',
               marginTop: '2px',
+              whiteSpace: 'nowrap',
               fontFamily: 'Georgia, serif',
             }}>
               vecenspomen.mk
@@ -370,7 +372,7 @@ export const OGImageTemplate = React.forwardRef<HTMLDivElement, OGImageTemplateP
                 width: '440px',
                 height: '630px',
                 objectFit: 'cover',
-                objectPosition: post.photoPosition ?? 'center top',
+                objectPosition: post.photoPosition ?? 'center center',
                 opacity: 0.9,
                 filter: 'grayscale(10%) contrast(1.05)',
                 display: 'block',
