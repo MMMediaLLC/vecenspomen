@@ -144,8 +144,12 @@ export const SubmitPost: React.FC<SubmitPostProps> = ({ onComplete, initialPost,
 
   const prevStep = () => {
     setValidationError(null);
-    setStep(prev => prev - 1);
-    window.scrollTo(0, 0);
+    if (step === 1) {
+      navigate('/');
+    } else {
+      setStep(prev => prev - 1);
+      window.scrollTo(0, 0);
+    }
   };
 
   const handleFinalSubmit = async () => {
@@ -192,11 +196,7 @@ export const SubmitPost: React.FC<SubmitPostProps> = ({ onComplete, initialPost,
         return (
           <Step1
             selectedType={post.type || null}
-            onSelect={(type: PostType) => {
-              updatePost({ type });
-              setStep(2);
-              window.scrollTo(0, 0);
-            }}
+            onSelect={(type: PostType) => updatePost({ type })}
           />
         );
       case 2:
@@ -321,7 +321,7 @@ export const SubmitPost: React.FC<SubmitPostProps> = ({ onComplete, initialPost,
           )}
         </div>
 
-        {step > 1 && step < 5 && (
+        {step < 5 && (
           <div className="mt-8 md:mt-12 flex justify-between items-center">
             <button
               onClick={prevStep}
