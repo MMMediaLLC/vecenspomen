@@ -182,7 +182,7 @@ export const OGImageTemplate = React.forwardRef<HTMLDivElement, OGImageTemplateP
           </div>
 
           <div style={{
-            fontSize: '62px',
+            fontSize: '56px',
             fontWeight: 'normal',
             color: '#1c1917',
             lineHeight: 1.05,
@@ -195,9 +195,11 @@ export const OGImageTemplate = React.forwardRef<HTMLDivElement, OGImageTemplateP
 
           {years && (
             <div style={{
+              display: 'block',
               fontSize: '19px',
               color: '#78716c',
               letterSpacing: '0.18em',
+              marginTop: '8px',
               fontFamily: 'Georgia, serif',
             }}>
               {years}
