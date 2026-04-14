@@ -55,9 +55,11 @@ export default async function handler(req, res) {
     );
 
     if (!response.ok) {
-      const err = await response.text();
-      console.error('[RefineText] Gemini error:', err);
-      return res.status(500).json({ error: 'Грешка при обработка на текстот.' });
+      const errText = await response.text();
+      console.error('[RefineText] Gemini error:', response.status, errText);
+      let errMsg = `Gemini ${response.status}`;
+      try { errMsg = JSON.parse(errText)?.error?.message || errMsg; } catch {}
+      return res.status(500).json({ error: errMsg });
     }
 
     const data = await response.json();
