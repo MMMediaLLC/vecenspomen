@@ -1,23 +1,32 @@
-import { collection, doc, getDocs, getDoc, updateDoc, deleteDoc, serverTimestamp, addDoc } from 'firebase/firestore';
+import { collection, doc, getDocs, getDoc, updateDoc, deleteDoc, serverTimestamp, addDoc, query, where } from 'firebase/firestore';
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import { db, storage } from './firebase';
 import { MemorialPost, PostStatus } from '../types';
 
 const postsCollection = collection(db, 'posts');
 
+const normalizeDocs = (docs: any[]): MemorialPost[] =>
+  docs.map(d => {
+    const data = d.data() as any;
+    return {
+      ...data,
+      id: d.id,
+      createdAt: data.createdAt?.toDate?.()?.toISOString() ?? data.createdAt ?? new Date().toISOString(),
+    } as MemorialPost;
+  });
+
 export const getPosts = async (): Promise<MemorialPost[]> => {
   try {
     const snapshot = await getDocs(postsCollection);
-    return snapshot.docs.map(doc => {
-      const data = doc.data() as any;
-      return {
-        ...data,
-        id: doc.id,
-        // Normalize Firestore Timestamp → ISO string so date sorting works everywhere
-        createdAt: data.createdAt?.toDate?.()?.toISOString() ?? data.createdAt ?? new Date().toISOString(),
-      } as MemorialPost;
-    });
-  } catch (err) {
+    return normalizeDocs(snapshot.docs);
+  } catch (err: any) {
+    if (err?.code === 'permission-denied') {
+      // Unauthenticated — Firestore rules only allow reading published posts,
+      // so we must include the matching where() clause in the query.
+      const q = query(postsCollection, where('status', '==', 'Објавено'));
+      const snapshot = await getDocs(q);
+      return normalizeDocs(snapshot.docs);
+    }
     console.error('Firestore Read Error in getPosts:', err);
     throw err;
   }
