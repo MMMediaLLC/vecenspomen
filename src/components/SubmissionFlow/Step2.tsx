@@ -406,6 +406,16 @@ export const Step2: React.FC<Step2Props> = ({ post, updatePost }) => {
               />
             </div>
           </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+            <div className="space-y-1">
+              <label className={labelClass}>Година на раѓање <span className="text-stone-400 ml-1 text-[9px] normal-case tracking-normal">(незадолжително)</span></label>
+              <input type="number" name="birthYear" value={post.birthYear || ''} onChange={handleChange} placeholder="пр. 1945" className={inputClass} />
+            </div>
+            <div className="space-y-1">
+              <label className={labelClass}>Година на смрт <span className="text-stone-400 ml-1 text-[9px] normal-case tracking-normal">(незадолжително)</span></label>
+              <input type="number" name="deathYear" value={post.deathYear || ''} onChange={(e) => updatePost({ deathYear: e.target.value ? parseInt(e.target.value, 10) : undefined })} placeholder="пр. 2026" className={inputClass} />
+            </div>
+          </div>
           <div className="space-y-1">
             <label className={labelClass}>Наслов на пораката (незадолжително)</label>
             <input type="text" name="farewellTitle" value={post.farewellTitle || ''} onChange={handleChange} placeholder="На нашата мила сестра, колешка, пријателка" className={inputClass} />
