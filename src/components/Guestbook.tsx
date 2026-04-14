@@ -36,15 +36,14 @@ export const Guestbook: React.FC<GuestbookProps> = ({ entries, onAddComment, isE
 
   return (
     <div className="mt-16 max-w-2xl mx-auto space-y-10">
-      <div className="text-center space-y-3">
-        <div className="inline-block border border-stone-400 px-6 py-2">
-          <h3 className="text-[11px] font-semibold uppercase tracking-widest text-stone-700">Книга на сочувство</h3>
-        </div>
+      <div className="text-center space-y-2">
+        <h3 className="text-xl font-serif text-stone-700">Книга на сочувство</h3>
+        <div className="w-8 h-[1px] bg-stone-300 mx-auto" />
         <p className="text-stone-400 text-xs font-light">Споделете спомен или изразете сочувство до семејството.</p>
       </div>
 
       {/* Form */}
-      <form onSubmit={handleSubmit} className="space-y-5">
+      <form onSubmit={handleSubmit} className="border border-stone-300 p-6 space-y-5">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
           <div className="space-y-1.5">
             <label className="text-[9px] font-bold uppercase tracking-widest text-stone-400">Од кого</label>
