@@ -230,13 +230,13 @@ export const SinglePost: React.FC = () => {
               <div className="flex gap-2">
                 <Link
                   to={`/objavi?type=СОЧУВСТВО&fullName=${encodeURIComponent(post.fullName)}&relId=${post.id}&relSlug=${post.slug}&photoUrl=${encodeURIComponent(post.photoUrl || '')}`}
-                  className="flex-1 flex items-center justify-center py-3.5 px-6 bg-white border border-stone-200/80 shadow-[0_2px_8px_rgba(0,0,0,0.04)] font-serif text-sm tracking-wide text-stone-500 hover:text-stone-800 hover:border-stone-300 hover:shadow-[0_4px_14px_rgba(0,0,0,0.07)] transition-all duration-300"
+                  className="flex-1 flex items-center justify-center py-3.5 px-3 bg-white border border-stone-200/80 shadow-[0_2px_8px_rgba(0,0,0,0.04)] font-serif text-[13px] tracking-wide text-stone-500 whitespace-nowrap hover:text-stone-800 hover:border-stone-300 hover:shadow-[0_4px_14px_rgba(0,0,0,0.07)] transition-all duration-300"
                 >
                   Изрази сочувство
                 </Link>
                 <Link
                   to={`/objavi?type=ПОСЛЕДЕН ПОЗДРАВ&fullName=${encodeURIComponent(post.fullName)}&relId=${post.id}&relSlug=${post.slug}&photoUrl=${encodeURIComponent(post.photoUrl || '')}`}
-                  className="flex-1 flex items-center justify-center py-3.5 px-6 bg-white border border-stone-200/80 shadow-[0_2px_8px_rgba(0,0,0,0.04)] font-serif text-sm tracking-wide text-stone-500 hover:text-stone-800 hover:border-stone-300 hover:shadow-[0_4px_14px_rgba(0,0,0,0.07)] transition-all duration-300"
+                  className="flex-1 flex items-center justify-center py-3.5 px-3 bg-white border border-stone-200/80 shadow-[0_2px_8px_rgba(0,0,0,0.04)] font-serif text-[13px] tracking-wide text-stone-500 whitespace-nowrap hover:text-stone-800 hover:border-stone-300 hover:shadow-[0_4px_14px_rgba(0,0,0,0.07)] transition-all duration-300"
                 >
                   Последен поздрав
                 </Link>
