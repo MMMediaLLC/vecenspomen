@@ -14,7 +14,7 @@ async function generateSitemap() {
 
   const staticRoutes = [
     '/',
-    '/pochinati',
+    '/spomeni',
     '/ceni',
     '/kako-raboti',
     '/politika-na-privatnost',

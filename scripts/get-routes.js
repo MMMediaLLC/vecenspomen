@@ -15,7 +15,7 @@ async function getFirestoreRoutes() {
 
   const staticRoutes = [
     '/',
-    '/pochinati',
+    '/spomeni',
     '/ceni',
     '/kako-raboti',
     '/politika-na-privatnost',
