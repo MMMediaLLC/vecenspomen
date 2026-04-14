@@ -223,53 +223,24 @@ export const SinglePost: React.FC = () => {
           </div>
 
           {post.type === 'ТАЖНА ВЕСТ' && (
-            <div className="max-w-2xl mx-auto mt-5 flex gap-3">
-              <Link
-                to={`/objavi?type=СОЧУВСТВО&fullName=${encodeURIComponent(post.fullName)}&relId=${post.id}&relSlug=${post.slug}&photoUrl=${encodeURIComponent(post.photoUrl || '')}`}
-                style={{
-                  flex: 1,
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  padding: '14px 24px',
-                  background: '#faf9f7',
-                  border: '1px solid #d6d3d1',
-                  borderRadius: '4px',
-                  fontFamily: 'Georgia, serif',
-                  fontSize: '14px',
-                  letterSpacing: '0.08em',
-                  color: '#57534e',
-                  cursor: 'pointer',
-                  transition: 'background 0.2s, border-color 0.2s',
-                }}
-                onMouseEnter={e => { (e.currentTarget as HTMLElement).style.background = '#f0ede8'; (e.currentTarget as HTMLElement).style.borderColor = '#a8a29e'; }}
-                onMouseLeave={e => { (e.currentTarget as HTMLElement).style.background = '#faf9f7'; (e.currentTarget as HTMLElement).style.borderColor = '#d6d3d1'; }}
-              >
-                Изрази сочувство
-              </Link>
-              <Link
-                to={`/objavi?type=ПОСЛЕДЕН ПОЗДРАВ&fullName=${encodeURIComponent(post.fullName)}&relId=${post.id}&relSlug=${post.slug}&photoUrl=${encodeURIComponent(post.photoUrl || '')}`}
-                style={{
-                  flex: 1,
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  padding: '14px 24px',
-                  background: '#faf9f7',
-                  border: '1px solid #d6d3d1',
-                  borderRadius: '4px',
-                  fontFamily: 'Georgia, serif',
-                  fontSize: '14px',
-                  letterSpacing: '0.08em',
-                  color: '#57534e',
-                  cursor: 'pointer',
-                  transition: 'background 0.2s, border-color 0.2s',
-                }}
-                onMouseEnter={e => { (e.currentTarget as HTMLElement).style.background = '#f0ede8'; (e.currentTarget as HTMLElement).style.borderColor = '#a8a29e'; }}
-                onMouseLeave={e => { (e.currentTarget as HTMLElement).style.background = '#faf9f7'; (e.currentTarget as HTMLElement).style.borderColor = '#d6d3d1'; }}
-              >
-                Последен поздрав
-              </Link>
+            <div className="max-w-2xl mx-auto mt-4 space-y-3">
+              <p className="text-center text-[11px] text-stone-400 font-light tracking-wide">
+                Во мигови на длабока тага, оставете зборови на почит:
+              </p>
+              <div className="flex gap-2">
+                <Link
+                  to={`/objavi?type=СОЧУВСТВО&fullName=${encodeURIComponent(post.fullName)}&relId=${post.id}&relSlug=${post.slug}&photoUrl=${encodeURIComponent(post.photoUrl || '')}`}
+                  className="flex-1 flex items-center justify-center py-3.5 px-6 bg-white border border-stone-200/80 shadow-[0_2px_8px_rgba(0,0,0,0.04)] font-serif text-sm tracking-wide text-stone-500 hover:text-stone-800 hover:border-stone-300 hover:shadow-[0_4px_14px_rgba(0,0,0,0.07)] transition-all duration-300"
+                >
+                  Изрази сочувство
+                </Link>
+                <Link
+                  to={`/objavi?type=ПОСЛЕДЕН ПОЗДРАВ&fullName=${encodeURIComponent(post.fullName)}&relId=${post.id}&relSlug=${post.slug}&photoUrl=${encodeURIComponent(post.photoUrl || '')}`}
+                  className="flex-1 flex items-center justify-center py-3.5 px-6 bg-white border border-stone-200/80 shadow-[0_2px_8px_rgba(0,0,0,0.04)] font-serif text-sm tracking-wide text-stone-500 hover:text-stone-800 hover:border-stone-300 hover:shadow-[0_4px_14px_rgba(0,0,0,0.07)] transition-all duration-300"
+                >
+                  Последен поздрав
+                </Link>
+              </div>
             </div>
           )}
 
