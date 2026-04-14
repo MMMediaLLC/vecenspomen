@@ -218,7 +218,7 @@ export const Home: React.FC<HomeProps> = ({ posts }) => {
         
         <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 text-center relative z-20">
           <h2 className="text-2xl md:text-5xl font-serif text-white mb-2 md:mb-8 tracking-tight">
-            Известете ги семејството и пријателите за тажната вест.
+            Известете ги семејството и пријателите за тажната вест
           </h2>
           <p className="text-stone-400 text-sm md:text-xl font-light mb-6 md:mb-12 max-w-xl mx-auto leading-relaxed">
             Поднесете објава за неколку минути, нашиот тим ќе ја провери и одобри.
