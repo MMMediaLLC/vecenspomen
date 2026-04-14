@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import { MemorialPost } from '../../types';
 import { CITIES } from '../../constants';
 import { Sparkles, Loader2, Check, Search, MapPin, X } from 'lucide-react';
-import { GoogleGenAI } from '@google/genai';
 
 interface Step2Props {
   post: Partial<MemorialPost>;
@@ -198,22 +197,24 @@ export const Step2: React.FC<Step2Props> = ({ post, updatePost }) => {
     if (!post.mainText?.trim()) return;
     setIsRefining(true);
     setError(null);
-    const apiKey = import.meta.env.VITE_GEMINI_API_KEY || '';
-    if (!apiKey) {
-      setError('AI системот моментално не е достапен.');
-      setIsRefining(false);
-      return;
-    }
-    const prompt = `Напиши достоен, формален и емотивно смирен текст за меморијално известување на македонски јазик. Тип: ${post.type}. Починат: ${post.fullName}. Оригинален текст: "${post.mainText}"`;
     try {
-      const ai = new GoogleGenAI({ apiKey });
-      const response = await ai.models.generateContent({ model: 'gemini-1.5-flash', contents: prompt });
-      const refinedText = response.text?.trim();
-      if (refinedText) updatePost({ aiRefinedText: refinedText });
-      else throw new Error('Empty response');
-    } catch (err) {
-      setError('Настана грешка при обработка на текстот.');
-    } finally { setIsRefining(false); }
+      const response = await fetch('/api/refine-text', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          mainText: post.mainText,
+          fullName: post.fullName,
+          type: post.type,
+        }),
+      });
+      const data = await response.json();
+      if (!response.ok) throw new Error(data.error || 'Грешка');
+      if (data.refined) updatePost({ aiRefinedText: data.refined });
+    } catch (err: any) {
+      setError(err.message || 'Настана грешка при обработка на текстот.');
+    } finally {
+      setIsRefining(false);
+    }
   };
 
   const required = <span className="text-red-300 ml-1">*</span>;
