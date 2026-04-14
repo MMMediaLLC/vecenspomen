@@ -34,7 +34,7 @@ export const PremiumFrame: React.FC<PremiumFrameProps> = ({ style = 'elegant', c
              <div className="absolute bottom-3 left-3 w-10 h-10 border-b-2 border-l-2 border-stone-800 rounded-bl-full" />
              <div className="absolute bottom-3 right-3 w-10 h-10 border-b-2 border-r-2 border-stone-800 rounded-br-full" />
              {/* Center Top Symbol */}
-             <div className="absolute -top-[1.25rem] left-1/2 -translate-x-1/2 bg-white px-2">
+             <div className="absolute -top-[0.6rem] md:-top-[1.25rem] left-1/2 -translate-x-1/2 bg-white px-2">
                <span className="text-3xl text-stone-800 block leading-none">☦</span>
              </div>
           </div>

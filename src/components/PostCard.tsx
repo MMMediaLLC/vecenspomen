@@ -4,9 +4,10 @@ import { MemorialPost } from '../types';
 interface PostCardProps {
   post: MemorialPost;
   onClick: (id: string) => void;
+  showImageShadow?: boolean;
 }
 
-export const PostCard: React.FC<PostCardProps> = ({ post, onClick }) => {
+export const PostCard: React.FC<PostCardProps> = ({ post, onClick, showImageShadow = false }) => {
   const formatMacedonianDate = (dateStr?: string) => {
     if (!dateStr) return '';
     const date = new Date(dateStr);
@@ -46,12 +47,17 @@ export const PostCard: React.FC<PostCardProps> = ({ post, onClick }) => {
       className="group cursor-pointer bg-white border border-stone-100/60 hover:border-stone-200 rounded-sm overflow-hidden transition-all duration-700 shadow-[0_1px_3px_rgba(0,0,0,0.04)] hover:shadow-[0_8px_30px_rgba(0,0,0,0.07)] flex flex-col h-full relative paper-texture"
     >
       <div className="relative aspect-[4/5] overflow-hidden bg-stone-100">
-        <img 
-          src={post.photoUrl} 
-          alt={post.fullName} 
+        <img
+          src={post.photoUrl}
+          alt={post.fullName}
           className={`w-full h-full object-cover transition-all duration-700 scale-100 group-hover:scale-105 ${post.selectedFrameStyle === 'muslim' ? '' : 'grayscale-[0.2] group-hover:grayscale-0'}`}
           referrerPolicy="no-referrer"
         />
+        {showImageShadow && (
+          <div className="absolute inset-0 pointer-events-none" style={{
+            background: 'linear-gradient(to bottom, rgba(0,0,0,0.18) 0%, transparent 40%, transparent 60%, rgba(0,0,0,0.32) 100%)'
+          }} />
+        )}
         <div className="absolute top-4 left-4 flex flex-col gap-2">
           <span className="px-2.5 py-1 text-[8px] font-medium tracking-wider uppercase rounded-sm bg-stone-900/60 backdrop-blur-sm text-white/70 transition-all group-hover:bg-stone-900/75 group-hover:text-white/90 font-sans">
             {post.type === 'ПОМЕН' ? (

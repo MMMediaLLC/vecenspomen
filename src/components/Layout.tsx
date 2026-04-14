@@ -31,7 +31,7 @@ export const Layout: React.FC<LayoutProps> = ({ children }) => {
   return (
     <div className="min-h-screen flex flex-col">
       {/* Navigation */}
-      <nav className="sticky top-0 z-50 shadow-[0_2px_12px_rgba(0,0,0,0.35)]" style={{ background: '#141414', borderBottom: '1px solid rgba(255,255,255,0.06)' }}>
+      <nav id="main-nav" className="sticky top-0 z-50 shadow-[0_2px_12px_rgba(0,0,0,0.35)]" style={{ background: '#141414', borderBottom: '1px solid rgba(255,255,255,0.06)' }}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between h-12">
             {/* Logo */}
@@ -149,7 +149,7 @@ export const Layout: React.FC<LayoutProps> = ({ children }) => {
         </div>
       </footer>
       {/* Global mobile sticky CTA */}
-      <div className="md:hidden fixed bottom-0 left-0 right-0 z-50 p-4 bg-white/95 backdrop-blur-md border-t border-stone-200">
+      <div className="mobile-sticky-cta md:hidden fixed bottom-0 left-0 right-0 z-50 p-4 bg-white/95 backdrop-blur-md border-t border-stone-200">
         <Link
           to="/objavi"
           onClick={() => window.scrollTo(0, 0)}

@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import { MemorialPost } from '../types';
 import { MemorialTemplate } from '../components/MemorialTemplate';
@@ -22,7 +22,32 @@ export const SinglePost: React.FC = () => {
 
   const [copied, setCopied] = useState(false);
   const [downloading, setDownloading] = useState(false);
+  const [isFullscreen, setIsFullscreen] = useState(false);
   const memorialRef = useRef<HTMLDivElement>(null);
+  const longPressTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  useEffect(() => {
+    if (isFullscreen) {
+      document.body.classList.add('memorial-fullscreen');
+    } else {
+      document.body.classList.remove('memorial-fullscreen');
+    }
+    return () => { document.body.classList.remove('memorial-fullscreen'); };
+  }, [isFullscreen]);
+
+  const handleTouchStart = useCallback(() => {
+    longPressTimer.current = setTimeout(() => {
+      setIsFullscreen(true);
+    }, 600);
+  }, []);
+
+  const handleTouchEnd = useCallback(() => {
+    if (longPressTimer.current) {
+      clearTimeout(longPressTimer.current);
+      longPressTimer.current = null;
+    }
+    setIsFullscreen(false);
+  }, []);
 
   useEffect(() => {
     if (post?.id) {
@@ -218,7 +243,13 @@ export const SinglePost: React.FC = () => {
 
         {/* Memorial card + action buttons as one flush unit */}
         <div className="animate-in fade-in zoom-in-95 duration-1000">
-          <div ref={memorialRef}>
+          <div
+            ref={memorialRef}
+            onTouchStart={handleTouchStart}
+            onTouchEnd={handleTouchEnd}
+            onTouchMove={handleTouchEnd}
+            style={{ WebkitUserSelect: 'none', userSelect: 'none' }}
+          >
             <MemorialTemplate post={post} />
           </div>
 

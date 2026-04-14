@@ -98,6 +98,14 @@
   animation: fadeIn 0.4s ease forwards;
 }
 
+/* Memorial fullscreen mode (long press on mobile) */
+body.memorial-fullscreen #main-nav {
+  display: none !important;
+}
+body.memorial-fullscreen .mobile-sticky-cta {
+  display: none !important;
+}
+
 /* Toast notification */
 @keyframes slideUp {
   from { opacity: 0; transform: translateY(12px) translateX(-50%); }

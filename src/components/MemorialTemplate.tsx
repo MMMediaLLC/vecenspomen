@@ -51,7 +51,7 @@ export const MemorialTemplate: React.FC<MemorialTemplateProps> = ({ post, isPrev
     <div className={`${isPreview ? 'px-4 md:px-6' : 'px-4 md:px-14'} pb-10 relative z-10 ${type === 'ТАЖНА ВЕСТ' ? 'pt-7' : 'pt-9 md:pt-10'}`}>
       {/* Type Label (Very Top) */}
       <div className={`text-center ${type === 'ТАЖНА ВЕСТ' ? 'mb-3' : 'mb-5 md:mb-6'}`}>
-        <h1 className={`uppercase tracking-normal text-stone-900 font-serif ${isPremium ? 'text-xl md:text-2xl font-bold' : 'text-base md:text-lg font-semibold'} ${type === 'ТАЖНА ВЕСТ' ? 'mt-2' : ''}`}>
+        <h1 className={`uppercase tracking-normal text-stone-900 font-serif text-lg md:text-xl font-semibold ${type === 'ТАЖНА ВЕСТ' ? 'mt-2' : ''}`}>
           {type === 'ПОМЕН' ? (
             pomenSubtype === '40 дена' ? 'Четириесетдневен помен' :
             pomenSubtype === '6 месеци' ? 'Шестмесечен помен' :

@@ -456,8 +456,9 @@ export const Step2: React.FC<Step2Props> = ({ post, updatePost }) => {
               <input type="text" name="fullName" value={post.fullName || ''} onChange={handleChange} placeholder="пр. Петар Петровски" className={inputClass} />
             </div>
             <div className="space-y-1">
-              <label className={labelClass}>До кого е пораката</label>
-              <input type="text" name="condolenceFamily" value={post.condolenceFamily || ''} onChange={handleChange} placeholder="пр. До семејството Петровски" className={inputClass} />
+              <label className={labelClass}>До:</label>
+              <input type="text" name="condolenceFamily" value={post.condolenceFamily || ''} onChange={handleChange} placeholder="пр. Семејството Петровски" className={inputClass} />
+              <p className="text-[9px] text-stone-400 font-light">Не го впишувајте зборот „До" — се додава автоматски при прикажување на картичката.</p>
             </div>
           </div>
           <div className="space-y-1">

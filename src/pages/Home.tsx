@@ -174,7 +174,7 @@ export const Home: React.FC<HomeProps> = ({ posts }) => {
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 md:gap-8">
             {latestPosts.map(post => (
               <div key={post.id} className="h-full">
-                <PostCard post={post} onClick={onPostClick} />
+                <PostCard post={post} onClick={onPostClick} showImageShadow={true} />
               </div>
             ))}
           </div>
