@@ -232,15 +232,6 @@ export const Home: React.FC<HomeProps> = ({ posts }) => {
         </div>
       </section>
  
-      {/* 4) MOBILE STICKY CTA */}
-      <div className="md:hidden fixed bottom-0 left-0 right-0 p-4 bg-white/95 backdrop-blur-md border-t border-stone-200 z-50 animate-in slide-in-from-bottom-full duration-500">
-        <button
-          onClick={onNavigateSubmit}
-          className="w-full bg-stone-900 text-white py-4 rounded-sm text-sm font-medium tracking-wide shadow-lg flex justify-center items-center gap-2"
-        >
-          Објави тажна вест <ArrowRight size={16} />
-        </button>
-      </div>
 
       <style>{`
         .hide-scrollbar::-webkit-scrollbar {

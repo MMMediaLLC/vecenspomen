@@ -1,5 +1,5 @@
 import React from 'react';
-import { Menu, X } from 'lucide-react';
+import { Menu, X, ArrowRight } from 'lucide-react';
 import { Link, useLocation } from 'react-router-dom';
 
 interface LayoutProps {
@@ -116,7 +116,7 @@ export const Layout: React.FC<LayoutProps> = ({ children }) => {
       </nav>
 
       {/* Main Content */}
-      <main key={location.pathname} className="flex-grow fade-in">
+      <main key={location.pathname} className="flex-grow fade-in pb-[72px] md:pb-0">
         {children}
       </main>
 
@@ -148,6 +148,17 @@ export const Layout: React.FC<LayoutProps> = ({ children }) => {
           </div>
         </div>
       </footer>
+      {/* Global mobile sticky CTA */}
+      <div className="md:hidden fixed bottom-0 left-0 right-0 z-50 p-4 bg-white/95 backdrop-blur-md border-t border-stone-200">
+        <Link
+          to="/objavi"
+          onClick={() => window.scrollTo(0, 0)}
+          className="w-full bg-stone-900 text-white py-4 rounded-sm text-sm font-medium tracking-wide shadow-lg flex justify-center items-center gap-2"
+        >
+          Објави спомен <ArrowRight size={16} />
+        </Link>
+      </div>
+
     </div>
   );
 };

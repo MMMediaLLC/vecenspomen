@@ -309,16 +309,6 @@ export const SinglePost: React.FC = () => {
         />
       </div>
 
-      {/* Mobile sticky CTA */}
-      <div className="md:hidden fixed bottom-0 left-0 right-0 p-4 bg-white/95 backdrop-blur-md border-t border-stone-200 z-50">
-        <Link
-          to="/objavi"
-          onClick={() => window.scrollTo(0, 0)}
-          className="w-full bg-stone-900 text-white py-4 rounded-sm text-sm font-medium tracking-wide shadow-lg flex justify-center items-center gap-2"
-        >
-          Објави спомен <ArrowRight size={16} />
-        </Link>
-      </div>
 
     </div>
   );
