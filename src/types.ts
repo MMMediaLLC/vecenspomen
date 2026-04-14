@@ -49,6 +49,7 @@ export interface MemorialPost {
   phone: string;
   mainText: string;
   aiRefinedText?: string;
+  aiRefinedIntro?: string;
   photoUrl: string;
   package: PackageType;
   selectedFrameStyle?: 'elegant' | 'orthodox' | 'catholic' | 'muslim' | 'star' | 'clean';
