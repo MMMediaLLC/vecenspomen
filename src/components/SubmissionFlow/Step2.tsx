@@ -309,15 +309,18 @@ export const Step2: React.FC<Step2Props> = ({ post, updatePost }) => {
           <div className="space-y-8 pt-4">
 
             {/* AI копче — едно за двете полиња */}
-            <div className="flex justify-end">
+            <div className="flex flex-col items-end gap-2">
               <button
                 onClick={handleRefine}
                 disabled={isRefining || (!post.mainText?.trim() && !post.introText?.trim())}
                 className="flex items-center gap-2 bg-stone-900 text-white px-4 py-2 text-[10px] font-bold uppercase tracking-widest hover:bg-stone-800 transition-all disabled:opacity-30 group"
               >
                 {isRefining ? <Loader2 className="animate-spin" size={12} /> : <Sparkles size={12} className="text-stone-400 group-hover:text-[var(--color-gold)]" />}
-                Подобри со AI
+                {isRefining ? 'Обработување...' : 'Подобри со AI'}
               </button>
+              {error && (
+                <p className="text-red-500 text-[10px] font-light">{error}</p>
+              )}
             </div>
 
             <div className="space-y-2">
