@@ -1,4 +1,8 @@
 {
+  "redirects": [
+    { "source": "/pochinati", "destination": "/spomeni", "permanent": true },
+    { "source": "/pochinati/:city", "destination": "/spomeni/:city", "permanent": true }
+  ],
   "rewrites": [
     {
       "source": "/((?!api/).*)",

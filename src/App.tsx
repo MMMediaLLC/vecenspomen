@@ -144,6 +144,9 @@ const AppRoutes = () => {
     <Layout>
       <Routes>
         <Route path="/" element={<Home posts={publishedPosts} />} />
+        <Route path="/spomeni" element={<Pochinati posts={publishedPosts} />} />
+        <Route path="/spomeni/:city" element={<Pochinati posts={publishedPosts} />} />
+        {/* Legacy redirects */}
         <Route path="/pochinati" element={<Pochinati posts={publishedPosts} />} />
         <Route path="/pochinati/:city" element={<Pochinati posts={publishedPosts} />} />
         <Route path="/pomen" element={<Pochinati posts={publishedPosts} />} />

@@ -55,7 +55,7 @@ export const Layout: React.FC<LayoutProps> = ({ children }) => {
             {/* Desktop Nav */}
             <div className="hidden md:flex items-center gap-8">
               {navLink('Почетна', '/')}
-              {navLink('Спомени', '/pochinati')}
+              {navLink('Спомени', '/spomeni')}
               {navLink('Цени', '/ceni')}
               <Link
                 to="/objavi"
@@ -63,7 +63,7 @@ export const Layout: React.FC<LayoutProps> = ({ children }) => {
                 className="bg-white text-stone-900 px-6 py-2.5 rounded-[3px] text-[13px] font-bold font-sans uppercase tracking-[0.05em] hover:bg-stone-200 transition-all shadow-sm"
                 aria-label="Поднеси нова објава"
               >
-                Објави тажна вест
+                Објави спомен
               </Link>
             </div>
 
@@ -91,7 +91,7 @@ export const Layout: React.FC<LayoutProps> = ({ children }) => {
               Почетна
             </Link>
             <Link
-              to="/pochinati"
+              to="/spomeni"
               onClick={() => { setIsMenuOpen(false); }}
               className="block w-full text-left px-4 py-2.5 text-white/90 font-medium rounded-sm hover:bg-white/10"
             >
@@ -109,7 +109,7 @@ export const Layout: React.FC<LayoutProps> = ({ children }) => {
               onClick={() => { setIsMenuOpen(false); window.scrollTo(0, 0); }}
               className="block w-full text-center bg-white text-stone-900 py-3 rounded-[3px] font-medium font-sans uppercase tracking-[0.05em] text-[13px] mt-2"
             >
-              Објави тажна вест
+              Објави спомен
             </Link>
           </div>
         )}

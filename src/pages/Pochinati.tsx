@@ -60,7 +60,7 @@ export const Pochinati: React.FC<PochinatiProps> = ({ posts }) => {
     setSearchTerm('');
     setSelectedType('Сите');
     setSelectedCity('Сите');
-    if (city) navigate('/pochinati');
+    if (city) navigate('/spomeni');
   };
 
   return (
@@ -68,9 +68,9 @@ export const Pochinati: React.FC<PochinatiProps> = ({ posts }) => {
       {/* Header */}
       <div className="bg-stone-50 border-b border-stone-100 py-20 mb-12">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <h1 className="text-4xl md:text-5xl font-serif text-stone-900 mb-6">Починати</h1>
+          <h1 className="text-4xl md:text-5xl font-serif text-stone-900 mb-6">Спомени</h1>
           <p className="text-lg text-stone-500 max-w-2xl mx-auto font-light">
-            Последни поздрави, сеќавања и тажни вести од цела Македонија.
+            Последни поздрави, сеќавања и тажни вести од Македонија, посветени на оние што засекогаш ќе останат во нашите мисли.
           </p>
         </div>
       </div>

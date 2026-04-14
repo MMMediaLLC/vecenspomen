@@ -188,7 +188,7 @@ export const Home: React.FC<HomeProps> = ({ posts }) => {
           <div className="flex items-center justify-center gap-6 mt-8 md:mt-16">
             <div className="h-[1px] w-8 bg-stone-200" />
             <button
-              onClick={() => { navigate('/pochinati'); window.scrollTo(0, 0); }}
+              onClick={() => { navigate('/spomeni'); window.scrollTo(0, 0); }}
               className="text-stone-600 hover:text-stone-900 text-sm font-normal tracking-wide transition-colors font-sans"
             >
               Види ги сите починати
@@ -218,7 +218,7 @@ export const Home: React.FC<HomeProps> = ({ posts }) => {
         
         <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 text-center relative z-20">
           <h2 className="text-2xl md:text-5xl font-serif text-white mb-2 md:mb-8 tracking-tight">
-            Информирајте ги пријателите и семејството за тажната вест.
+            Известете ги семејството и пријателите за тажната вест.
           </h2>
           <p className="text-stone-400 text-sm md:text-xl font-light mb-6 md:mb-12 max-w-xl mx-auto leading-relaxed">
             Поднесете објава за неколку минути, нашиот тим ќе ја провери и одобри.
@@ -227,7 +227,7 @@ export const Home: React.FC<HomeProps> = ({ posts }) => {
             onClick={onNavigateSubmit}
             className="bg-white text-stone-900 px-7 py-3 md:px-10 md:py-4 text-sm md:text-base font-bold font-sans transition-all hover:bg-stone-100 inline-flex items-center justify-center gap-2 uppercase tracking-normal"
           >
-            Поднесете објава <ArrowRight size={18} />
+            Објави Тажна вест <ArrowRight size={18} />
           </button>
         </div>
       </section>
