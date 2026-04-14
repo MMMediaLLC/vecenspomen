@@ -42,15 +42,15 @@ async function sendReminderEmail(post, reminderType) {
 }
 
 // Проверува дали денешниот датум е во прозорецот за праќање на потсетникот
-// Праќаме 2 дена пред точниот датум за да се стигне навреме
+// Праќаме 7 дена пред точниот датум за да се стигне навреме
 function isDue(scheduledDate) {
   const target = new Date(scheduledDate);
   const today = new Date();
   today.setHours(0, 0, 0, 0);
   target.setHours(0, 0, 0, 0);
   const diffDays = Math.round((target - today) / (1000 * 60 * 60 * 24));
-  // Прати 2 дена пред (diffDays === 2) или на денот (diffDays === 0 или -1)
-  return diffDays >= -1 && diffDays <= 2;
+  // Прати на денот (diffDays === 0) или 1 ден по (diffDays === -1) за сигурност
+  return diffDays >= -1 && diffDays <= 1;
 }
 
 function addDays(dateStr, days) {
@@ -96,9 +96,9 @@ export default async function handler(req, res) {
       const remindersSent = post.remindersSent || [];
 
       const checks = [
-        { type: '40_days',  scheduledDate: addDays(post.dateOfDeath, 38) },  // 2 дена пред 40-иот ден
-        { type: '6_months', scheduledDate: addDays(post.dateOfDeath, 180) },
-        { type: '1_year',   scheduledDate: addDays(post.dateOfDeath, 363) },
+        { type: '40_days',  scheduledDate: addDays(post.dateOfDeath, 33) },  // 7 дена пред 40-иот ден
+        { type: '6_months', scheduledDate: addDays(post.dateOfDeath, 173) }, // 7 дена пред 6 месеци
+        { type: '1_year',   scheduledDate: addDays(post.dateOfDeath, 358) }, // 7 дена пред 1 година
       ];
 
       for (const check of checks) {

@@ -234,19 +234,11 @@ export default async function handler(req, res) {
   try {
     switch (type) {
       case 'payment_confirmed': {
-        // To user
-        if (post.email) {
-          await sendViaResend(
-            post.email,
-            'Вечен Спомен — Плаќањето е потврдено',
-            emailPaymentConfirmed(post, appUrl)
-          );
-        }
-        // To admin
+        // Само до админ — Lemon Squeezy веќе праќа потврда за плаќање до корисникот
         if (adminEmail) {
           await sendViaResend(
             adminEmail,
-            `Нова objava чека одобрување — ${post.fullName}`,
+            `Нова објава чека одобрување — ${post.fullName}`,
             emailAdminNewPost(post, appUrl)
           );
         }
