@@ -61,10 +61,13 @@ export default async function handler(req, res) {
     }
 
     const data = await response.json();
+    console.log('[RefineText] Gemini response:', JSON.stringify(data).slice(0, 500));
     const refined = data?.candidates?.[0]?.content?.parts?.[0]?.text?.trim();
 
     if (!refined) {
-      return res.status(500).json({ error: 'AI не врати резултат.' });
+      const reason = data?.candidates?.[0]?.finishReason || data?.promptFeedback?.blockReason || 'unknown';
+      console.error('[RefineText] No refined text. Reason:', reason, JSON.stringify(data).slice(0, 300));
+      return res.status(500).json({ error: `AI не врати резултат (${reason}).` });
     }
 
     return res.status(200).json({ refined });
