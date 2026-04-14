@@ -35,60 +35,60 @@ export const Guestbook: React.FC<GuestbookProps> = ({ entries, onAddComment, isE
   if (!isEnabled) return null;
 
   return (
-    <div className="mt-24 max-w-3xl mx-auto space-y-12">
-      <div className="text-center space-y-4">
-        <h3 className="text-3xl font-serif text-stone-900 italic">Книга на сочувство</h3>
-        <div className="w-12 h-[1px] bg-[var(--color-gold)] mx-auto opacity-40" />
-        <p className="text-stone-500 text-sm font-light">Споделете спомен или изразете сочувство до семејството.</p>
+    <div className="mt-16 max-w-2xl mx-auto space-y-10">
+      <div className="text-center space-y-2">
+        <h3 className="text-xl font-serif text-stone-700">Книга на сочувство</h3>
+        <div className="w-8 h-[1px] bg-stone-300 mx-auto" />
+        <p className="text-stone-400 text-xs font-light">Споделете спомен или изразете сочувство до семејството.</p>
       </div>
 
       {/* Form */}
-      <div className="bg-white p-8 md:p-10 border border-stone-100 shadow-sm rounded-sm">
-        <form onSubmit={handleSubmit} className="space-y-6">
-          <div className="space-y-2">
-            <label className="text-[10px] font-bold uppercase tracking-widest text-stone-400">Од кого</label>
+      <form onSubmit={handleSubmit} className="space-y-5">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+          <div className="space-y-1.5">
+            <label className="text-[9px] font-bold uppercase tracking-widest text-stone-400">Од кого</label>
             <input
               type="text"
               value={senderName}
               onChange={(e) => setSenderName(e.target.value)}
               placeholder="Вашето име и презиме"
-              className="w-full p-3 border-b border-stone-200 focus:outline-none focus:border-stone-900 transition-colors text-sm font-light"
+              className="w-full py-2 bg-transparent border-b border-stone-200 focus:outline-none focus:border-stone-500 transition-colors text-sm font-light placeholder:text-stone-300"
               required
             />
           </div>
-          <div className="space-y-2">
-            <label className="text-[10px] font-bold uppercase tracking-widest text-stone-400">Порака</label>
+          <div className="space-y-1.5">
+            <label className="text-[9px] font-bold uppercase tracking-widest text-stone-400">Порака</label>
             <textarea
               value={text}
               onChange={(e) => setText(e.target.value)}
-              rows={4}
+              rows={2}
               placeholder="Напишете ги вашите зборови овде..."
-              className="w-full p-4 bg-stone-50 border border-stone-100 focus:outline-none focus:border-stone-400 transition-all text-sm font-light leading-relaxed resize-none"
+              className="w-full py-2 bg-transparent border-b border-stone-200 focus:outline-none focus:border-stone-500 transition-colors text-sm font-light leading-relaxed resize-none placeholder:text-stone-300"
               required
             />
           </div>
-          <div className="flex flex-col md:flex-row justify-between items-center gap-4">
-            <p className="text-[10px] text-stone-400 uppercase tracking-widest">
-              * Пораките се модерирани и ќе бидат јавно видливи по одобрување.
-            </p>
-            <button
-              type="submit"
-              disabled={isSubmitting}
-              className="w-full md:w-auto bg-stone-900 text-white px-8 py-3 text-xs font-bold uppercase tracking-widest hover:bg-stone-800 transition-all flex items-center justify-center gap-2 shadow-lg disabled:opacity-50"
-            >
-              {isSubmitting ? <Loader2 className="animate-spin" size={14} /> : <Send size={14} />}
-              Испрати
-            </button>
-          </div>
-        </form>
+        </div>
+        <div className="flex flex-col md:flex-row justify-between items-center gap-3 pt-1">
+          <p className="text-[9px] text-stone-300 uppercase tracking-widest">
+            * Пораките се модерирани и ќе бидат видливи по одобрување.
+          </p>
+          <button
+            type="submit"
+            disabled={isSubmitting}
+            className="w-full md:w-auto border border-stone-300 text-stone-600 px-6 py-2 text-[11px] font-semibold uppercase tracking-widest hover:border-stone-600 hover:text-stone-900 transition-all flex items-center justify-center gap-2 disabled:opacity-40"
+          >
+            {isSubmitting ? <Loader2 className="animate-spin" size={12} /> : <Send size={12} />}
+            Испрати
+          </button>
+        </div>
 
         {showSuccess && (
-          <div className="mt-6 p-4 bg-green-50 border border-green-100 text-green-700 text-xs flex items-center gap-2 animate-in fade-in slide-in-from-top-2">
-            <CheckCircle size={14} />
+          <div className="p-3 bg-green-50 border border-green-100 text-green-600 text-xs flex items-center gap-2 animate-in fade-in slide-in-from-top-2">
+            <CheckCircle size={12} />
             Вашата порака е испратена на ревизија и наскоро ќе биде објавена.
           </div>
         )}
-      </div>
+      </form>
 
       {/* Entries List */}
       <div className="space-y-8 pb-12">
