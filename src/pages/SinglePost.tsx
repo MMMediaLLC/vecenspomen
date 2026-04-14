@@ -9,7 +9,7 @@ import { mk } from 'date-fns/locale';
 import html2canvas from 'html2canvas';
 import {
   Link as LinkIcon, MessageCircle, Facebook, Download,
-  ArrowLeft, Check, Loader2, AlertCircle, Home
+  ArrowLeft, ArrowRight, Check, Loader2, AlertCircle, Home
 } from 'lucide-react';
 
 export const SinglePost: React.FC = () => {
@@ -223,7 +223,7 @@ export const SinglePost: React.FC = () => {
           </div>
 
           {post.type === 'ТАЖНА ВЕСТ' && (
-            <div className="max-w-2xl mx-auto mt-4 space-y-3">
+            <div className="md:hidden max-w-2xl mx-auto mt-4 space-y-3">
               <p className="text-center text-[11px] text-stone-400 font-light tracking-wide">
                 Во мигови на длабока тага, оставете зборови на почит:
               </p>
@@ -307,6 +307,17 @@ export const SinglePost: React.FC = () => {
           onAddComment={handleAddGuestbookEntry}
           isEnabled={post.guestbookEnabled}
         />
+      </div>
+
+      {/* Mobile sticky CTA */}
+      <div className="md:hidden fixed bottom-0 left-0 right-0 p-4 bg-white/95 backdrop-blur-md border-t border-stone-200 z-50">
+        <Link
+          to="/objavi"
+          onClick={() => window.scrollTo(0, 0)}
+          className="w-full bg-stone-900 text-white py-4 rounded-sm text-sm font-medium tracking-wide shadow-lg flex justify-center items-center gap-2"
+        >
+          Објави спомен <ArrowRight size={16} />
+        </Link>
       </div>
 
     </div>
