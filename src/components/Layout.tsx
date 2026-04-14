@@ -130,7 +130,7 @@ export const Layout: React.FC<LayoutProps> = ({ children }) => {
             <div className="flex flex-col items-center gap-3">
               <img src="/logo.png" alt="Вечен Спомен" className="h-[48px] w-auto object-contain invert mix-blend-multiply" />
               <div className="flex items-center">
-                <span className="font-serif text-[14px] font-bold tracking-[0.08em] text-stone-900">ВЕЧЕН СПОМЕН</span>
+                <span className="text-[14px] text-stone-900" style={{ fontFamily: "'Gabriela', serif" }}>ВЕЧЕН СПОМЕН</span>
               </div>
             </div>
 
