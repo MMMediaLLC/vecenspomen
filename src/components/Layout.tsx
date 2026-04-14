@@ -47,7 +47,7 @@ export const Layout: React.FC<LayoutProps> = ({ children }) => {
                   <img src="/logo.png" alt="Вечен Спомен" className="h-[44px] w-auto object-contain mix-blend-screen" />
                 </div>
                 <div className="flex items-center ml-1 text-white">
-                  <span className="text-[17px] font-bold tracking-[0.1em]" style={{ fontFamily: 'Georgia, serif' }}>ВЕЧЕН СПОМЕН</span>
+                  <span className="text-[17px] font-bold tracking-normal" style={{ fontFamily: 'Georgia, serif' }}>ВЕЧЕН СПОМЕН</span>
                 </div>
               </Link>
             </div>
