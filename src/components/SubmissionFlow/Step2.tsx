@@ -198,30 +198,27 @@ export const Step2: React.FC<Step2Props> = ({ post, updatePost }) => {
     setIsRefining(true);
     setError(null);
     try {
-      const [mainRes, introRes] = await Promise.all([
-        post.mainText?.trim()
-          ? fetch('/api/refine-text', {
-              method: 'POST',
-              headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify({ mainText: post.mainText, fullName: post.fullName, type: post.type }),
-            }).then(r => r.json())
-          : Promise.resolve(null),
-        post.introText?.trim()
-          ? fetch('/api/refine-text', {
-              method: 'POST',
-              headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify({ mainText: post.introText, fullName: post.fullName, type: post.type }),
-            }).then(r => r.json())
-          : Promise.resolve(null),
-      ]);
-      if (mainRes?.refined || introRes?.refined) {
-        updatePost({
-          ...(mainRes?.refined ? { aiRefinedText: mainRes.refined } : {}),
-          ...(introRes?.refined ? { aiRefinedIntro: introRes.refined } : {}),
+      const callApi = async (text: string) => {
+        const r = await fetch('/api/refine-text', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ mainText: text, fullName: post.fullName, type: post.type }),
         });
-      } else {
-        throw new Error('AI не врати резултат.');
-      }
+        const data = await r.json();
+        if (!r.ok) throw new Error(data.error || `Грешка ${r.status}`);
+        if (!data.refined) throw new Error('AI не врати резултат.');
+        return data.refined as string;
+      };
+
+      const [mainRefined, introRefined] = await Promise.all([
+        post.mainText?.trim() ? callApi(post.mainText) : Promise.resolve(null),
+        post.introText?.trim() ? callApi(post.introText) : Promise.resolve(null),
+      ]);
+
+      updatePost({
+        ...(mainRefined ? { aiRefinedText: mainRefined } : {}),
+        ...(introRefined ? { aiRefinedIntro: introRefined } : {}),
+      });
     } catch (err: any) {
       setError(err.message || 'Настана грешка при обработка на текстот.');
     } finally {
