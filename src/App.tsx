@@ -10,7 +10,6 @@ import { SubmitPost } from './pages/SubmitPost';
 import { AdminDashboard } from './pages/AdminDashboard';
 import { MemorialPost } from './types';
 import { getPosts, addPost as firebaseAddPost, updatePostStatus as firebaseUpdateStatus, updatePost as firebaseUpdatePost, deleteGuestbookEntry as firebaseDeleteGuestbookEntry, deleteMemorialPost } from './lib/posts';
-import { SEEDED_POSTS } from './constants';
 import { Loader2 } from 'lucide-react';
 import { EditPost } from './pages/EditPost';
 import { KakoRaboti } from './pages/KakoRaboti';
@@ -38,25 +37,17 @@ const AppRoutes = () => {
     const fetchPosts = async () => {
       try {
         const liveData = await getPosts();
-        const examples = SEEDED_POSTS.map(p => ({ ...p, status: 'Објавено' as const }));
-        
-        const combined = [...liveData];
-        examples.forEach(example => {
-          if (!combined.find(p => p.id === example.id)) {
-            combined.push(example);
-          }
-        });
 
-        combined.sort((a, b) => {
+        liveData.sort((a, b) => {
           const dateA = new Date(a.createdAt).getTime();
           const dateB = new Date(b.createdAt).getTime();
           return dateB - dateA;
         });
 
-        setPosts(combined);
+        setPosts(liveData);
       } catch (err) {
         console.error("Error fetching posts:", err);
-        setPosts(SEEDED_POSTS);
+        setPosts([]);
       } finally {
         setIsLoading(false);
       }
