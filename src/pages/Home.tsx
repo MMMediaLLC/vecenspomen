@@ -191,7 +191,7 @@ export const Home: React.FC<HomeProps> = ({ posts }) => {
               onClick={() => { navigate('/spomeni'); window.scrollTo(0, 0); }}
               className="text-stone-600 hover:text-stone-900 text-sm font-normal tracking-wide transition-colors font-sans"
             >
-              Види ги сите починати
+              Види ги сите спомени
             </button>
             <div className="h-[1px] w-8 bg-stone-200" />
           </div>

@@ -266,7 +266,7 @@ export const SubmitPost: React.FC<SubmitPostProps> = ({ onComplete, initialPost,
         {step < 5 && (
           <div className="text-center mb-16 space-y-4">
             <h1 className="text-3xl md:text-5xl font-serif">
-              {isEditMode ? 'Уреди објава' : 'Поднесете објава'}
+              {isEditMode ? 'Уреди објава' : 'Објави спомен'}
             </h1>
             <p className="text-stone-500 max-w-xl mx-auto font-light leading-relaxed">
               {isEditMode 

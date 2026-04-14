@@ -20,7 +20,7 @@ export const Prices: React.FC = () => {
   return (
     <div className="bg-stone-50 min-h-screen pb-16 md:pb-32">
       {/* Header */}
-      <div className="bg-white border-b border-stone-100 py-10 md:py-24 mb-8 md:mb-16 relative overflow-hidden">
+      <div className="bg-white border-b border-stone-100 py-10 md:py-14 mb-8 md:mb-16 relative overflow-hidden">
         <div className="absolute inset-0 opacity-[0.02] pointer-events-none bg-[url('https://www.transparenttextures.com/patterns/natural-paper.png')]" />
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center relative z-10">
           <h1 className="text-3xl md:text-6xl font-serif text-stone-900 mb-4 md:mb-8 tracking-tight">Цени и пакети</h1>
