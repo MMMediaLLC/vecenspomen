@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { BrowserRouter, Routes, Route, useNavigate } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, useNavigate, useLocation } from 'react-router-dom';
 import { UnheadProvider, createHead } from '@unhead/react/client';
 import { Layout } from './components/Layout';
 import { Home } from './pages/Home';
@@ -21,6 +21,16 @@ import { PaymentCancel } from './pages/PaymentCancel';
 
 const AppRoutes = () => {
   const navigate = useNavigate();
+  const location = useLocation();
+
+  useEffect(() => {
+    if (typeof window.gtag === 'function') {
+      window.gtag('event', 'page_view', {
+        page_path: location.pathname + location.search,
+        page_title: document.title,
+      });
+    }
+  }, [location]);
   const [posts, setPosts] = useState<MemorialPost[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
