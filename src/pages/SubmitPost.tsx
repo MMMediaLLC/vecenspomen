@@ -304,6 +304,17 @@ export const SubmitPost: React.FC<SubmitPostProps> = ({ onComplete, initialPost,
           </div>
         )}
 
+        {step < 5 && step > 1 && (
+          <div className="mb-4">
+            <button
+              onClick={prevStep}
+              className="flex items-center gap-2 text-stone-400 hover:text-stone-900 font-bold uppercase tracking-widest text-[10px] transition-all"
+            >
+              <ArrowLeft size={16} /> Назад
+            </button>
+          </div>
+        )}
+
         <div className={`bg-white p-6 md:p-16 rounded-sm border border-stone-200 shadow-sm relative overflow-hidden transition-all duration-500 ${step >= 2 && step <= 4 ? 'min-h-[600px]' : ''}`}>
           {step > 1 && step < 5 && (
             <div className="mb-12 pb-6 border-b border-stone-100 flex justify-between items-center">
@@ -329,14 +340,7 @@ export const SubmitPost: React.FC<SubmitPostProps> = ({ onComplete, initialPost,
         </div>
 
         {step < 5 && (
-          <div className="mt-8 md:mt-12 flex justify-between items-center">
-            <button
-              onClick={prevStep}
-              className="flex items-center gap-2 text-stone-400 hover:text-stone-900 font-bold uppercase tracking-widest text-[10px] transition-all"
-            >
-              <ArrowLeft size={16} /> Назад
-            </button>
-
+          <div className="mt-8 md:mt-12 flex justify-end items-center">
             <button
               onClick={nextStep}
               disabled={isSubmitting || isGeneratingOG}
