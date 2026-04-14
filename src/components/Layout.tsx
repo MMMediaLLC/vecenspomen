@@ -33,7 +33,7 @@ export const Layout: React.FC<LayoutProps> = ({ children }) => {
       {/* Navigation */}
       <nav className="sticky top-0 z-50 shadow-[0_2px_12px_rgba(0,0,0,0.35)]" style={{ background: '#141414', borderBottom: '1px solid rgba(255,255,255,0.06)' }}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between h-16">
+          <div className="flex justify-between h-12">
             {/* Logo */}
             <div className="flex items-center">
               <Link
