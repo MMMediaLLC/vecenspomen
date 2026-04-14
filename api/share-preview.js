@@ -63,7 +63,7 @@ export default async function handler(req, res) {
   }
 
   const pageUrl = `${baseUrl}/spomen/${encodeURIComponent(slug)}`;
-  const title   = post ? `${post.fullName} — Вечен Спомен` : 'Вечен Спомен';
+  const title   = post ? `Во спомен на ${post.fullName}, почивај во мир.` : 'Вечен Спомен';
   const desc    = post
     ? `${post.type} · ${post.city}${post.birthYear ? ` · ${post.birthYear}–${post.deathYear}` : ''}`
     : 'Меморијал на vecenspomen.mk';
