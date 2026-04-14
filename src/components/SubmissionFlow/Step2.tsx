@@ -194,22 +194,34 @@ export const Step2: React.FC<Step2Props> = ({ post, updatePost }) => {
   };
 
   const handleRefine = async () => {
-    if (!post.mainText?.trim()) return;
+    if (!post.mainText?.trim() && !post.introText?.trim()) return;
     setIsRefining(true);
     setError(null);
     try {
-      const response = await fetch('/api/refine-text', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          mainText: post.mainText,
-          fullName: post.fullName,
-          type: post.type,
-        }),
-      });
-      const data = await response.json();
-      if (!response.ok) throw new Error(data.error || 'Грешка');
-      if (data.refined) updatePost({ aiRefinedText: data.refined });
+      const [mainRes, introRes] = await Promise.all([
+        post.mainText?.trim()
+          ? fetch('/api/refine-text', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ mainText: post.mainText, fullName: post.fullName, type: post.type }),
+            }).then(r => r.json())
+          : Promise.resolve(null),
+        post.introText?.trim()
+          ? fetch('/api/refine-text', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ mainText: post.introText, fullName: post.fullName, type: post.type }),
+            }).then(r => r.json())
+          : Promise.resolve(null),
+      ]);
+      if (mainRes?.refined || introRes?.refined) {
+        updatePost({
+          ...(mainRes?.refined ? { aiRefinedText: mainRes.refined } : {}),
+          ...(introRes?.refined ? { aiRefinedIntro: introRes.refined } : {}),
+        });
+      } else {
+        throw new Error('AI не врати резултат.');
+      }
     } catch (err: any) {
       setError(err.message || 'Настана грешка при обработка на текстот.');
     } finally {
@@ -295,41 +307,59 @@ export const Step2: React.FC<Step2Props> = ({ post, updatePost }) => {
           </div>
 
           <div className="space-y-8 pt-4">
+
+            {/* AI копче — едно за двете полиња */}
+            <div className="flex justify-end">
+              <button
+                onClick={handleRefine}
+                disabled={isRefining || (!post.mainText?.trim() && !post.introText?.trim())}
+                className="flex items-center gap-2 bg-stone-900 text-white px-4 py-2 text-[10px] font-bold uppercase tracking-widest hover:bg-stone-800 transition-all disabled:opacity-30 group"
+              >
+                {isRefining ? <Loader2 className="animate-spin" size={12} /> : <Sparkles size={12} className="text-stone-400 group-hover:text-[var(--color-gold)]" />}
+                Подобри со AI
+              </button>
+            </div>
+
             <div className="space-y-2">
               <label className={labelClass}>Вовед во објавата {required}</label>
-              <textarea 
-                name="introText" 
-                value={post.introText || ''} 
-                onChange={handleChange} 
-                className={`${textareaClass} h-24`} 
+              <textarea
+                name="introText"
+                value={post.introText || ''}
+                onChange={handleChange}
+                className={`${textareaClass} h-24`}
                 placeholder="пр. Со длабока тага ве известуваме дека нè напушти нашиот сакан..."
               />
               <p className="text-[9px] text-stone-400 font-light">Краток воведен дел кој се појавува над фотографијата.</p>
+              {post.aiRefinedIntro && (
+                <div className="bg-stone-50 border border-stone-200 p-5 rounded-sm space-y-3 animate-in zoom-in-95 duration-500">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-2"><Sparkles size={13} className="text-[var(--color-gold)]" /><h4 className="text-[10px] font-bold uppercase tracking-widest text-stone-900">AI — Вовед</h4></div>
+                    <button onClick={() => updatePost({ aiRefinedIntro: undefined })} className="text-stone-400 hover:text-red-700 text-[10px] font-bold uppercase tracking-widest">Откажи</button>
+                  </div>
+                  <p className="text-stone-800 leading-relaxed font-light text-sm">{post.aiRefinedIntro}</p>
+                  <div className="flex items-center gap-2 text-[9px] uppercase tracking-widest text-stone-400 font-bold"><Check size={10} className="text-green-500" /> Достоинствено • Граматички точно</div>
+                </div>
+              )}
             </div>
 
-            <div className="space-y-4">
-              <div className="flex justify-between items-end">
-                <label className={labelClass}>Содржина на објавата {required}</label>
-                <button onClick={handleRefine} disabled={isRefining || !post.mainText?.trim()} className="flex items-center gap-2 bg-stone-900 text-white px-4 py-2 text-[10px] font-bold uppercase tracking-widest hover:bg-stone-800 transition-all disabled:opacity-30 group mb-2">
-                  {isRefining ? <Loader2 className="animate-spin" size={12} /> : <Sparkles size={12} className="text-stone-400 group-hover:text-[var(--color-gold)]" />} ПОДОБРИ СО AI
-                </button>
-              </div>
-              <textarea 
-                name="mainText" 
-                value={post.mainText || ''} 
-                onChange={handleChange} 
-                className={`${textareaClass} h-40`} 
-                placeholder="пр. Ќе остане засекогаш во нашите срца, спомени и молитви. Неговиот лик, добрина и љубов ќе ги паметиме вечно." 
+            <div className="space-y-2">
+              <label className={labelClass}>Содржина на објавата {required}</label>
+              <textarea
+                name="mainText"
+                value={post.mainText || ''}
+                onChange={handleChange}
+                className={`${textareaClass} h-40`}
+                placeholder="пр. Ќе остане засекогаш во нашите срца, спомени и молитви. Неговиот лик, добрина и љубов ќе ги паметиме вечно."
               />
               <p className="text-[9px] text-stone-400 font-light">Овде внесете главна порака на сеќавање, почит и последен поздрав.</p>
               {post.aiRefinedText && (
-                <div className="bg-stone-50 border border-stone-200 p-6 rounded-sm space-y-4 animate-in zoom-in-95 duration-500">
-                   <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-2"><Sparkles size={14} className="text-[var(--color-gold)]" /><h4 className="text-[10px] font-bold uppercase tracking-widest text-stone-900">AI Подобрена верзија</h4></div>
-                      <button onClick={() => updatePost({ aiRefinedText: undefined })} className="text-stone-400 hover:text-red-700 text-[10px] font-bold uppercase tracking-widest">Откажи</button>
-                   </div>
-                   <p className="text-stone-800 leading-relaxed font-light text-sm">{post.aiRefinedText}</p>
-                   <div className="flex items-center gap-2 text-[9px] uppercase tracking-widest text-stone-400 font-bold"><Check size={10} className="text-green-500" /> Достоинствено • Граматички точно</div>
+                <div className="bg-stone-50 border border-stone-200 p-5 rounded-sm space-y-3 animate-in zoom-in-95 duration-500">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-2"><Sparkles size={13} className="text-[var(--color-gold)]" /><h4 className="text-[10px] font-bold uppercase tracking-widest text-stone-900">AI — Содржина</h4></div>
+                    <button onClick={() => updatePost({ aiRefinedText: undefined })} className="text-stone-400 hover:text-red-700 text-[10px] font-bold uppercase tracking-widest">Откажи</button>
+                  </div>
+                  <p className="text-stone-800 leading-relaxed font-light text-sm">{post.aiRefinedText}</p>
+                  <div className="flex items-center gap-2 text-[9px] uppercase tracking-widest text-stone-400 font-bold"><Check size={10} className="text-green-500" /> Достоинствено • Граматички точно</div>
                 </div>
               )}
             </div>
