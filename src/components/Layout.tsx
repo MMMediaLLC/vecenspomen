@@ -143,8 +143,48 @@ export const Layout: React.FC<LayoutProps> = ({ children }) => {
             </ul>
           </div>
           
-          <div className="mt-8 text-center text-xs text-stone-400">
-            © {new Date().getFullYear()} Вечен Спомен. Сите права се задржани.
+          <div className="mt-8 flex flex-col sm:flex-row items-center justify-between gap-4">
+            <div className="text-xs text-stone-400">
+              © {new Date().getFullYear()} Вечен Спомен. Сите права се задржани.
+            </div>
+            {/* Payment card icons */}
+            <div className="flex items-center gap-2">
+              {/* Visa */}
+              <div className="flex items-center justify-center bg-white border border-stone-200 rounded px-2 py-1 shadow-sm" style={{ minWidth: 44, height: 28 }}>
+                <svg viewBox="0 0 48 16" width="38" height="13" aria-label="Visa">
+                  <text x="0" y="13" fontFamily="Arial, sans-serif" fontWeight="bold" fontSize="14" fill="#1a1f71" letterSpacing="-0.5">VISA</text>
+                </svg>
+              </div>
+              {/* Mastercard */}
+              <div className="flex items-center justify-center bg-white border border-stone-200 rounded px-1.5 py-1 shadow-sm" style={{ minWidth: 44, height: 28 }}>
+                <svg viewBox="0 0 38 24" width="34" height="22" aria-label="Mastercard">
+                  <circle cx="14" cy="12" r="10" fill="#EB001B"/>
+                  <circle cx="24" cy="12" r="10" fill="#F79E1B"/>
+                  <path d="M19 5.27A10 10 0 0 1 23.73 12 10 10 0 0 1 19 18.73 10 10 0 0 1 14.27 12 10 10 0 0 1 19 5.27z" fill="#FF5F00"/>
+                </svg>
+              </div>
+              {/* Maestro */}
+              <div className="flex items-center justify-center bg-white border border-stone-200 rounded px-1.5 py-1 shadow-sm" style={{ minWidth: 44, height: 28 }}>
+                <svg viewBox="0 0 38 24" width="34" height="22" aria-label="Maestro">
+                  <circle cx="14" cy="12" r="10" fill="#0099DF"/>
+                  <circle cx="24" cy="12" r="10" fill="#ED1C24" opacity="0.85"/>
+                  <path d="M19 5.27A10 10 0 0 1 23.73 12 10 10 0 0 1 19 18.73 10 10 0 0 1 14.27 12 10 10 0 0 1 19 5.27z" fill="#6C2C91" opacity="0.7"/>
+                </svg>
+              </div>
+              {/* American Express */}
+              <div className="flex items-center justify-center bg-[#007bc1] border border-stone-200 rounded px-1.5 py-1 shadow-sm" style={{ minWidth: 44, height: 28 }}>
+                <svg viewBox="0 0 44 16" width="36" height="13" aria-label="American Express">
+                  <text x="1" y="12" fontFamily="Arial, sans-serif" fontWeight="bold" fontSize="10" fill="white" letterSpacing="0.3">AMEX</text>
+                </svg>
+              </div>
+              {/* PayPal */}
+              <div className="flex items-center justify-center bg-white border border-stone-200 rounded px-2 py-1 shadow-sm" style={{ minWidth: 44, height: 28 }}>
+                <svg viewBox="0 0 60 20" width="46" height="15" aria-label="PayPal">
+                  <text x="0" y="14" fontFamily="Arial, sans-serif" fontWeight="bold" fontSize="13" fill="#003087">Pay</text>
+                  <text x="22" y="14" fontFamily="Arial, sans-serif" fontWeight="bold" fontSize="13" fill="#009cde">Pal</text>
+                </svg>
+              </div>
+            </div>
           </div>
         </div>
       </footer>
