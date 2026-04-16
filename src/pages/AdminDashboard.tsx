@@ -12,7 +12,6 @@ import { auth } from '../lib/firebase';
 import { signInWithEmailAndPassword, onAuthStateChanged, signOut, User } from 'firebase/auth';
 import { sendStatusEmail } from '../lib/email';
 import { uploadOgImage } from '../lib/posts';
-import html2canvas from 'html2canvas';
 
 interface AdminDashboardProps {
   posts: MemorialPost[];
@@ -95,7 +94,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
       setApprovingId(null);
     };
 
-    html2canvas(node, { scale: 1, backgroundColor: '#faf9f7', logging: false })
+    import('html2canvas').then(m => m.default(node, { scale: 1, backgroundColor: '#faf9f7', logging: false }))
       .then(canvas => canvas.toBlob(blob => {
         if (blob) uploadOgImage(ogGeneratingPost.id, blob).catch(console.error);
         approve();

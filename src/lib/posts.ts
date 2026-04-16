@@ -120,17 +120,27 @@ export const getPostById = async (id: string): Promise<MemorialPost | null> => {
 };
 
 export const getPostBySlug = async (slug: string): Promise<MemorialPost | null> => {
-  const snapshot = await getDocs(postsCollection);
-  const docSnap = snapshot.docs.find(d => (d.data() as any).slug === slug);
-  return docSnap ? { ...(docSnap.data() as object), id: docSnap.id } as MemorialPost : null;
+  const q = query(postsCollection, where('slug', '==', slug));
+  const snapshot = await getDocs(q);
+  if (snapshot.empty) return null;
+  const docSnap = snapshot.docs[0];
+  return { ...(docSnap.data() as object), id: docSnap.id } as MemorialPost;
 };
 
 export const getRelatedPosts = async (identifier: string): Promise<MemorialPost[]> => {
-  const allPosts = await getPosts();
-  return allPosts.filter(p => 
-    (p.relatedToId === identifier || p.relatedToSlug === identifier) && 
-    p.status === 'Објавено'
-  );
+  const [byId, bySlug] = await Promise.all([
+    getDocs(query(postsCollection, where('relatedToId', '==', identifier))),
+    getDocs(query(postsCollection, where('relatedToSlug', '==', identifier))),
+  ]);
+  const seen = new Set<string>();
+  const results: MemorialPost[] = [];
+  for (const snap of [...byId.docs, ...bySlug.docs]) {
+    if (!seen.has(snap.id)) {
+      seen.add(snap.id);
+      results.push({ ...snap.data(), id: snap.id } as MemorialPost);
+    }
+  }
+  return results.filter(p => p.status === 'Објавено');
 };
 
 export const addGuestbookEntry = async (postId: string, entry: MemorialPost['guestbookEntries'][0]): Promise<void> => {

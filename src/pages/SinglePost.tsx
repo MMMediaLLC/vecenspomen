@@ -6,7 +6,6 @@ import { Guestbook } from '../components/Guestbook';
 import { getRelatedPosts, getPostById, getPostBySlug, addGuestbookEntry } from '../lib/posts';
 import { format } from 'date-fns';
 import { mk } from 'date-fns/locale';
-import html2canvas from 'html2canvas';
 import {
   Link as LinkIcon, MessageCircle, Facebook, Download,
   ArrowLeft, ArrowRight, Check, Loader2, AlertCircle, Home
@@ -118,6 +117,7 @@ export const SinglePost: React.FC = () => {
     if (!memorialRef.current) return;
     setDownloading(true);
     try {
+      const html2canvas = (await import('html2canvas')).default;
       const canvas = await html2canvas(memorialRef.current, {
         scale: 2,
         useCORS: true,

@@ -19,15 +19,12 @@ export const Guestbook: React.FC<GuestbookProps> = ({ entries, onAddComment, isE
     if (!senderName.trim() || !text.trim() || isSubmitting) return;
 
     setIsSubmitting(true);
-    // Simulate API delay
-    setTimeout(() => {
-      onAddComment({ senderName, text });
-      setSenderName('');
-      setText('');
-      setIsSubmitting(false);
-      setShowSuccess(true);
-      setTimeout(() => setShowSuccess(false), 5000);
-    }, 1000);
+    onAddComment({ senderName, text });
+    setSenderName('');
+    setText('');
+    setIsSubmitting(false);
+    setShowSuccess(true);
+    setTimeout(() => setShowSuccess(false), 5000);
   };
 
   const approvedEntries = entries.filter(e => e.status === 'approved');
