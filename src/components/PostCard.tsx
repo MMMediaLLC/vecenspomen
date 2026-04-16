@@ -41,8 +41,30 @@ export const PostCard: React.FC<PostCardProps> = ({ post, onClick, showImageShad
     return '';
   };
 
+  const CornerOrnament = ({ position }: { position: 'tl' | 'tr' | 'bl' | 'br' }) => {
+    const isRight = position === 'tr' || position === 'br';
+    const isBottom = position === 'bl' || position === 'br';
+    return (
+      <svg
+        width="16" height="16"
+        viewBox="0 0 16 16"
+        className="absolute pointer-events-none transition-opacity duration-500 opacity-25 group-hover:opacity-50"
+        style={{
+          top: isBottom ? 'auto' : 5,
+          bottom: isBottom ? 5 : 'auto',
+          left: isRight ? 'auto' : 5,
+          right: isRight ? 5 : 'auto',
+          transform: `scale(${isRight ? -1 : 1}, ${isBottom ? -1 : 1})`,
+        }}
+      >
+        <path d="M1 8 L1 1 L8 1" fill="none" stroke="#78716c" strokeWidth="0.7"/>
+        <path d="M3.5 1 L1 1 L1 3.5" fill="none" stroke="#78716c" strokeWidth="1.3"/>
+      </svg>
+    );
+  };
+
   return (
-    <div 
+    <div
       onClick={() => onClick(post.slug || post.id)}
       className="group cursor-pointer bg-white border border-stone-100/60 hover:border-stone-200 rounded-sm overflow-hidden transition-all duration-700 shadow-[0_1px_3px_rgba(0,0,0,0.04)] hover:shadow-[0_8px_30px_rgba(0,0,0,0.07)] flex flex-col h-full relative paper-texture"
     >
@@ -72,7 +94,11 @@ export const PostCard: React.FC<PostCardProps> = ({ post, onClick, showImageShad
         </div>
       </div>
       
-      <div className="p-4 md:p-6 text-center flex flex-col items-center flex-grow">
+      <div className="p-4 md:p-6 text-center flex flex-col items-center flex-grow relative">
+        <CornerOrnament position="tl" />
+        <CornerOrnament position="tr" />
+        <CornerOrnament position="bl" />
+        <CornerOrnament position="br" />
         <h3 className="font-serif font-normal text-2xl text-stone-900 mb-1 group-hover:text-stone-700 transition-colors leading-tight">
           {post.fullName}
         </h3>
