@@ -2,7 +2,7 @@ import { LucideIcon } from 'lucide-react';
 
 export type PostType = 'ТАЖНА ВЕСТ' | 'ПОСЛЕДЕН ПОЗДРАВ' | 'СОЧУВСТВО' | 'ПОМЕН';
 
-export type PomenSubtype = '40 дена' | '6 месеци' | '1 година' | 'Сеќавање';
+export type PomenSubtype = '7 дена' | '40 дена' | '6 месеци' | '1 година' | '2 години' | '5 години' | '10 години' | 'Сеќавање';
 
 export type PackageType = 'Основен' | 'Истакнат';
 
