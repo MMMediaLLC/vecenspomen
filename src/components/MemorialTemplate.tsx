@@ -211,7 +211,7 @@ export const MemorialTemplate: React.FC<MemorialTemplateProps> = ({ post, isPrev
 
   return (
     <div
-      className={`max-w-2xl mx-auto bg-white border rounded-sm memorial-card-shadow relative overflow-hidden paper-texture transition-all duration-700 ${
+      className={`max-w-2xl mx-auto bg-[#faf8f4] border rounded-sm memorial-card-shadow relative overflow-hidden paper-texture transition-all duration-700 ${
         isPreview ? 'scale-[0.98] origin-top' : ''
       } ${isPremium ? 'border-transparent' : 'border-stone-200/60'}`}
     >
