@@ -70,7 +70,7 @@ export const PostCard: React.FC<PostCardProps> = ({ post, onClick, showImageShad
   return (
     <div
       onClick={() => onClick(post.slug || post.id)}
-      className="group cursor-pointer bg-white border border-black/20 hover:border-black/30 rounded-sm overflow-hidden transition-all duration-700 shadow-[0_1px_3px_rgba(0,0,0,0.04)] hover:shadow-[0_8px_30px_rgba(0,0,0,0.07)] flex flex-col h-full relative paper-texture"
+      className="group cursor-pointer bg-[#faf8f4] border border-black/20 hover:border-black/30 rounded-sm overflow-hidden transition-all duration-700 shadow-[0_1px_3px_rgba(0,0,0,0.04)] hover:shadow-[0_8px_30px_rgba(0,0,0,0.07)] flex flex-col h-full relative paper-texture"
     >
       <div className="relative aspect-[4/5] overflow-hidden bg-stone-100">
         <img
