@@ -120,11 +120,22 @@ export const getPostById = async (id: string): Promise<MemorialPost | null> => {
 };
 
 export const getPostBySlug = async (slug: string): Promise<MemorialPost | null> => {
-  const q = query(postsCollection, where('slug', '==', slug));
-  const snapshot = await getDocs(q);
-  if (snapshot.empty) return null;
-  const docSnap = snapshot.docs[0];
-  return { ...(docSnap.data() as object), id: docSnap.id } as MemorialPost;
+  try {
+    const q = query(postsCollection, where('slug', '==', slug));
+    const snapshot = await getDocs(q);
+    if (snapshot.empty) return null;
+    const docSnap = snapshot.docs[0];
+    return { ...(docSnap.data() as object), id: docSnap.id } as MemorialPost;
+  } catch (err: any) {
+    if (err?.code === 'permission-denied') {
+      const q = query(postsCollection, where('slug', '==', slug), where('status', '==', 'Објавено'));
+      const snapshot = await getDocs(q);
+      if (snapshot.empty) return null;
+      const docSnap = snapshot.docs[0];
+      return { ...(docSnap.data() as object), id: docSnap.id } as MemorialPost;
+    }
+    throw err;
+  }
 };
 
 export const getRelatedPosts = async (identifier: string): Promise<MemorialPost[]> => {
