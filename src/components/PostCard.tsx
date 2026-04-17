@@ -46,19 +46,23 @@ export const PostCard: React.FC<PostCardProps> = ({ post, onClick, showImageShad
     const isBottom = position === 'bl' || position === 'br';
     return (
       <svg
-        width="16" height="16"
-        viewBox="0 0 16 16"
-        className="absolute pointer-events-none transition-opacity duration-500 opacity-25 group-hover:opacity-50"
+        width="22" height="22"
+        viewBox="0 0 22 22"
+        className="absolute pointer-events-none transition-opacity duration-500 opacity-20 group-hover:opacity-45"
         style={{
-          top: isBottom ? 'auto' : 5,
-          bottom: isBottom ? 5 : 'auto',
-          left: isRight ? 'auto' : 5,
-          right: isRight ? 5 : 'auto',
+          top: isBottom ? 'auto' : 4,
+          bottom: isBottom ? 4 : 'auto',
+          left: isRight ? 'auto' : 4,
+          right: isRight ? 4 : 'auto',
           transform: `scale(${isRight ? -1 : 1}, ${isBottom ? -1 : 1})`,
         }}
       >
-        <path d="M1 8 L1 1 L8 1" fill="none" stroke="#78716c" strokeWidth="0.7"/>
-        <path d="M3.5 1 L1 1 L1 3.5" fill="none" stroke="#78716c" strokeWidth="1.3"/>
+        {/* outer L — slightly wobbly */}
+        <path d="M1.5 12 C1.4 9 1.6 5.5 1.5 1.5 C5.5 1.4 9 1.6 12 1.5" fill="none" stroke="#78716c" strokeWidth="0.6" strokeLinecap="round"/>
+        {/* inner accent */}
+        <path d="M1.5 5 C2 3.5 3.5 2 5 1.5" fill="none" stroke="#78716c" strokeWidth="1.1" strokeLinecap="round"/>
+        {/* small dot */}
+        <circle cx="1.8" cy="1.8" r="0.8" fill="#78716c" opacity="0.6"/>
       </svg>
     );
   };
