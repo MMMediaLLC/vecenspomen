@@ -2,8 +2,8 @@
 // Builds a direct Lemon Squeezy checkout URL with custom postId and packageType params.
 // No API key needed — buy links are public, custom data is passed via query string.
 
-const URL_BASIC    = 'https://vechen-spomen.lemonsqueezy.com/checkout/buy/391e17b3-fa55-4e03-967d-9be57b4b83bc';
-const URL_FEATURED = 'https://vechen-spomen.lemonsqueezy.com/checkout/buy/41103419-5df8-4e67-bb45-112dca3f0ba8';
+const URL_BASIC    = process.env.LEMON_OSNOVEN_URL;
+const URL_FEATURED = process.env.LEMON_ISTAKNAT_URL;
 
 export default async function handler(req, res) {
   if (req.method !== 'POST') {
@@ -21,7 +21,7 @@ export default async function handler(req, res) {
     packageName.toLowerCase() === 'istaknat';
 
   const baseCheckout = isFeature ? URL_FEATURED : URL_BASIC;
-  const url = `${baseCheckout}?checkout[custom][postId]=${encodeURIComponent(postId)}&checkout[custom][packageType]=${encodeURIComponent(packageName)}`;
+  const url = `${baseCheckout}&checkout[custom][postId]=${encodeURIComponent(postId)}&checkout[custom][packageType]=${encodeURIComponent(packageName)}`;
 
   return res.status(200).json({ url });
 }
