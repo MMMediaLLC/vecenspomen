@@ -143,6 +143,8 @@ export const Layout: React.FC<LayoutProps> = ({ children }) => {
                 <li><Link to="/uslovi" onClick={() => window.scrollTo(0, 0)} className="hover:text-stone-900 transition-colors">Услови</Link></li>
               </ul>
               {/* Payment card icons */}
+              <div className="flex flex-col items-center md:items-end gap-1.5">
+              <span className="text-[9px] font-semibold uppercase tracking-widest text-stone-400">Безбедно плаќање со:</span>
               <div className="flex items-center gap-1.5">
                 {/* Visa */}
                 <div className="flex items-center justify-center bg-white border border-stone-200 rounded shadow-sm px-1.5 py-0.5 md:px-2 md:py-1" style={{ minWidth: 36, height: 22 }}>
@@ -179,6 +181,7 @@ export const Layout: React.FC<LayoutProps> = ({ children }) => {
                     <text x="22" y="14" fontFamily="Arial, sans-serif" fontWeight="bold" fontSize="13" fill="#009cde">Pal</text>
                   </svg>
                 </div>
+              </div>
               </div>
             </div>
           </div>
