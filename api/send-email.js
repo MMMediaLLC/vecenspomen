@@ -249,7 +249,7 @@ export default async function handler(req, res) {
         if (post.email) {
           await sendViaResend(
             post.email,
-            'Вечен Спомен — Вашата objava е одобрена',
+            'Вечен Спомен — Вашата меморијална објава е одобрена',
             emailApproved(post, appUrl)
           );
         }
@@ -260,7 +260,7 @@ export default async function handler(req, res) {
         if (post.email) {
           await sendViaResend(
             post.email,
-            'Вечен Спомен — Известување за вашата objava',
+            'Вечен Спомен — Известување за вашата меморијална објава',
             emailRejected(post)
           );
         }
