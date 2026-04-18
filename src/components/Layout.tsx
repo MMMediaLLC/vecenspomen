@@ -116,12 +116,12 @@ export const Layout: React.FC<LayoutProps> = ({ children }) => {
       </nav>
 
       {/* Main Content */}
-      <main key={location.pathname} className="flex-grow fade-in pb-[72px] md:pb-0">
+      <main key={location.pathname} className="flex-grow fade-in">
         {children}
       </main>
 
       {/* Footer */}
-      <footer className="bg-[#f8f6f3] border-t border-stone-200/70 text-stone-500 pt-4 pb-8 md:py-12 no-print">
+      <footer className="bg-[#f8f6f3] border-t border-stone-200/70 text-stone-500 pt-4 pb-[88px] md:py-12 no-print">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex flex-col md:flex-row justify-between items-center gap-6">
 
@@ -145,40 +145,40 @@ export const Layout: React.FC<LayoutProps> = ({ children }) => {
               {/* Payment card icons */}
               <div className="flex flex-col items-center md:items-end gap-1.5">
               <span className="text-[9px] font-semibold uppercase tracking-widest text-stone-400">Безбедно плаќање со:</span>
-              <div className="flex items-center gap-1.5">
+              <div className="flex items-center gap-1">
                 {/* Visa */}
-                <div className="flex items-center justify-center bg-white border border-stone-200 rounded shadow-sm px-1.5 py-0.5 md:px-2 md:py-1" style={{ minWidth: 36, height: 22 }}>
-                  <svg viewBox="0 0 48 16" width="30" height="10" className="md:w-[38px] md:h-[13px]" aria-label="Visa">
-                    <text x="0" y="13" fontFamily="Arial, sans-serif" fontWeight="bold" fontSize="14" fill="#1a1f71" letterSpacing="-0.5">VISA</text>
+                <div className="flex items-center justify-center bg-white border border-stone-200 rounded shadow-sm" style={{ width: 38, height: 22 }}>
+                  <svg viewBox="0 0 38 14" width="38" height="14" aria-label="Visa">
+                    <text x="50%" y="11" textAnchor="middle" fontFamily="Arial, sans-serif" fontWeight="bold" fontSize="12" fill="#1a1f71" letterSpacing="-0.5">VISA</text>
                   </svg>
                 </div>
                 {/* Mastercard */}
-                <div className="flex items-center justify-center bg-white border border-stone-200 rounded shadow-sm px-1 py-0.5 md:px-1.5 md:py-1" style={{ minWidth: 36, height: 22 }}>
-                  <svg viewBox="0 0 38 24" width="26" height="17" className="md:w-[34px] md:h-[22px]" aria-label="Mastercard">
+                <div className="flex items-center justify-center bg-white border border-stone-200 rounded shadow-sm" style={{ width: 38, height: 22 }}>
+                  <svg viewBox="0 0 38 24" width="28" height="18" aria-label="Mastercard">
                     <circle cx="14" cy="12" r="10" fill="#EB001B"/>
                     <circle cx="24" cy="12" r="10" fill="#F79E1B"/>
                     <path d="M19 5.27A10 10 0 0 1 23.73 12 10 10 0 0 1 19 18.73 10 10 0 0 1 14.27 12 10 10 0 0 1 19 5.27z" fill="#FF5F00"/>
                   </svg>
                 </div>
                 {/* Maestro */}
-                <div className="flex items-center justify-center bg-white border border-stone-200 rounded shadow-sm px-1 py-0.5 md:px-1.5 md:py-1" style={{ minWidth: 36, height: 22 }}>
-                  <svg viewBox="0 0 38 24" width="26" height="17" className="md:w-[34px] md:h-[22px]" aria-label="Maestro">
+                <div className="flex items-center justify-center bg-white border border-stone-200 rounded shadow-sm" style={{ width: 38, height: 22 }}>
+                  <svg viewBox="0 0 38 24" width="28" height="18" aria-label="Maestro">
                     <circle cx="14" cy="12" r="10" fill="#0099DF"/>
                     <circle cx="24" cy="12" r="10" fill="#ED1C24" opacity="0.85"/>
                     <path d="M19 5.27A10 10 0 0 1 23.73 12 10 10 0 0 1 19 18.73 10 10 0 0 1 14.27 12 10 10 0 0 1 19 5.27z" fill="#6C2C91" opacity="0.7"/>
                   </svg>
                 </div>
                 {/* American Express */}
-                <div className="flex items-center justify-center bg-[#007bc1] border border-stone-200 rounded shadow-sm px-1 py-0.5 md:px-1.5 md:py-1" style={{ minWidth: 36, height: 22 }}>
-                  <svg viewBox="0 0 44 16" width="28" height="10" className="md:w-[36px] md:h-[13px]" aria-label="American Express">
-                    <text x="1" y="12" fontFamily="Arial, sans-serif" fontWeight="bold" fontSize="10" fill="white" letterSpacing="0.3">AMEX</text>
+                <div className="flex items-center justify-center bg-[#007bc1] border border-stone-200 rounded shadow-sm" style={{ width: 38, height: 22 }}>
+                  <svg viewBox="0 0 38 14" width="38" height="14" aria-label="American Express">
+                    <text x="50%" y="11" textAnchor="middle" fontFamily="Arial, sans-serif" fontWeight="bold" fontSize="9" fill="white" letterSpacing="0.5">AMEX</text>
                   </svg>
                 </div>
                 {/* PayPal */}
-                <div className="flex items-center justify-center bg-white border border-stone-200 rounded shadow-sm px-1.5 py-0.5 md:px-2 md:py-1" style={{ minWidth: 36, height: 22 }}>
-                  <svg viewBox="0 0 60 20" width="36" height="12" className="md:w-[46px] md:h-[15px]" aria-label="PayPal">
-                    <text x="0" y="14" fontFamily="Arial, sans-serif" fontWeight="bold" fontSize="13" fill="#003087">Pay</text>
-                    <text x="22" y="14" fontFamily="Arial, sans-serif" fontWeight="bold" fontSize="13" fill="#009cde">Pal</text>
+                <div className="flex items-center justify-center bg-white border border-stone-200 rounded shadow-sm" style={{ width: 38, height: 22 }}>
+                  <svg viewBox="0 0 38 14" width="38" height="14" aria-label="PayPal">
+                    <text x="4" y="11" fontFamily="Arial, sans-serif" fontWeight="bold" fontSize="10" fill="#003087">Pay</text>
+                    <text x="21" y="11" fontFamily="Arial, sans-serif" fontWeight="bold" fontSize="10" fill="#009cde">Pal</text>
                   </svg>
                 </div>
               </div>
