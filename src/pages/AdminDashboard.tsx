@@ -392,7 +392,11 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
                         <span className={`text-[9px] font-black uppercase tracking-widest px-2 py-0.5 border ${
                           post.package === 'Истакнат' ? 'border-stone-900 text-stone-900 bg-stone-50' : 'border-stone-200 text-stone-400'
                         }`}>{post.package}</span>
-                        {post.status === 'pending_payment' && (
+                        {post.paymentStatus === 'paid' ? (
+                          <span className="text-[9px] font-black uppercase tracking-widest px-2 py-0.5 bg-green-50 text-green-600 border border-green-100 flex items-center gap-1">
+                            <CheckCircle size={10} /> Платено
+                          </span>
+                        ) : post.status === 'pending_payment' && (
                           <span className="text-[9px] font-black uppercase tracking-widest px-2 py-0.5 bg-red-50 text-red-600 border border-red-100 flex items-center gap-1">
                             <Clock size={10} /> Неплатено
                           </span>
