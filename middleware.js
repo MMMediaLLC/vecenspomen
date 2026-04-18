@@ -4,7 +4,7 @@ export const config = {
 
 export default function middleware(request) {
   const ua = request.headers.get('user-agent') || '';
-  const isBot = /facebookexternalhit|Twitterbot|LinkedInBot|WhatsApp|Pinterest|Viber|Slackbot|TelegramBot/i.test(ua);
+  const isBot = /facebookexternalhit|Twitterbot|LinkedInBot|WhatsApp|Pinterest|Viber|viber-bot|ViberBot|com\.viber|Slackbot|TelegramBot/i.test(ua);
 
   if (!isBot) return; // pass through — vercel.json serves index.html → React SPA
 
