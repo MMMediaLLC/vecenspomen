@@ -1,20 +1,75 @@
 <div align="center">
-<img width="1200" height="475" alt="GHBanner" src="https://github.com/user-attachments/assets/0aa67016-6eaf-458a-adb2-6e31a0763ed6" />
+<img width="1200" height="475" alt="M&M Media Banner" src="https://i.ibb.co/N2HH5Vwy/mmedia1.jpg" />
 </div>
 
-# Run and deploy your AI Studio app
+# M&M Media AI апликација
 
-This contains everything you need to run your app locally.
+Професионална AI веб-апликација развиена од M&M Media, наменета за практична употреба, дигитална автоматизација и современи онлајн решенија.
 
-View your app in AI Studio: https://ai.studio/apps/51153889-b39c-40c1-a352-4b3105d37201
+## За проектот
 
-## Run Locally
+Оваа апликација е дел од развојната насока на M&M Media за создавање практични дигитални алатки базирани на вештачка интелигенција, автоматизација и модерна веб-технологија.
 
-**Prerequisites:**  Node.js
+Решението е дизајнирано да биде едноставно за користење, брзо, флексибилно и подготвено за реална примена.
 
+## Можности
 
-1. Install dependencies:
-   `npm install`
-2. Set the `GEMINI_API_KEY` in [.env.local](.env.local) to your Gemini API key
-3. Run the app:
-   `npm run dev`
+* Модерен и респонзивен интерфејс
+* AI функционалности
+* Брза и стабилна архитектура
+* Подготвено за cloud deployment
+* Оптимизирани перформанси
+* Модуларна структура
+* Флексибилна конфигурација
+* Практична употреба за бизнис, медиуми и организации
+
+## Локално стартување
+
+### Потребно
+
+* Node.js
+
+### Инсталација
+
+1. Инсталирање на зависности
+
+```bash
+npm install
+```
+
+2. Конфигурација на environment променливи во:
+
+```env
+.env.local
+```
+
+3. Стартување на апликацијата
+
+```bash
+npm run dev
+```
+
+## Deployment
+
+Апликацијата може да се постави на модерни cloud и серверски платформи, вклучувајќи:
+
+* Vercel
+* Cloudflare
+* Netlify
+* VPS инфраструктура
+* Dedicated servers
+
+## Технологии
+
+* Современа веб-апликациска архитектура
+* AI интеграција
+* Модерен JavaScript развој
+* Cloud-ready структура
+* API интеграции
+* Респонзивен frontend систем
+* Скалабилна веб-архитектура
+
+---
+
+Developed by M&M Media  
+https://mmmedia.site
