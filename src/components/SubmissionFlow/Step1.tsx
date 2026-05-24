@@ -9,10 +9,10 @@ interface Step1Props {
 
 export const Step1: React.FC<Step1Props> = ({ selectedType, onSelect }) => {
   const types = [
-    { id: 'ТАЖНА ВЕСТ', icon: FileText, desc: 'Достоинствено известување за загуба и детали за погреб.' },
-    { id: 'ПОСЛЕДЕН ПОЗДРАВ', icon: Users, desc: 'Испратете соодветни зборови за збогување со најблиските.' },
-    { id: 'СОЧУВСТВО', icon: MessageSquare, desc: 'Изразување на искрено сочувство кон семејството.' },
-    { id: 'ПОМЕН', icon: Heart, desc: 'Одбележување на 40 дена, 6 месеци, 1 година или годишнина.' },
+    { id: 'ТАЖНА ВЕСТ', icon: FileText, desc: 'Известување за загуба и детали за погреб.' },
+    { id: 'ПОСЛЕДЕН ПОЗДРАВ', icon: Users, desc: 'Зборови за збогување со најблиските.' },
+    { id: 'СОЧУВСТВО', icon: MessageSquare, desc: 'Искрено сочувство кон семејството.' },
+    { id: 'ПОМЕН', icon: Heart, desc: 'За 40 дена, 6 месеци, 1 год. или годишнина.' },
   ];
 
   return (
@@ -29,7 +29,7 @@ export const Step1: React.FC<Step1Props> = ({ selectedType, onSelect }) => {
         >
           <t.icon className={`mb-2 ${selectedType === t.id ? 'text-stone-300' : 'text-stone-400 group-hover:text-stone-600'}`} size={22} />
           <h3 className="text-base font-serif mb-1">{t.id}</h3>
-          <p className={`text-xs md:text-sm line-clamp-3 ${selectedType === t.id ? 'text-stone-400' : 'text-stone-500'}`}>
+          <p className={`text-xs md:text-sm ${selectedType === t.id ? 'text-stone-400' : 'text-stone-500'}`}>
             {t.desc}
           </p>
         </button>
