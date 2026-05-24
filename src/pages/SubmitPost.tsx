@@ -261,11 +261,11 @@ export const SubmitPost: React.FC<SubmitPostProps> = ({ onComplete, initialPost,
   };
 
   return (
-    <div className="bg-stone-50 min-h-screen py-12 md:py-20 font-sans text-stone-900">
+    <div className="bg-stone-50 min-h-screen py-6 md:py-10 font-sans text-stone-900">
       <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
         {step < 5 && (
-          <div className="text-center mb-16 space-y-4">
-            <h1 className="text-3xl md:text-5xl font-serif">
+          <div className="text-center mb-6 space-y-2">
+            <h1 className="text-2xl md:text-4xl font-serif">
               {isEditMode ? 'Уреди објава' : 'Објави спомен'}
             </h1>
             <p className="text-stone-500 max-w-xl mx-auto font-light leading-relaxed">
@@ -277,7 +277,7 @@ export const SubmitPost: React.FC<SubmitPostProps> = ({ onComplete, initialPost,
         )}
 
         {step < 5 && (
-          <div className="mb-16">
+          <div className="mb-6">
             <div className="flex justify-between mb-4 px-2 relative">
               <div className="absolute top-4 left-0 right-0 h-[1px] bg-stone-200 -z-10" />
               {steps.map((s, i) => (
@@ -315,7 +315,7 @@ export const SubmitPost: React.FC<SubmitPostProps> = ({ onComplete, initialPost,
           </div>
         )}
 
-        <div className={`bg-white p-6 md:p-16 rounded-sm border border-stone-200 shadow-sm relative overflow-hidden transition-all duration-500 ${step >= 2 && step <= 4 ? 'min-h-[600px]' : ''}`}>
+        <div className={`bg-white p-4 md:p-10 rounded-sm border border-stone-200 shadow-sm relative overflow-hidden transition-all duration-500 ${step >= 2 && step <= 4 ? 'min-h-[600px]' : ''}`}>
           {step > 1 && step < 5 && (
             <div className="mb-12 pb-6 border-b border-stone-100 flex justify-between items-center">
               <h2 className="text-xl md:text-2xl font-serif text-stone-900">
@@ -340,7 +340,7 @@ export const SubmitPost: React.FC<SubmitPostProps> = ({ onComplete, initialPost,
         </div>
 
         {step < 5 && (
-          <div className="mt-8 md:mt-12 flex justify-end items-center">
+          <div className="mt-4 md:mt-6 flex justify-end items-center">
             <button
               onClick={nextStep}
               disabled={isSubmitting || isGeneratingOG}
