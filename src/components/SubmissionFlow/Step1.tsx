@@ -16,21 +16,21 @@ export const Step1: React.FC<Step1Props> = ({ selectedType, onSelect }) => {
   ];
 
   return (
-    <div className="flex flex-col gap-2 md:grid md:grid-cols-2 md:gap-3">
+    <div className="flex flex-col gap-2 md:grid md:grid-cols-2 md:gap-5">
       {types.map((t) => (
         <button
           key={t.id}
           onClick={() => onSelect(t.id as PostType)}
-          className={`px-4 py-3 text-left border rounded-sm transition-all duration-300 group flex flex-row items-center gap-4 ${
+          className={`px-4 py-3 md:px-6 md:py-5 text-left border rounded-sm transition-all duration-300 group flex flex-row items-center gap-4 md:flex-col md:items-start md:gap-0 ${
             selectedType === t.id
               ? 'bg-stone-900 border-stone-900 text-white shadow-xl'
               : 'bg-white border-stone-200 hover:border-stone-400 text-stone-900'
           }`}
         >
-          <t.icon className={`shrink-0 ${selectedType === t.id ? 'text-stone-300' : 'text-stone-400 group-hover:text-stone-600'}`} size={22} />
+          <t.icon className={`shrink-0 md:mb-4 ${selectedType === t.id ? 'text-stone-300' : 'text-stone-400 group-hover:text-stone-600'}`} size={22} />
           <div>
-            <h3 className="text-sm font-serif font-semibold mb-0.5">{t.id}</h3>
-            <p className={`text-xs ${selectedType === t.id ? 'text-stone-400' : 'text-stone-500'}`}>
+            <h3 className="text-sm md:text-lg font-serif font-semibold md:font-normal mb-0.5 md:mb-2">{t.id}</h3>
+            <p className={`text-xs md:text-sm ${selectedType === t.id ? 'text-stone-400' : 'text-stone-500'}`}>
               {t.desc}
             </p>
           </div>
