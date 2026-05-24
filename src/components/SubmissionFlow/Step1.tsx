@@ -16,12 +16,12 @@ export const Step1: React.FC<Step1Props> = ({ selectedType, onSelect }) => {
   ];
 
   return (
-    <div className="grid grid-cols-2 gap-3">
+    <div className="grid grid-cols-2 grid-rows-2 gap-3 h-[260px] md:h-auto md:grid-rows-none">
       {types.map((t) => (
         <button
           key={t.id}
           onClick={() => onSelect(t.id as PostType)}
-          className={`px-3 py-3 text-left border rounded-sm transition-all duration-300 group ${
+          className={`px-3 py-3 text-left border rounded-sm transition-all duration-300 group h-full flex flex-col ${
             selectedType === t.id
               ? 'bg-stone-900 border-stone-900 text-white shadow-xl'
               : 'bg-white border-stone-200 hover:border-stone-400 text-stone-900'
