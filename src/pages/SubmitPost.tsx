@@ -261,11 +261,11 @@ export const SubmitPost: React.FC<SubmitPostProps> = ({ onComplete, initialPost,
   };
 
   return (
-    <div className="bg-stone-50 min-h-screen py-6 md:py-10 font-sans text-stone-900">
+    <div className="bg-stone-50 min-h-screen py-3 md:py-6 font-sans text-stone-900">
       <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
         {step < 5 && (
-          <div className="text-center mb-6 space-y-2">
-            <h1 className="text-2xl md:text-4xl font-serif">
+          <div className="text-center mb-3 space-y-1">
+            <h1 className="text-xl md:text-3xl font-serif">
               {isEditMode ? 'Уреди објава' : 'Објави спомен'}
             </h1>
             <p className="text-stone-500 max-w-xl mx-auto font-light leading-relaxed">
@@ -277,12 +277,12 @@ export const SubmitPost: React.FC<SubmitPostProps> = ({ onComplete, initialPost,
         )}
 
         {step < 5 && (
-          <div className="mb-6">
-            <div className="flex justify-between mb-4 px-2 relative">
+          <div className="mb-3">
+            <div className="flex justify-between mb-2 px-2 relative">
               <div className="absolute top-4 left-0 right-0 h-[1px] bg-stone-200 -z-10" />
               {steps.map((s, i) => (
-                <div key={s} className="flex flex-col items-center gap-3">
-                  <div className={`w-8 h-8 rounded-full flex items-center justify-center text-[10px] font-bold border-2 transition-all duration-500 ${
+                <div key={s} className="flex flex-col items-center gap-2">
+                  <div className={`w-7 h-7 rounded-full flex items-center justify-center text-[10px] font-bold border-2 transition-all duration-500 ${
                     step > i + 1 ? 'bg-stone-900 border-stone-900 text-white' : step === i + 1 ? 'border-stone-900 text-stone-900 bg-white' : 'border-stone-200 text-stone-300 bg-white'
                   }`}>
                     {step > i + 1 ? <Check size={14} strokeWidth={3} /> : i + 1}
@@ -295,7 +295,7 @@ export const SubmitPost: React.FC<SubmitPostProps> = ({ onComplete, initialPost,
                 </div>
               ))}
             </div>
-            <div className="h-1.5 bg-stone-200 rounded-full overflow-hidden shadow-inner mt-8">
+            <div className="h-1.5 bg-stone-200 rounded-full overflow-hidden shadow-inner mt-4">
               <div
                 className="h-full bg-stone-900 transition-all duration-700 ease-in-out"
                 style={{ width: `${((step - 1) / (steps.length - 1)) * 100}%` }}
