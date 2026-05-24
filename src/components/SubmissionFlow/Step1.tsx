@@ -29,7 +29,7 @@ export const Step1: React.FC<Step1Props> = ({ selectedType, onSelect }) => {
         >
           <t.icon className={`mb-2 ${selectedType === t.id ? 'text-stone-300' : 'text-stone-400 group-hover:text-stone-600'}`} size={22} />
           <h3 className="text-base font-serif mb-1">{t.id}</h3>
-          <p className={`text-sm ${selectedType === t.id ? 'text-stone-400' : 'text-stone-500'}`}>
+          <p className={`text-xs md:text-sm line-clamp-3 ${selectedType === t.id ? 'text-stone-400' : 'text-stone-500'}`}>
             {t.desc}
           </p>
         </button>

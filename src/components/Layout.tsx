@@ -191,8 +191,8 @@ export const Layout: React.FC<LayoutProps> = ({ children }) => {
           </div>
         </div>
       </footer>
-      {/* Global mobile sticky CTA */}
-      <div className="mobile-sticky-cta md:hidden fixed bottom-0 left-0 right-0 z-50 p-4 bg-white/95 backdrop-blur-md border-t border-stone-200">
+      {/* Global mobile sticky CTA — hidden on /objavi */}
+      <div className={`mobile-sticky-cta md:hidden fixed bottom-0 left-0 right-0 z-50 p-4 bg-white/95 backdrop-blur-md border-t border-stone-200 ${currentPath.startsWith('/objavi') || currentPath.startsWith('/edit') ? 'hidden' : ''}`}>
         <Link
           to="/objavi"
           onClick={() => window.scrollTo(0, 0)}
