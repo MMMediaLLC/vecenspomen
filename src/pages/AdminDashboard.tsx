@@ -77,7 +77,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
     setOgGeneratingPost(post);
   }, []);
 
-  // Just saves the DOM node — html2canvas is triggered by onOGReady
+  // Just saves the DOM node - html2canvas is triggered by onOGReady
   const ogRefCallback = useCallback((node: HTMLDivElement | null) => {
     (ogRef as React.MutableRefObject<HTMLDivElement | null>).current = node;
   }, []);
@@ -108,7 +108,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
 
   // Helper: Format Date
   const formatDate = (dateStr?: string) => {
-    if (!dateStr) return '—';
+    if (!dateStr) return '-';
     return new Date(dateStr).toLocaleDateString('mk-MK', {
       day: 'numeric',
       month: 'long',
@@ -413,7 +413,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
                         </div>
                         <div className="flex flex-col gap-0.5">
                           <span className="text-[8px] text-stone-300">Време</span>
-                          {post.timeOfFuneral || '—'}
+                          {post.timeOfFuneral || '-'}
                         </div>
                         <div className="flex flex-col gap-0.5">
                           <span className="text-[8px] text-stone-300">Поднесено на</span>
@@ -579,7 +579,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
                 <div>
                   <h3 className="text-[10px] font-black uppercase tracking-[0.3em] text-stone-400 mb-6 flex items-center gap-3">
                     <div className="w-2 h-2 rounded-full bg-green-500" />
-                    Одобрени пораки — јавно видливи ({approvedCondolences.length})
+                    Одобрени пораки - јавно видливи ({approvedCondolences.length})
                   </h3>
                   <div className="grid grid-cols-1 gap-3">
                     {approvedCondolences.map(({ postId, postName, entry }) => (
@@ -822,7 +822,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
         }
       `}</style>
 
-      {/* Hidden OG image renderer — off-screen, 1200x630 */}
+      {/* Hidden OG image renderer - off-screen, 1200x630 */}
       {ogGeneratingPost && (
         <div style={{ position: 'fixed', left: '-9999px', top: 0, zIndex: -1 }}>
           <OGImageTemplate ref={ogRefCallback} post={ogGeneratingPost} onReady={onOGReady} />

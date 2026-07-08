@@ -120,7 +120,7 @@ const CropSelector: React.FC<CropSelectorProps> = ({
         {isCropping ? (
           <><Loader2 className="animate-spin" size={14} /> Се обработува...</>
         ) : cropConfirmed ? (
-          <><Check size={14} /> Потврдено — примени повторно</>
+          <><Check size={14} /> Потврдено - примени повторно</>
         ) : (
           <><Scissors size={14} /> Потврди ја позицијата</>
         )}
@@ -332,7 +332,7 @@ export const Step3: React.FC<Step3Props> = ({
             <Upload size={48} />
             <div>
               <p className="text-stone-600 font-medium text-base">Повлечете слика овде, или кликнете за избор</p>
-              <p className="text-sm mt-1">JPG, PNG, WEBP — до 10MB</p>
+              <p className="text-sm mt-1">JPG, PNG, WEBP - до 10MB</p>
             </div>
           </div>
         )}
@@ -345,7 +345,7 @@ export const Step3: React.FC<Step3Props> = ({
         </div>
       )}
 
-      {/* Crop selector — only after successful upload */}
+      {/* Crop selector - only after successful upload */}
       {uploadSuccess && !isDefault && originalUrl && (
         <div className="flex justify-center pt-4 border-t border-stone-100 animate-in fade-in slide-in-from-bottom-4 duration-500">
           <CropSelector

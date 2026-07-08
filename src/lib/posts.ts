@@ -21,7 +21,7 @@ export const getPosts = async (): Promise<MemorialPost[]> => {
     return normalizeDocs(snapshot.docs);
   } catch (err: any) {
     if (err?.code === 'permission-denied') {
-      // Unauthenticated — Firestore rules only allow reading published posts,
+      // Unauthenticated - Firestore rules only allow reading published posts,
       // so we must include the matching where() clause in the query.
       const q = query(postsCollection, where('status', '==', 'Објавено'));
       const snapshot = await getDocs(q);

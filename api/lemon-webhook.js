@@ -24,7 +24,7 @@ function getDb() {
       // Case 1: Vercel stored \n as escaped backslash+n (correct)
       serviceAccount = JSON.parse(raw.replace(/\\n/g, '\n'));
     } catch {
-      // Case 2: Vercel converted \n to actual newlines — escape them back, then fix private_key
+      // Case 2: Vercel converted \n to actual newlines - escape them back, then fix private_key
       const escaped = raw.replace(/\n/g, '\\n');
       serviceAccount = JSON.parse(escaped);
       if (serviceAccount.private_key) {
@@ -78,7 +78,7 @@ export default async function handler(req, res) {
 
   const db = getDb();
   if (!db) {
-    console.error('[Webhook] Firestore unavailable — check FIREBASE_SERVICE_ACCOUNT');
+    console.error('[Webhook] Firestore unavailable - check FIREBASE_SERVICE_ACCOUNT');
     return res.status(500).json({ error: 'Webhook misconfigured: database unavailable' });
   }
 
@@ -96,7 +96,7 @@ export default async function handler(req, res) {
       timingSafeEqual(digestBuf, sigBuf);
 
     if (!sigValid) {
-      console.warn('[Webhook] Rejected — signature mismatch');
+      console.warn('[Webhook] Rejected - signature mismatch');
       return res.status(401).json({ error: 'Invalid signature' });
     }
 
@@ -190,7 +190,7 @@ export default async function handler(req, res) {
     } else if (eventName === 'order_refunded') {
 
       if (!postId) {
-        console.warn('[Webhook] order_refunded — postId missing in custom_data');
+        console.warn('[Webhook] order_refunded - postId missing in custom_data');
         return res.status(200).json({ received: true, processed: false, reason: 'missing_post_id' });
       }
 
@@ -198,7 +198,7 @@ export default async function handler(req, res) {
       const postSnap = await postRef.get();
 
       if (!postSnap.exists) {
-        console.warn('[Webhook] order_refunded — post not found, skipping:', postId);
+        console.warn('[Webhook] order_refunded - post not found, skipping:', postId);
         return res.status(200).json({ received: true, processed: false, reason: 'post_not_found' });
       }
 
@@ -212,7 +212,7 @@ export default async function handler(req, res) {
       });
       console.log('[Webhook] Post refund processed:', postId);
 
-    // G. Unknown events — 200 to prevent Lemon retries
+    // G. Unknown events - 200 to prevent Lemon retries
     } else {
       console.log('[Webhook] Unknown event, ignoring:', eventName);
     }

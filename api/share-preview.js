@@ -13,7 +13,7 @@ export default async function handler(req, res) {
   let post = null;
 
   try {
-    // Query Firestore REST API — find post by slug where status == Објавено
+    // Query Firestore REST API - find post by slug where status == Објавено
     const url = `https://firestore.googleapis.com/v1/projects/${projectId}/databases/(default)/documents:runQuery?key=${apiKey}`;
     const body = {
       structuredQuery: {
@@ -52,7 +52,7 @@ export default async function handler(req, res) {
         deathYear: f.deathYear?.integerValue || '',
         mainText:  f.mainText?.stringValue  || '',
         slug:      f.slug?.stringValue      || slug,
-        // Construct OG image URL from postId — no token, requires public Storage rules
+        // Construct OG image URL from postId - no token, requires public Storage rules
         ogImageUrl: postId
           ? `https://firebasestorage.googleapis.com/v0/b/${projectId}.firebasestorage.app/o/og-images%2F${postId}.png?alt=media`
           : (f.ogImageUrl?.stringValue || null),

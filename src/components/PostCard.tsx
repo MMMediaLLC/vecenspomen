@@ -57,7 +57,7 @@ export const PostCard: React.FC<PostCardProps> = ({ post, onClick, showImageShad
           transform: `scale(${isRight ? -1 : 1}, ${isBottom ? -1 : 1})`,
         }}
       >
-        {/* outer L — slightly wobbly */}
+        {/* outer L - slightly wobbly */}
         <path d="M1.5 12 C1.4 9 1.6 5.5 1.5 1.5 C5.5 1.4 9 1.6 12 1.5" fill="none" stroke="#78716c" strokeWidth="0.6" strokeLinecap="round"/>
         {/* inner accent */}
         <path d="M1.5 5 C2 3.5 3.5 2 5 1.5" fill="none" stroke="#78716c" strokeWidth="1.1" strokeLinecap="round"/>

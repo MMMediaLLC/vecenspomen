@@ -104,7 +104,7 @@ export const SinglePost: React.FC = () => {
 
   const handleViberShare = () => {
     if (!post) return;
-    const text = encodeURIComponent(`${post.fullName} — Вечен Спомен\n${window.location.href}`);
+    const text = encodeURIComponent(`${post.fullName} - Вечен Спомен\n${window.location.href}`);
     window.open(`viber://forward?text=${text}`, '_blank');
   };
 

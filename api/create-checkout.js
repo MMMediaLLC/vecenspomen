@@ -1,6 +1,6 @@
 // api/create-checkout.js
 // Builds a direct Lemon Squeezy checkout URL with custom postId and packageType params.
-// No API key needed — buy links are public, custom data is passed via query string.
+// No API key needed - buy links are public, custom data is passed via query string.
 
 const URL_BASIC    = process.env.LEMON_OSNOVEN_URL;
 const URL_FEATURED = process.env.LEMON_ISTAKNAT_URL;

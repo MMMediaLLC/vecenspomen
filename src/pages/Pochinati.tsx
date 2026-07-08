@@ -131,7 +131,7 @@ export const Pochinati: React.FC<PochinatiProps> = ({ posts }) => {
 
           <div className="flex items-center justify-between mt-6 px-1">
              <p className="text-stone-400 text-[10px] uppercase tracking-widest font-bold">
-              {filteredPosts.length} РЕЗУЛТАТИ {currentPage > 1 && `— СТРАНА ${currentPage}`}
+              {filteredPosts.length} РЕЗУЛТАТИ {currentPage > 1 && `- СТРАНА ${currentPage}`}
             </p>
             {(searchTerm || selectedType !== 'Сите' || selectedCity !== 'Сите') && (
               <button

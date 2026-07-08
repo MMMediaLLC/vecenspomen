@@ -1,5 +1,5 @@
 // api/check-reminders.js
-// Cron job — се извршува секој ден во 09:00 UTC
+// Cron job - се извршува секој ден во 09:00 UTC
 // Проверува дали има потсетници за праќање (40 дена, 6 месеци, 1 година)
 
 import admin from 'firebase-admin';
@@ -60,7 +60,7 @@ function addDays(dateStr, days) {
 }
 
 export default async function handler(req, res) {
-  // Верификација — само Vercel Cron може да го повика ова
+  // Верификација - само Vercel Cron може да го повика ова
   const cronSecret = process.env.CRON_SECRET;
   if (cronSecret) {
     const authHeader = req.headers['authorization'];
@@ -70,7 +70,7 @@ export default async function handler(req, res) {
   }
 
   if (!process.env.RESEND_API_KEY) {
-    console.log('[Reminders] RESEND_API_KEY not set — skipping');
+    console.log('[Reminders] RESEND_API_KEY not set - skipping');
     return res.status(200).json({ skipped: true, reason: 'email_not_configured' });
   }
 

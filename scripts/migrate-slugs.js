@@ -11,7 +11,7 @@
  *   Or put FIREBASE_SERVICE_ACCOUNT in a .env file and run:
  *   node --env-file=.env scripts/migrate-slugs.js
  *
- * The script is idempotent — running it twice is safe.
+ * The script is idempotent - running it twice is safe.
  */
 
 import { initializeApp, cert, getApps } from 'firebase-admin/app';

@@ -21,7 +21,7 @@ export async function sendStatusEmail(type: EmailType, post: MemorialPost): Prom
       }),
     });
   } catch (err) {
-    // Email failure is non-critical — log and continue
+    // Email failure is non-critical - log and continue
     console.warn('[Email] Failed to send status email:', err);
   }
 }

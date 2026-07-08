@@ -40,7 +40,7 @@ export const Layout: React.FC<LayoutProps> = ({ children }) => {
                 to="/"
                 onClick={handleLogoClick}
                 className="flex items-center gap-3 group"
-                aria-label="Почетна — Вечен Спомен"
+                aria-label="Почетна - Вечен Спомен"
                 title="Почетна"
               >
                 <div className="flex items-center justify-center transition-transform group-hover:scale-105">
@@ -191,7 +191,7 @@ export const Layout: React.FC<LayoutProps> = ({ children }) => {
           </div>
         </div>
       </footer>
-      {/* Global mobile sticky CTA — hidden on /objavi */}
+      {/* Global mobile sticky CTA - hidden on /objavi */}
       <div className={`mobile-sticky-cta md:hidden fixed bottom-0 left-0 right-0 z-50 p-4 bg-white/95 backdrop-blur-md border-t border-stone-200 ${currentPath.startsWith('/objavi') || currentPath.startsWith('/edit') ? 'hidden' : ''}`}>
         <Link
           to="/objavi"

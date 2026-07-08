@@ -305,7 +305,7 @@ export const Step2: React.FC<Step2Props> = ({ post, updatePost }) => {
 
           <div className="space-y-8 pt-4">
 
-            {/* AI копче — едно за двете полиња */}
+            {/* AI копче - едно за двете полиња */}
             <div className="flex flex-col items-end gap-2">
               <button
                 onClick={handleRefine}
@@ -333,7 +333,7 @@ export const Step2: React.FC<Step2Props> = ({ post, updatePost }) => {
               {post.aiRefinedIntro && (
                 <div className="bg-stone-50 border border-stone-200 p-5 rounded-sm space-y-3 animate-in zoom-in-95 duration-500">
                   <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-2"><Sparkles size={13} className="text-[var(--color-gold)]" /><h4 className="text-[10px] font-bold uppercase tracking-widest text-stone-900">AI — Вовед</h4></div>
+                    <div className="flex items-center gap-2"><Sparkles size={13} className="text-[var(--color-gold)]" /><h4 className="text-[10px] font-bold uppercase tracking-widest text-stone-900">AI - Вовед</h4></div>
                     <button onClick={() => updatePost({ aiRefinedIntro: undefined })} className="text-stone-400 hover:text-red-700 text-[10px] font-bold uppercase tracking-widest">Откажи</button>
                   </div>
                   <p className="text-stone-800 leading-relaxed font-light text-sm">{post.aiRefinedIntro}</p>
@@ -355,7 +355,7 @@ export const Step2: React.FC<Step2Props> = ({ post, updatePost }) => {
               {post.aiRefinedText && (
                 <div className="bg-stone-50 border border-stone-200 p-5 rounded-sm space-y-3 animate-in zoom-in-95 duration-500">
                   <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-2"><Sparkles size={13} className="text-[var(--color-gold)]" /><h4 className="text-[10px] font-bold uppercase tracking-widest text-stone-900">AI — Содржина</h4></div>
+                    <div className="flex items-center gap-2"><Sparkles size={13} className="text-[var(--color-gold)]" /><h4 className="text-[10px] font-bold uppercase tracking-widest text-stone-900">AI - Содржина</h4></div>
                     <button onClick={() => updatePost({ aiRefinedText: undefined })} className="text-stone-400 hover:text-red-700 text-[10px] font-bold uppercase tracking-widest">Откажи</button>
                   </div>
                   <p className="text-stone-800 leading-relaxed font-light text-sm">{post.aiRefinedText}</p>
@@ -458,7 +458,7 @@ export const Step2: React.FC<Step2Props> = ({ post, updatePost }) => {
             <div className="space-y-1">
               <label className={labelClass}>До:</label>
               <input type="text" name="condolenceFamily" value={post.condolenceFamily || ''} onChange={handleChange} placeholder="пр. Семејството Петровски" className={inputClass} />
-              <p className="text-[9px] text-stone-400 font-light">Не го впишувајте зборот „До" — се додава автоматски при прикажување на картичката.</p>
+              <p className="text-[9px] text-stone-400 font-light">Не го впишувајте зборот „До" - се додава автоматски при прикажување на картичката.</p>
             </div>
           </div>
           <div className="space-y-1">

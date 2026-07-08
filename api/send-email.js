@@ -103,7 +103,7 @@ function emailAdminNewPost(post, appUrl) {
         <p style="margin:0 0 8px;color:#44403c;font-size:14px;"><strong>Лице:</strong> ${post.fullName}</p>
         <p style="margin:0 0 8px;color:#44403c;font-size:14px;"><strong>Тип:</strong> ${post.type}</p>
         <p style="margin:0 0 8px;color:#44403c;font-size:14px;"><strong>Пакет:</strong> ${post.package}</p>
-        <p style="margin:0 0 8px;color:#44403c;font-size:14px;"><strong>Град:</strong> ${post.city || '—'}</p>
+        <p style="margin:0 0 8px;color:#44403c;font-size:14px;"><strong>Град:</strong> ${post.city || '-'}</p>
         <p style="margin:0;color:#44403c;font-size:14px;"><strong>E-пошта:</strong> ${post.email}</p>
       </td></tr>
     </table>
@@ -166,16 +166,16 @@ function emailReminder(post, reminderType, appUrl) {
   const postLink = `${appUrl}/spomen/${post.slug || post.id}`;
 
   const labels = {
-    '40_days':  { title: '40 дена', text: 'Наскоро се навршуваат 40 дена од заминувањето на', cta: 'ПОМЕН — 40 ДЕНА' },
-    '6_months': { title: '6 месеци', text: 'Наскоро се навршуваат 6 месеци од заминувањето на', cta: 'ПОМЕН — 6 МЕСЕЦИ' },
-    '1_year':   { title: '1 година', text: 'Наскоро се навршува 1 година од заминувањето на', cta: 'ПОМЕН — 1 ГОДИНА' },
+    '40_days':  { title: '40 дена', text: 'Наскоро се навршуваат 40 дена од заминувањето на', cta: 'ПОМЕН - 40 ДЕНА' },
+    '6_months': { title: '6 месеци', text: 'Наскоро се навршуваат 6 месеци од заминувањето на', cta: 'ПОМЕН - 6 МЕСЕЦИ' },
+    '1_year':   { title: '1 година', text: 'Наскоро се навршува 1 година од заминувањето на', cta: 'ПОМЕН - 1 ГОДИНА' },
   };
   const label = labels[reminderType] || labels['40_days'];
 
   const submitUrl = `${appUrl}/objavi?type=ПОМЕН&fullName=${encodeURIComponent(post.fullName)}&relId=${post.id}&relSlug=${post.slug || ''}`;
 
   return baseTemplate(`
-    <h1 style="margin:0 0 8px;color:#1c1917;font-size:28px;font-weight:400;letter-spacing:-0.5px;">Потсетник — ${label.title}</h1>
+    <h1 style="margin:0 0 8px;color:#1c1917;font-size:28px;font-weight:400;letter-spacing:-0.5px;">Потсетник - ${label.title}</h1>
     <p style="margin:0 0 32px;color:#a8a29e;font-size:9px;letter-spacing:3px;font-family:Arial,sans-serif;text-transform:uppercase;">Меморијален потсетник</p>
 
     <p style="margin:0 0 20px;color:#44403c;font-size:15px;line-height:1.7;">Почитувани,</p>
@@ -220,7 +220,7 @@ export default async function handler(req, res) {
   }
 
   if (!process.env.RESEND_API_KEY) {
-    console.warn('[Email] RESEND_API_KEY not set — skipping email');
+    console.warn('[Email] RESEND_API_KEY not set - skipping email');
     return res.status(200).json({ sent: false, reason: 'not_configured' });
   }
 
@@ -234,11 +234,11 @@ export default async function handler(req, res) {
   try {
     switch (type) {
       case 'payment_confirmed': {
-        // Само до админ — Lemon Squeezy веќе праќа потврда за плаќање до корисникот
+        // Само до админ - Lemon Squeezy веќе праќа потврда за плаќање до корисникот
         if (adminEmail) {
           await sendViaResend(
             adminEmail,
-            `Нова објава чека одобрување — ${post.fullName}`,
+            `Нова објава чека одобрување - ${post.fullName}`,
             emailAdminNewPost(post, appUrl)
           );
         }
@@ -249,7 +249,7 @@ export default async function handler(req, res) {
         if (post.email) {
           await sendViaResend(
             post.email,
-            'Вечен Спомен — Вашата меморијална објава е одобрена',
+            'Вечен Спомен - Вашата меморијална објава е одобрена',
             emailApproved(post, appUrl)
           );
         }
@@ -260,7 +260,7 @@ export default async function handler(req, res) {
         if (post.email) {
           await sendViaResend(
             post.email,
-            'Вечен Спомен — Известување за вашата меморијална објава',
+            'Вечен Спомен - Известување за вашата меморијална објава',
             emailRejected(post)
           );
         }
@@ -271,7 +271,7 @@ export default async function handler(req, res) {
         if (post.email && post.reminderType) {
           await sendViaResend(
             post.email,
-            `Вечен Спомен — Потсетник за ${post.fullName}`,
+            `Вечен Спомен - Потсетник за ${post.fullName}`,
             emailReminder(post, post.reminderType, appUrl)
           );
         }
