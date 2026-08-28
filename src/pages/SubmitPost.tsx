@@ -201,7 +201,7 @@ export const SubmitPost: React.FC<SubmitPostProps> = ({ onComplete, initialPost,
           />
         );
       case 2:
-        return <Step2 post={post} updatePost={updatePost} />;
+        return <Step2 post={post} updatePost={updatePost} isEditMode={isEditMode} />;
       case 3:
         return <Step3
           photoUrl={post.photoUrl || DEFAULT_PHOTO}

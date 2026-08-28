@@ -6,6 +6,7 @@ import { Sparkles, Loader2, Check, Search, MapPin, X } from 'lucide-react';
 interface Step2Props {
   post: Partial<MemorialPost>;
   updatePost: (data: Partial<MemorialPost>) => void;
+  isEditMode?: boolean;
 }
 
 const inputClass = 'w-full p-4 border border-stone-200 rounded-sm focus:outline-none focus:border-stone-900 transition-colors bg-white font-light text-stone-800 h-14';
@@ -151,7 +152,7 @@ const DateInput: React.FC<{
   );
 };
 
-export const Step2: React.FC<Step2Props> = ({ post, updatePost }) => {
+export const Step2: React.FC<Step2Props> = ({ post, updatePost, isEditMode }) => {
   const [isRefining, setIsRefining] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -239,7 +240,7 @@ export const Step2: React.FC<Step2Props> = ({ post, updatePost }) => {
     return (
       <div className="animate-in fade-in slide-in-from-bottom-4 duration-1000">
         {renderSectionTitle('Податоци за тажна вест')}
-        
+
         <div className="space-y-10">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
             <div className="space-y-1">
@@ -248,12 +249,28 @@ export const Step2: React.FC<Step2Props> = ({ post, updatePost }) => {
             </div>
             <div className="space-y-1">
               <label className={labelClass}>Град {required}</label>
-              <CitySelector 
-                value={post.city || ''} 
-                onChange={(city) => updatePost({ city })} 
+              <CitySelector
+                value={post.city || ''}
+                onChange={(city) => updatePost({ city })}
               />
             </div>
           </div>
+
+          {isEditMode && (
+            <div className="space-y-1">
+              <label className={labelClass}>
+                URL Slug <span className="text-stone-400 ml-1 text-[9px] normal-case tracking-normal">(само мали латинични букви и цртички — го менува линкот)</span>
+              </label>
+              <input
+                type="text"
+                name="slug"
+                value={post.slug || ''}
+                onChange={handleChange}
+                placeholder="пр. petar-petrovski-2026"
+                className={inputClass}
+              />
+            </div>
+          )}
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
             <div className="space-y-1">
