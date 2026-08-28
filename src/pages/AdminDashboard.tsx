@@ -94,12 +94,15 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
       setApprovingId(null);
     };
 
+    const timeout = setTimeout(() => { console.warn('OG capture timed out'); approve(); }, 15000);
+
     import('html2canvas').then(m => m.default(node, { scale: 1, backgroundColor: '#faf9f7', logging: false }))
       .then(canvas => canvas.toBlob(blob => {
+        clearTimeout(timeout);
         if (blob) uploadOgImage(ogGeneratingPost.id, blob).catch(console.error);
         approve();
       }, 'image/png'))
-      .catch(err => { console.error('OG capture failed:', err); approve(); });
+      .catch(err => { clearTimeout(timeout); console.error('OG capture failed:', err); approve(); });
   }, [ogGeneratingPost, onUpdateStatus]);
 
 

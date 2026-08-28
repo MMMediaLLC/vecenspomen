@@ -62,11 +62,9 @@ function addDays(dateStr, days) {
 export default async function handler(req, res) {
   // Верификација - само Vercel Cron може да го повика ова
   const cronSecret = process.env.CRON_SECRET;
-  if (cronSecret) {
-    const authHeader = req.headers['authorization'];
-    if (authHeader !== `Bearer ${cronSecret}`) {
-      return res.status(401).json({ error: 'Unauthorized' });
-    }
+  const authHeader = req.headers['authorization'];
+  if (!cronSecret || authHeader !== `Bearer ${cronSecret}`) {
+    return res.status(401).json({ error: 'Unauthorized' });
   }
 
   if (!process.env.RESEND_API_KEY) {

@@ -2,7 +2,7 @@ export const config = {
   matcher: ['/spomen/:slug*'],
 };
 
-export default function middleware(request) {
+export default async function middleware(request) {
   const ua = request.headers.get('user-agent') || '';
   const isBot = /facebookexternalhit|Twitterbot|LinkedInBot|WhatsApp|Pinterest|Viber|viber-bot|ViberBot|com\.viber|Slackbot|TelegramBot/i.test(ua);
 

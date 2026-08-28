@@ -97,8 +97,7 @@ export const SinglePost: React.FC = () => {
       setCopied(true);
       setTimeout(() => setCopied(false), 2500);
     } catch {
-      setCopied(true);
-      setTimeout(() => setCopied(false), 2500);
+      // clipboard failed - don't show false success
     }
   };
 

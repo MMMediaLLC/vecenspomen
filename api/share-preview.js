@@ -2,6 +2,15 @@
 // Called by middleware.js for social media bots visiting /spomen/:slug
 // Returns HTML with proper OG meta tags so Facebook/Viber/etc. pick up the preview image
 
+function escapeHtml(str) {
+  return String(str)
+    .replace(/&/g, '&amp;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;');
+}
+
 export default async function handler(req, res) {
   const slug = req.query.slug;
   if (!slug) return res.status(400).send('Missing slug');
@@ -50,8 +59,8 @@ export default async function handler(req, res) {
         fullName:  f.fullName?.stringValue  || '',
         type:      f.type?.stringValue      || '',
         city:      f.city?.stringValue      || '',
-        birthYear: f.birthYear?.integerValue || '',
-        deathYear: f.deathYear?.integerValue || '',
+        birthYear: f.birthYear?.integerValue || f.birthYear?.stringValue || '',
+        deathYear: f.deathYear?.integerValue || f.deathYear?.stringValue || '',
         mainText:  f.mainText?.stringValue  || '',
         slug:      f.slug?.stringValue      || slug,
         // Construct OG image URL from postId - no token, requires public Storage rules
@@ -65,11 +74,12 @@ export default async function handler(req, res) {
   }
 
   const pageUrl = `${baseUrl}/spomen/${encodeURIComponent(slug)}`;
-  const title   = post ? `Во спомен на ${post.fullName}, почивај во мир.` : 'Вечен Спомен';
+  const title   = post ? `Во спомен на ${escapeHtml(post.fullName)}, почивај во мир.` : 'Вечен Спомен';
   const desc    = post
-    ? `${post.type} · ${post.city}${post.birthYear ? ` · ${post.birthYear}–${post.deathYear}` : ''}`
+    ? escapeHtml(`${post.type} · ${post.city}${post.birthYear ? ` · ${post.birthYear}–${post.deathYear}` : ''}`)
     : 'Меморијал на vecenspomen.mk';
-  const image   = post?.ogImageUrl || `${baseUrl}/logo.png`;
+  const image   = escapeHtml(post?.ogImageUrl || `${baseUrl}/logo.png`);
+  const safeUrl = escapeHtml(pageUrl);
 
   res.setHeader('Content-Type', 'text/html; charset=utf-8');
   res.setHeader('Cache-Control', 's-maxage=3600, stale-while-revalidate=86400');
@@ -79,7 +89,7 @@ export default async function handler(req, res) {
   <meta charset="utf-8" />
   <title>${title}</title>
   <meta property="og:type"        content="article" />
-  <meta property="og:url"         content="${pageUrl}" />
+  <meta property="og:url"         content="${safeUrl}" />
   <meta property="og:title"       content="${title}" />
   <meta property="og:description" content="${desc}" />
   <meta property="og:image"       content="${image}" />
@@ -89,10 +99,10 @@ export default async function handler(req, res) {
   <meta property="og:site_name"   content="Вечен Спомен" />
   <meta name="twitter:card"       content="summary_large_image" />
   <meta name="twitter:image"      content="${image}" />
-  <meta http-equiv="refresh"      content="0; url=${pageUrl}" />
+  <meta http-equiv="refresh"      content="0; url=${safeUrl}" />
 </head>
 <body>
-  <a href="${pageUrl}">${title}</a>
+  <a href="${safeUrl}">${title}</a>
 </body>
 </html>`);
 }
