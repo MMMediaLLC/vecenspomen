@@ -106,7 +106,7 @@ export default async function handler(req, res) {
     const customData = payload?.meta?.custom_data ?? {};
     const orderId    = payload?.data?.id ?? null;
     const postId     = customData.postId ?? null;
-    const pkg        = customData.package ?? null;
+    const pkg        = customData.packageType ?? null;
 
     console.log(`[Webhook] Processing event: ${eventName}`, { orderId, postId, pkg });
     
