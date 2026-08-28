@@ -232,6 +232,21 @@ export const Step2: React.FC<Step2Props> = ({ post, updatePost, isEditMode }) =>
   const renderSectionTitle = (title: string) => (
     <div className="mb-8 pb-4 border-b border-stone-100">
       <h3 className="text-xl font-serif text-stone-800">{title}</h3>
+      {isEditMode && (
+        <div className="mt-6 space-y-1">
+          <label className={labelClass}>
+            URL Slug <span className="text-stone-400 ml-1 text-[9px] normal-case tracking-normal">(само мали латинични букви и цртички — го менува линкот)</span>
+          </label>
+          <input
+            type="text"
+            name="slug"
+            value={post.slug || ''}
+            onChange={handleChange}
+            placeholder="пр. petar-petrovski-2026"
+            className={inputClass}
+          />
+        </div>
+      )}
     </div>
   );
 
@@ -256,21 +271,6 @@ export const Step2: React.FC<Step2Props> = ({ post, updatePost, isEditMode }) =>
             </div>
           </div>
 
-          {isEditMode && (
-            <div className="space-y-1">
-              <label className={labelClass}>
-                URL Slug <span className="text-stone-400 ml-1 text-[9px] normal-case tracking-normal">(само мали латинични букви и цртички — го менува линкот)</span>
-              </label>
-              <input
-                type="text"
-                name="slug"
-                value={post.slug || ''}
-                onChange={handleChange}
-                placeholder="пр. petar-petrovski-2026"
-                className={inputClass}
-              />
-            </div>
-          )}
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
             <div className="space-y-1">
