@@ -10,6 +10,8 @@ export default async function handler(req, res) {
   const apiKey    = process.env.VITE_FIREBASE_API_KEY;
   const baseUrl   = (process.env.VITE_APP_URL || 'https://vecenspomen.mk').replace(/\/$/, '');
 
+  console.log('[share-preview] slug:', slug, '| projectId:', projectId ? 'OK' : 'MISSING', '| apiKey:', apiKey ? 'OK' : 'MISSING');
+
   let post = null;
 
   try {
@@ -67,7 +69,7 @@ export default async function handler(req, res) {
   const desc    = post
     ? `${post.type} · ${post.city}${post.birthYear ? ` · ${post.birthYear}–${post.deathYear}` : ''}`
     : 'Меморијал на vecenspomen.mk';
-  const image   = post?.ogImageUrl || `${baseUrl}/og-default.png`;
+  const image   = post?.ogImageUrl || `${baseUrl}/logo.png`;
 
   res.setHeader('Content-Type', 'text/html; charset=utf-8');
   res.setHeader('Cache-Control', 's-maxage=3600, stale-while-revalidate=86400');
