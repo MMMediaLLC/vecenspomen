@@ -245,6 +245,17 @@ export default async function handler(req, res) {
         break;
       }
 
+      case 'new_submission': {
+        if (adminEmail) {
+          await sendViaResend(
+            adminEmail,
+            `Нова пријава — ${post.fullName}`,
+            emailAdminNewPost(post, appUrl)
+          );
+        }
+        break;
+      }
+
       case 'approved': {
         if (post.email) {
           await sendViaResend(

@@ -59,6 +59,12 @@ const AppRoutes = () => {
     setPosts(prev => [newPost, ...prev]);
     try {
       const realId = await firebaseAddPost(newPost);
+      // Notify admin of new submission
+      fetch('/api/send-email', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ type: 'new_submission', post: { ...newPost, id: realId || newPost.id } }),
+      }).catch(() => {});
       return realId;
     } catch (err) {
       console.error("Failed to add post tracking:", err);
